@@ -71,14 +71,85 @@ jobs:
           retention-days: 30
           if-no-files-found: warn
 
-      - name: 部署到 GitHub Pages (可选)
+      - name: 检出 gh-pages 分支
+        uses: actions/checkout@v4
+        with:
+          ref: gh-pages
+          path: gh-pages
+        continue-on-error: true
+
+      - name: 准备部署目录
+        run: |
+          mkdir -p deploy/reports/${{ github.run_number }}
+
+          # 复制新报告到对应目录
+          cp $OUTPUT_DIR/*.html deploy/reports/${{ github.run_number }}/ || true
+
+          # 复制最新报告到根目录作为 index.html
+          LATEST_REPORT=$(ls -t $OUTPUT_DIR/*.html 2>/dev/null | head -1)
+          if [ -n "$LATEST_REPORT" ]; then
+            cp "$LATEST_REPORT" deploy/index.html
+          fi
+
+          # 保留历史报告
+          if [ -d "gh-pages/reports" ]; then
+            cp -r gh-pages/reports/* deploy/reports/ 2>/dev/null || true
+          fi
+
+          # 生成报告列表页面
+          cat > deploy/list.html << 'HTMLEOF'
+          <!DOCTYPE html>
+          <html lang="zh-CN">
+          <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>微博热搜产品创意分析 - 历史报告</title>
+            <style>
+              * { margin: 0; padding: 0; box-sizing: border-box; }
+              body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; padding: 40px 20px; }
+              .container { max-width: 800px; margin: 0 auto; }
+              h1 { color: white; text-align: center; margin-bottom: 30px; font-size: 2em; text-shadow: 2px 2px 4px rgba(0,0,0,0.2); }
+              .card { background: white; border-radius: 16px; padding: 30px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); }
+              .btn { display: block; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; text-decoration: none; padding: 15px 25px; border-radius: 10px; margin: 10px 0; text-align: center; transition: transform 0.2s, box-shadow 0.2s; }
+              .btn:hover { transform: translateY(-2px); box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4); }
+              .btn-primary { font-size: 1.2em; padding: 20px 30px; }
+              .divider { height: 1px; background: #eee; margin: 25px 0; }
+              .history-title { color: #666; font-size: 0.9em; margin-bottom: 15px; }
+              #report-list { max-height: 400px; overflow-y: auto; }
+              .report-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 15px; background: #f8f9fa; border-radius: 8px; margin: 8px 0; }
+              .report-item a { color: #667eea; text-decoration: none; }
+              .report-item a:hover { text-decoration: underline; }
+              .date { color: #999; font-size: 0.85em; }
+            </style>
+          </head>
+          <body>
+            <div class="container">
+              <h1>📊 微博热搜产品创意分析</h1>
+              <div class="card">
+                <a href="index.html" class="btn btn-primary">🔥 查看最新报告</a>
+                <div class="divider"></div>
+                <p class="history-title">历史报告</p>
+                <div id="report-list">
+                  <p style="color: #999; text-align: center;">报告列表加载中...</p>
+                </div>
+              </div>
+            </div>
+            <script>
+              // 这里可以通过 GitHub API 动态加载报告列表
+              // 简化版：直接显示提示
+              document.getElementById('report-list').innerHTML = '<p style="color:#666;text-align:center;padding:20px;">访问 <a href="https://github.com/shenqiangbin-cmd-eng/weibo-hotspot-analyzer/tree/gh-pages/reports">GitHub 仓库</a> 查看所有历史报告</p>';
+            </script>
+          </body>
+          </html>
+          HTMLEOF
+
+      - name: 部署到 GitHub Pages
         if: github.ref == 'refs/heads/main'
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ${{ env.OUTPUT_DIR }}
-          destination_dir: reports/${{ github.run_number }}
-          keep_files: true
+          publish_dir: ./deploy
+          keep_files: false
 
   notify:
     needs: analyze
@@ -90,7 +161,7 @@ jobs:
         run: |
           if [ "${{ needs.analyze.result }}" == "success" ]; then
             echo "✅ 微博热搜分析成功完成!"
-            echo "📊 报告已上传到 Artifacts"
+            echo "📊 报告地址: https://shenqiangbin-cmd-eng.github.io/weibo-hotspot-analyzer/"
           else
             echo "❌ 微博热搜分析失败"
             echo "请检查日志获取详细信息"
