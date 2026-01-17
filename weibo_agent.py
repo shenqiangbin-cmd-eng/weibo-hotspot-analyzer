@@ -21,7 +21,7 @@ from claude_agent_sdk import (
     AssistantMessage,
     TextBlock,
     ToolUseBlock,
-    ToolResultMessage,
+    ResultMessage,
 )
 
 # 环境变量
@@ -157,7 +157,6 @@ async def run_weibo_agent():
 
     # 配置 Agent 选项
     options = ClaudeAgentOptions(
-        model="claude-sonnet-4-20250514",
         mcp_servers={"weibo": weibo_tools},
         allowed_tools=[
             "mcp__weibo__fetch_weibo_hot",
@@ -184,18 +183,16 @@ async def run_weibo_agent():
     async with ClaudeSDKClient(options=options) as client:
         await client.query(prompt)
 
-        async for message in client.receive_response():
+        async for message in client.receive_messages():
             if isinstance(message, AssistantMessage):
                 for block in message.content:
                     if isinstance(block, TextBlock):
                         print(f"\n📝 Claude: {block.text[:500]}...")
                     elif isinstance(block, ToolUseBlock):
                         print(f"\n🔧 使用工具: {block.name}")
-            elif isinstance(message, ToolResultMessage):
-                for block in message.content:
-                    if hasattr(block, 'text'):
-                        preview = block.text[:200] if len(block.text) > 200 else block.text
-                        print(f"   结果: {preview}...")
+            elif isinstance(message, ResultMessage):
+                print(f"\n💰 总费用: ${message.total_cost_usd:.4f}")
+                break
 
     print("\n" + "-" * 50)
     print("✅ 分析完成!")
