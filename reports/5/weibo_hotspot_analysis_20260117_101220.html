@@ -1,0 +1,1698 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>微博热搜产品创意分析报告 - 2026年1月17日</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            line-height: 1.6;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+        
+        .header .subtitle {
+            color: #666;
+            font-size: 1.1em;
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .stat-card .number {
+            font-size: 2.5em;
+            font-weight: bold;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .stat-card .label {
+            color: #666;
+            margin-top: 10px;
+        }
+        
+        .topic-section {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+        
+        .topic-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+        
+        .topic-title {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .topic-rank {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: bold;
+        }
+        
+        .score-section {
+            margin: 20px 0;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 15px;
+        }
+        
+        .score-bar {
+            display: flex;
+            align-items: center;
+            margin: 10px 0;
+        }
+        
+        .score-label {
+            width: 120px;
+            font-weight: 500;
+        }
+        
+        .score-progress {
+            flex: 1;
+            height: 25px;
+            background: #e0e0e0;
+            border-radius: 12px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .score-fill {
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 10px;
+            color: white;
+            font-weight: bold;
+            transition: width 1s ease;
+        }
+        
+        .score-excellent {
+            background: linear-gradient(90deg, #10b981, #34d399);
+        }
+        
+        .score-good {
+            background: linear-gradient(90deg, #3b82f6, #60a5fa);
+        }
+        
+        .score-average {
+            background: linear-gradient(90deg, #6b7280, #9ca3af);
+        }
+        
+        .analysis-content {
+            margin: 20px 0;
+            padding: 20px;
+            background: #fff7ed;
+            border-left: 4px solid #f59e0b;
+            border-radius: 8px;
+        }
+        
+        .analysis-content h3 {
+            color: #f59e0b;
+            margin-bottom: 10px;
+        }
+        
+        .product-ideas {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .idea-card {
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 15px;
+            padding: 25px;
+            transition: all 0.3s ease;
+        }
+        
+        .idea-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        }
+        
+        .idea-card.excellent {
+            border-color: #10b981;
+            background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+        }
+        
+        .idea-card.good {
+            border-color: #3b82f6;
+            background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+        }
+        
+        .idea-card.average {
+            border-color: #6b7280;
+            background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
+        }
+        
+        .idea-title {
+            font-size: 1.3em;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #333;
+        }
+        
+        .idea-score {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: white;
+        }
+        
+        .idea-score.excellent {
+            background: linear-gradient(135deg, #10b981, #34d399);
+        }
+        
+        .idea-score.good {
+            background: linear-gradient(135deg, #3b82f6, #60a5fa);
+        }
+        
+        .idea-score.average {
+            background: linear-gradient(135deg, #6b7280, #9ca3af);
+        }
+        
+        .idea-features {
+            margin: 15px 0;
+        }
+        
+        .idea-features h4 {
+            color: #666;
+            margin-bottom: 8px;
+            font-size: 0.9em;
+        }
+        
+        .idea-features ul {
+            list-style: none;
+            padding-left: 0;
+        }
+        
+        .idea-features li {
+            padding: 5px 0 5px 20px;
+            position: relative;
+            color: #555;
+        }
+        
+        .idea-features li:before {
+            content: "•";
+            position: absolute;
+            left: 5px;
+            color: #667eea;
+            font-weight: bold;
+        }
+        
+        .idea-users {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #e0e0e0;
+            color: #666;
+            font-size: 0.95em;
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 30px;
+            color: white;
+            margin-top: 30px;
+        }
+        
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8em;
+            }
+            
+            .stats {
+                grid-template-columns: 1fr;
+            }
+            
+            .product-ideas {
+                grid-template-columns: 1fr;
+            }
+            
+            .topic-header {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔥 微博热搜产品创意分析报告</h1>
+            <p class="subtitle">2026年1月17日 10:12:20 | 基于AI智能分析</p>
+        </div>
+        
+        <div class="stats">
+            <div class="stat-card">
+                <div class="number">20</div>
+                <div class="label">分析话题数</div>
+            </div>
+            <div class="stat-card">
+                <div class="number">71.5</div>
+                <div class="label">平均创意分</div>
+            </div>
+            <div class="stat-card">
+                <div class="number">7</div>
+                <div class="label">优秀话题(≥80分)</div>
+            </div>
+            <div class="stat-card">
+                <div class="number">10</div>
+                <div class="label">良好话题(60-79分)</div>
+            </div>
+            <div class="stat-card">
+                <div class="number">3</div>
+                <div class="label">一般话题(<60分)</div>
+            </div>
+        </div>
+
+        <!-- 话题1: 跑男史上最强女嘉宾 -->
+        <div class="topic-section">
+            <div class="topic-header">
+                <div class="topic-title">🎬 跑男史上最强女嘉宾</div>
+                <div class="topic-rank">NO.1</div>
+            </div>
+            
+            <div class="score-section">
+                <div class="score-bar">
+                    <div class="score-label">总分:</div>
+                    <div class="score-progress">
+                        <div class="score-fill score-excellent" style="width: 85%;">85分</div>
+                    </div>
+                </div>
+                <div class="score-bar">
+                    <div class="score-label">有趣度:</div>
+                    <div class="score-progress">
+                        <div class="score-fill score-excellent" style="width: 87.5%;">70/80</div>
+                    </div>
+                </div>
+                <div class="score-bar">
+                    <div class="score-label">有用度:</div>
+                    <div class="score-progress">
+                        <div class="score-fill score-excellent" style="width: 75%;">15/20</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="analysis-content">
+                <h3>📊 话题分析</h3>
+                <p><strong>背景推测：</strong>《跑男》节目迎来一位体能或综合表现超强的女嘉宾，打破了以往女性在竞技类综艺中的刻板印象，引发网友热议。</p>
+                <p><strong>社会意义：</strong>反映女性力量崛起，打破性别刻板印象，展现女性在体育竞技领域的无限可能。</p>
+            </div>
+            
+            <div class="product-ideas">
+                <div class="idea-card excellent">
+                    <div class="idea-title">💪 她力场</div>
+                    <span class="idea-score excellent">88分</span>
+                    <div class="idea-features">
+                        <h4>核心功能：</h4>
+                        <ul>
+                            <li>女性运动能力测试与PK排行榜</li>
+                            <li>女性运动员故事分享社区</li>
+                            <li>线下"女力挑战赛"活动组织</li>
+                            <li>运动数据可视化与成长曲线</li>
+                            <li>女性专属运动课程与训练计划</li>
+                        </ul>
+                    </div>
+                    <div class="idea-users">
+                        <strong>目标用户：</strong>18-35岁热爱运动的都市女性，渴望突破自我、展现力量的新时代女性
+                    </div>
+                </div>
+                
+                <div class="idea-card excellent">
+                    <div class="idea-title">🎮 综艺竞技台</div>
+                    <span class="idea-score excellent">83分</span>
+                    <div class="idea-features">
+                        <h4>核心功能：</h4>
+                        <ul>
+                            <li>综艺游戏项目线上复刻体验</li>
+                            <li>明星嘉宾虚拟形象对战</li>
+                            <li>用户自创综艺游戏玩法</li>
+                            <li>线上组队参加综艺挑战赛</li>
+                            <li>综艺经典片段混剪与互动</li>
+                        </ul>
+                    </div>
+                    <div class="idea-users">
+                        <strong>目标用户：</strong>综艺节目爱好者、Z世代年轻人、游戏玩家
+                    </div>
+                </div>
+                
+                <div class="idea-card excellent">
+                    <div class="idea-title">⚡ 偶像能力值</div>
+                    <span class="idea-score excellent">80分</span>
+                    <div class="idea-features">
+                        <h4>核心功能：</h4>
+                        <ul>
+                            <li>明星多维度能力数据库（体能/智力/情商等）</li>
+                            <li>综艺表现数据采集与分析</li>
+                            <li>粉丝为偶像能力值投票打分</li>
+                            <li>能力值变化趋势图与历史对比</li>
+                        </ul>
+                    </div>
+                    <div class="idea-users">
+                        <strong>目标用户：</strong>追星族、数据控粉丝、综艺观众
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 话题2: 短剧演员忘摘道具车牌被查处 -->
+        <div class="topic-section">
+            <div class="topic-header">
+                <div class="topic-title">🚗 短剧演员忘摘道具车牌被查处</div>
+                <div class="topic-rank">NO.2</div>
+            </div>
+            
+            <div class="score-section">
+                <div class="score-bar">
+                    <div class="score-label">总分:</div>
+                    <div class="score-progress">
+                        <div class="score-fill score-excellent" style="width: 82%;">82分</div>
+                    </div>
+                </div>
+                <div class="score-bar">
+                    <div class="score-label">有趣度:</div>
+                    <div class="score-progress">
+                        <div class="score-fill score-excellent" style="width: 83.75%;">67/80</div>
+                    </div>
+                </div>
+                <div class="score-bar">
+                    <div class="score-label">有用度:</div>
+                    <div class="score-progress">
+                        <div class="score-fill score-excellent" style="width: 75%;">15/20</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="analysis-content">
+                <h3>📊 话题分析</h3>
+                <p><strong>背景推测：</strong>短剧演员拍摄完毕后忘记摘下假车牌上路，被交警查处的乌龙事件，折射出短视频行业的快速发展与规范化需求。</p>
+                <p><strong>社会意义：</strong>反映短剧行业野蛮生长中的管理漏洞，提醒从业者注意职业规范，也展现了新兴职业的有趣困境。</p>
+            </div>
+            
+            <div class="product-ideas">
+                <div class="idea-card excellent">
+                    <div class="idea-title">🎬 剧组管家</div>
+                    <span class="idea-score excellent">85分</span>
+                    <div class="idea-features">
+                        <h4>核心功能：</h4>
+                        <ul>
+                            <li>道具借还智能管理系统（扫码登记）</li>
+                            <li>拍摄现场物品清单自动核查</li>
+                            <li>收工前道具归还提醒与验收</li>
+                            <li>道具损坏赔偿自动计算</li>
+                            <li>拍摄场地复原检查清单</li>
+                        </ul>
+                    </div>
+                    <div class="idea-users">
+                        <strong>目标用户：</strong>短剧剧组、影视制作公司、道具管理员、独立导演
+                    </div>
+                </div>
+                
+                <div class="idea-card excellent">
+                    <div class="idea-title">⚠️ 演员下班助手</div>
+                    <span class="idea-score excellent">80分</span>
+                    <div class="idea-features">
+                        <h4>核心功能：</h4>
+                        <ul>
+                            <li>收工前道具穿戴物品检查提醒</li>
+                            <li>拍摄场景与日常场景智能切换</li>
+                            <li>异常物品（道具）识别预警</li>
+                            <li>离组前物品归还清单确认</li>
+                        </ul>
+                    </div>
+                    <div class="idea-users">
+                        <strong>目标用户：</strong>短剧演员、群众演员、影视从业者
+                    </div>
+                </div>
+                
+                <div class="idea-card excellent">
+                    <div class="idea-title">😂 打工囧事录</div>
+                    <span class="idea-score excellent">81分</span>
+                    <div class="idea-features">
+                        <h4>核心功能：</h4>
+                        <ul>
+                            <li>各行业职业囧事匿名分享社区</li>
+                            <li>囧事话题投票与热度排行</li>
+                            <li>职业困境解决方案众筹</li>
+                            <li>同行吐槽与经验交流</li>
+                        </ul>
+                    </div>
+                    <div class="idea-users">
+                        <strong>目标用户：</strong>所有打工人、职场新人、寻求共鸣的年轻人
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 话题3: 我国外贸转向协同发力新格局 -->
+        <div class="topic-section">
+            <div class="topic-header">
+                <div class="topic-title">📈 我国外贸转向协同发力新格局</div>
+                <div class="topic-rank">NO.3</div>
+            </div>
+            
+            <div class="score-section">
+                <div class="score-bar">
+                    <div class="score-label">总分:</div>
+                    <div class="score-progress">
+                        <div class="score-fill score-average" style="width: 52%;">52分</div>
+                    </div>
+                </div>
+                <div class="score-bar">
+                    <div class="score-label">有趣度:</div>
+                    <div class="score-progress">
+                        <div class="score-fill score-average" style="width: 40%;">32/80</div>
+                    </div>
+                </div>
+                <div class="score-bar">
+                    <div class="score-label">有用度:</div>
+                    <div class="score-progress">
+                        <div class="score-fill score-excellent" style="width: 100%;">20/20</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="analysis-content">
+                <h3>📊 话题分析</h3>
+                <p><strong>背景推测：</strong>国家外贸政策调整，从传统外贸模式转向多元化、数字化协同发展，跨境电商、服务贸易等新业态快速崛起。</p>
+                <p><strong>社会意义：</strong>反映中国经济转型升级，对外贸易从量到质的转变，对中小企业出海、个人跨境创业具有重要指导意义。</p>
+            </div>
+            
+            <div class="product-ideas">
+                <div class="idea-card average">
+                    <div class="idea-title">🌍 出海导航</div>
+                    <span class="idea-score average">68分</span>
+                    <div class="idea-features">
+                        <h4>核心功能：</h4>
+                        <ul>
+                            <li>各国外贸政策实时更新与解读</li>
+                            <li>跨境电商平台入驻指南</li>
+                            <li>出口退税智能计算与申请</li>
+                            <li>国际物流方案对比与推荐</li>
+                            <li>外贸风险评估与预警</li>
+                        </ul>
+                    </div>
+                    <div class="idea-users">
+                        <strong>目标用户：</strong>中小外贸企业主、跨境电商创业者、传统外贸从业者
+                    </div>
+                </div>
+                
+                <div class="idea-card average">
+                    <div class="idea-title">🤝 全球找搭子</div>
+                    <span class="idea-score average">55分</span>
+                    <div class="idea-features">
+                        <h4>核心功能：</h4>
+                        <ul>
+                            <li>国内供应商与海外买家智能匹配</li>
+                            <li>外贸合作伙伴信用评估</li>
+                            <li>跨境交易担保与纠纷仲裁</li>
+                            <li>外贸社群与行业交流</li>
+                        </ul>
+                    </div>
+                    <div class="idea-users">
+                        <strong>目标用户：</strong>外贸新手、寻求合作的制造商、海外采购商
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 话题4: 贺娇龙已安葬于昭苏公墓 -->
+        <div class="topic-section">
+            <div class="topic-header">
+                <div class="topic-title">🕯️ 贺娇龙已安葬于昭苏公墓</div>
+                <div class="topic-rank">NO.5</div>
+            </div>
+            
+            <div class="score-section">
+                <div class="score-bar">
+                    <div class="score-label">总分:</div>
+                    <div class="score-progress">
+                        <div class="score-fill score-good" style="width: 65%;">65分</div>
+                    </div>
+                </div>
+                <div class="score-bar">
+                    <div class="score-label">有趣度:</div>
+                    <div class="score-progress">
+                        <div class="score-fill score-good" style="width: 56.25%;">45/80</div>
+                    </div>
+                </div>
+                <div class="score-bar">
+                    <div class="score-label">有用度:</div>
+                    <div class="score-progress">
+                        <div class="score-fill score-excellent" style="width: 100%;">20/20</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="analysis-content">
+                <h3>📊 话题分析</h3>
+                <p><strong>背景推测：</strong>贺娇龙可能是近期引发社会关注的人物（公众人物或特殊事件当事人），其安葬消息引发网友追思与讨论。</p>
+                <p><strong>社会意义：</strong>反映公众对生命的尊重与缅怀，也提醒人们珍惜当下、关注生命安全。</p>
+            </div>
+            
+            <div class="product-ideas">
+                <div class="idea-card good">
+                    <div class="idea-title">💐 云祭奠</div>
+                    <span class="idea-score good">72分</span>
+                    <div class="idea-features">
+                        <h4>核心功能：</h4>
+                        <ul>
+                            <li>逝者纪念馆在线创建与管理</li>
+                            <li>虚拟祭祀（献花/留言/点烛）</li>
+                            <li>生命故事记录与传承</li>
+                            <li>远程直播墓地祭扫服务</li>
+                            <li>纪念日提醒与情感陪伴</li>
+                        </ul>
+                    </div>
+                    <div class="idea-users">
+                        <strong>目标用户：</strong>无法亲临现场的亲友、海外华人、年轻一代祭祀需求者
+                    </div>
+                </div>
+                
+                <div class="idea-card good">
+                    <div class="idea-title">📖 生命留声机</div>
+                    <span class="idea-score good">68分</span>
+                    <div class="idea-features">
+                        <h4>核心功能：</h4>
+                        <ul>
+                            <li>为在世亲人录制人生故事</li>
+                            <li>重要时刻视频/音频留存</li>
+                            <li>生前遗愿智能提醒执行</li>
+                            <li>数字遗产继承与管理</li>
+                        </ul>
+                    </div>
+                    <div class="idea-users">
+                        <strong>目标用户：</strong>中老年人、重视家族传承的用户、生命记录爱好者
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 话题5: 盲目施救致伤亡扩大4人窒息死亡 -->
+        <div class="topic-section">
+            <div class="topic-header">
+                <div class="topic-title">🚨 盲目施救致伤亡扩大4人窒息死亡</div>
+                <div class="topic-rank">NO.6</div>
+            </div>
+            
+            <div class="score-section">
+                <div class="score-bar">
+                    <div class="score-label">总分:</div>
+                    <div class="score-progress">
+                        <div class="score-fill score-excellent" style="width: 88%;">88分</div>
+                    </div>
+                </div>
+                <div class="score-bar">
+                    <div class="score-label">有趣度:</div>
+                    <div class="score-progress">
+                        <div class="score-fill score-excellent" style="width: 85%;">68/80</div>
+                    </div>
+                </div>
+                <div class="score-bar">
+                    <div class="score-label">有用度:</div>
+                    <div class="score-progress">
+                        <div class="score-fill score-excellent" style="width: 100%;">20/20</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="analysis-content">
+                <h3>📊 话题分析</h3>
+                <p><strong>背景推测：</strong>发生密闭空间事故，多人因缺乏急救知识盲目施救导致连环伤亡，敲响公众安全教育警钟。</p>
+                <p><strong>社会意义：</strong>暴露公众应急救援知识严重不足，科学施救教育亟待普及，具有极强的社会警示意义和教育价值。</p>
+            </div>
+            
+            <div class="product-ideas">
+                <div class="idea-card excellent">
+                    <div class="idea-title">🆘 急救AI教练</div>
+                    <span class="idea-score excellent">92分</span>
+                    <div class="idea-features">
+                        <h4>核心功能：</h4>
+                        <ul>
+                            <li>紧急情况AI语音实时指导（CPR/止血等）</li>
+                            <li>场景识别自动匹配施救方案</li>
+                            <li>错误施救行为实时预警</li>
+                            <li>一键呼叫120并同步位置</li>
+                            <li>AR急救步骤可视化演示</li>
+                        </ul>
+                    </div>
+                    <div class="idea-users">
+                        <strong>目标用户：</strong>所有公民，特殊场景工作者（工地/化工厂），家有老人小孩的家庭
+                    </div>
+                </div>
+                
+                <div class="idea-card excellent">
+                    <div class="idea-title">⚠️ 危险现场助手</div>
+                    <span class="idea-score excellent">86分</span>
+                    <div class="idea-features">
+                        <h4>核心功能：</h4>
+                        <ul>
+                            <li>危险环境智能识别（有毒气体/密闭空间）</li>
+                            <li>施救风险评估与安全建议</li>
+                            <li>专业救援队伍快速调度</li>
+                            <li>现场人员疏散引导</li>
+                            <li>事故现场信息采集上报</li>
+                        </ul>
+                    </div>
+                    <div class="idea-users">
+                        <strong>目标用户：</strong>企业安全员、施工现场管理者、应急救援志愿者
+                    </div>
+                </div>
+                
+                <div class="idea-card excellent">
+                    <div class="idea-title">🎓 生命课堂</div>
+                    <span class="idea-score excellent">85分</span>
+                    <div class="idea-features">
+                        <h4>核心功能：</h4>
+                        <ul>
+                            <li>碎片化急救知识视频课程</li>
+                            <li>VR急救场景沉浸式演练</li>
+                            <li>急救技能考核与认证</li>
+                            <li>每日安全知识推送</li>
+                            <li>线下急救培训活动组织</li>
+                        </ul>
+                    </div>
+                    <div class="idea-users">
+                        <strong>目标用户：</strong>学生群体、企业员工、社区居民、家长群体
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 话题6: 只有实习生点了大杯奶茶 -->
+        <div class="topic-section">
+            <div class="topic-header">
+                <div class="topic-title">☕ 只有实习生点了大杯奶茶</div>
+                <div class="topic-rank">NO.7</div>
+            </div>
+            
+            <div class="score-section">
+                <div class="score-bar">
+                    <div class="score-label">总分:</div>
+                    <div class="score-progress">
+                        <div class="score-fill score-excellent" style="width: 86%;">86分</div>
+                    </div>
+                </div>
+                <div class="score-bar">
+                    <div class="score-label">有趣度:</div>
+                    <div class="score-progress">
+                        <div class="score-fill score-excellent" style="width: 91.25%;">73/80</div>
+                    </div>
+                </div>
+                <div class="score-bar">
+                    <div class="score-label">有用度:</div>
+                    <div class="score-progress">
+                        <div class="score-fill score-good" style="width: 65%;">13/20</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="analysis-content">
+                <h3>📊 话题分析</h3>
+                <p><strong>背景推测：</strong>职场聚餐或团建时，只有不懂"潜规则"的实习生点了大杯饮品，其他同事都谨慎地选择小杯，折射出职场微妙的人际关系。</p>
+                <p><strong>社会意义：</strong>反映职场新人的迷茫与不安、职场隐形规则的复杂性，引发打工人强烈共鸣，具有极强的话题性和情感共振。</p>
+            </div>
+            
+            <div class="product-ideas">
+                <div class="idea-card excellent">
+                    <div class="idea-title">🧭 职场防雷指南</div>
+                    <span class="idea-score excellent">89分</span>
+                    <div class="idea-features">
+                        <h4>核心功能：</h4>
+                        <ul>
+                            <li>职场隐形规则众包知识库</li>
+                            <li>不同行业/公司文化避坑指南</li>
+                            <li>职场场景模拟与应对建议</li>
+                            <li>匿名吐槽与前辈经验分享</li>
+                            <li>职场社交礼仪AI智能问答</li>
+                        </ul>
+                    </div>
+                    <div class="idea-users">
+                        <strong>目标用户：</strong>职场新人、实习生、应届毕业生、跳槽转行者
+                    </div>
+                </div>
+                
+                <div class="idea-card excellent">
+                    <div class="idea-title">💬 实习生互助会</div>
+                    <span class="idea-score excellent">84分</span>
+                    <div class="idea-features">
+                        <h4>核心功能：</h4>
+                        <ul>
+                            <li>实习经历真实评价平台</li>
+                            <li>职场困境匿名求助社区</li>
+                            <li>前辈一对一职场答疑</li>
+                            <li>实习资源共享（模板/工具）</li>
+                            <li>职场情绪树洞与解压</li>
+                        </ul>
+                    </div>
+                    <div class="idea-users">
+                        <strong>目标用户：</strong>在校实习生、初入职场的00后、寻求归属感的职场新人
+                    </div>
+                </div>
+                
+                <div class="idea-card excellent">
+                    <div class="idea-title">🎯 社恐救星</div>
+                    <span class="idea-score excellent">82分</span>
+                    <div class="idea-features">
+                        <h4>核心功能：</h4>
+                        <ul>
+                            <li>社交场景话术智能推荐</li>
+                            <li>尴尬瞬间化解方案库</li>
+                            <li>社交焦虑评估与训练</li>
+                            <li>职场聚餐点单智能建议</li>
+                        </ul>
+                    </div>
+                    <div class="idea-users">
+                        <strong>目标用户：</strong>社恐人群、性格内向的职场人、不擅长社交的年轻人
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 话题7: 李沁现身春晚首次联排 -->
+        <div class="topic-section">
+            <div class="topic-header">
+                <div class="topic-title">🎊 李沁现身春晚首次联排</div>
+                <div class="topic-rank">NO.9</div>
+            </div>
+            
+            <div class="score-section">
+                <div class="score-bar">
+                    <div class="score-label">总分:</div>
+                    <div class="score-progress">
+                        <div class="score-fill score-good" style="width: 78%;">78分</div>
+                    </div>
+                </div>
+                <div class="score-bar">
+                    <div class="score-label">有趣度:</div>
+                    <div class="score-progress">
+                        <div class="score-fill score-excellent" style="width: 81.25%;">65/80</div>
+                    </div>
+                </div>
+                <div class="score-bar">
+                    <div class="score-label">有用度:</div>
+                    <div class="score-progress">
+                        <div class="score-fill score-good" style="width: 65%;">13/20</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="analysis-content">
+                <h3>📊 话题分析</h3>
+                <p><strong>背景推测：</strong>演员李沁确认参加春晚并开始联排，春节临近各大卫视晚会陆续曝光嘉宾阵容，引发网友期待。</p>
+                <p><strong>社会意义：</strong>反映春节文化氛围渐浓，全民对传统节日晚会的持续关注，娱乐文化在节日经济中的重要地位。</p>
+            </div>
+            
+            <div class="product-ideas">
+                <div class="idea-card good">
+                    <div class="idea-title">🎭 晚会剧透站</div>
+                    <span class="idea-score good">76分</span>
+                    <div class="idea-features">
+                        <h4>核心功能：</h4>
+                        <ul>
+                            <li>各大晚会嘉宾阵容实时追踪</li>
+                            <li>节目单预测与投票</li>
+                            <li>历届晚会精彩瞬间回顾</li>
+                            <li>明星同款服饰/妆容购买链接</li>
+                            <li>晚会观看提醒与同步吐槽</li>
+                        </ul>
+                    </div>
+                    <div class="idea-users">
+                        <strong>目标用户：</strong>追星族、晚会爱好者、娱乐资讯关注者
+                    </div>
+                </div>
+                
+                <div class="idea-card good">
+                    <div class="idea-title">🎤 云端春晚</div>
+                    <span class="idea-score good">74分</span>
+                    <div class="idea-features">
+                        <h4>核心功能：</h4>
+                        <ul>
+                            <li>用户自制春晚节目上传</li>
+                            <li>虚拟偶像同台表演</li>
+                            <li>家庭春晚录制与分享</li>
+                            <li>春晚节目混剪与二创</li>
+                        </ul>
+                    </div>
+                    <div class="idea-users">
+                        <strong>目标用户：</strong>有才艺的普通人、创作者、想参与春晚的民间艺人
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 话题8: 新疆31岁舞蹈老师万小艳去世 -->
+        <div class="topic-section">
+            <div class="topic-header">
+                <div class="topic-title">💔 新疆31岁舞蹈老师万小艳去世</div>
+                <div class="topic-rank">NO.10</div>
+            </div>
+            
+            <div class="score-section">
+                <div class="score-bar">
+                    <div class="score-label">总分:</div>
+                    <div class="score-progress">
+                        <div class="score-fill score-good" style="width: 70%;">70分</div>
+                    </div>
+                </div>
+                <div class="score-bar">
+                    <div class="score-label">有趣度:</div>
+                    <div class="score-progress">
+                        <div class="score-fill score-good" style="width: 62.5%;">50/80</div>
+                    </div>
+                </div>
+                <div class="score-bar">
+                    <div class="score-label">有用度:</div>
+<div class="score-progress">
+                        <div class="score-fill score-excellent" style="width: 100%;">20/20</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="analysis-content">
+                <h3>📊 话题分析</h3>
+                <p><strong>背景推测：</strong>年轻舞蹈老师突然离世，可能因病痛或意外，年轻生命的逝去引发网友惋惜与对健康的反思。</p>
+                <p><strong>社会意义：</strong>提醒年轻人关注健康、警惕过劳，反思工作与生活平衡，也体现社会对教育工作者的关注。</p>
+            </div>
+            
+            <div class="product-ideas">
+                <div class="idea-card good">
+                    <div class="idea-title">❤️ 健康守护者</div>
+                    <span class="idea-score good">75分</span>
+                    <div class="idea-features">
+                        <h4>核心功能：</h4>
+                        <ul>
+                            <li>年轻人高危疾病预警科普</li>
+                            <li>过劳风险智能评估</li>
+                            <li>异常身体信号识别指南</li>
+                            <li>体检提醒与报告解读</li>
+                            <li>健康作息智能规划</li>
+                        </ul>
+                    </div>
+                    <div class="idea-users">
+                        <strong>目标用户：</strong>高强度工作的年轻人、教师等高压职业者、忽视健康的打工人
+                    </div>
+                </div>
+                
+                <div class="idea-card good">
+                    <div class="idea-title">⚖️ 生活平衡仪</div>
+                    <span class="idea-score good">68分</span>
+                    <div class="idea-features">
+                        <h4>核心功能：</h4>
+                        <ul>
+                            <li>工作与生活时间分配追踪</li>
+                            <li>过度工作智能预警</li>
+                            <li>强制休息提醒与锁屏</li>
+                            <li>健康生活方式养成计划</li>
+                        </ul>
+                    </div>
+                    <div class="idea-users">
+                        <strong>目标用户：</strong>996工作者、自由职业者、工作狂人群
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 话题9: 免签后老外扎堆来华看病 -->
+        <div class="topic-section">
+            <div class="topic-header">
+                <div class="topic-title">🏥 免签后老外扎堆来华看病</div>
+                <div class="topic-rank">NO.11</div>
+            </div>
+            
+            <div class="score-section">
+                <div class="score-bar">
+                    <div class="score-label">总分:</div>
+                    <div class="score-progress">
+                        <div class="score-fill score-excellent" style="width: 83%;">83分</div>
+                    </div>
+                </div>
+                <div class="score-bar">
+                    <div class="score-label">有趣度:</div>
+                    <div class="score-progress">
+                        <div class="score-fill score-excellent" style="width: 81.25%;">65/80</div>
+                    </div>
+                </div>
+                <div class="score-bar">
+                    <div class="score-label">有用度:</div>
+                    <div class="score-progress">
+                        <div class="score-fill score-excellent" style="width: 90%;">18/20</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="analysis-content">
+                <h3>📊 话题分析</h3>
+                <p><strong>背景推测：</strong>中国对多国实施免签政策后，外国人发现中国医疗性价比极高（质量好、价格低），纷纷来华就医，形成"医疗旅游"热潮。</p>
+                <p><strong>社会意义：</strong>展现中国医疗水平国际认可度提升，医疗服务成为新型出口产业，也反映西方国家医疗费用高昂的困境。</p>
+            </div>
+            
+            <div class="product-ideas">
+                <div class="idea-card excellent">
+                    <div class="idea-title">🌏 医疗通全球</div>
+                    <span class="idea-score excellent">87分</span>
+                    <div class="idea-features">
+                        <h4>核心功能：</h4>
+                        <ul>
+                            <li>中英文医院科室智能导航</li>
+                            <li>国际患者就医流程一站式服务</li>
+                            <li>医疗翻译实时同传</li>
+                            <li>医疗旅游套餐定制（就医+旅游）</li>
+                            <li>跨国医疗保险对接与结算</li>
+                        </ul>
+                    </div>
+                    <div class="idea-users">
+                        <strong>目标用户：</strong>来华就医的外国人、医疗旅游中介、国际医疗部
+                    </div>
+                </div>
+                
+                <div class="idea-card excellent">
+                    <div class="idea-title">💊 全球药价通</div>
+                    <span class="idea-score excellent">81分</span>
+                    <div class="idea-features">
+                        <h4>核心功能：</h4>
+                        <ul>
+                            <li>各国同款药品价格对比</li>
+                            <li>医疗项目各国费用查询</li>
+                            <li>医疗性价比目的地推荐</li>
+                            <li>跨国购药合规指南</li>
+                        </ul>
+                    </div>
+                    <div class="idea-users">
+                        <strong>目标用户：</strong>需要昂贵医疗的海外患者、医疗费用敏感人群
+                    </div>
+                </div>
+                
+                <div class="idea-card excellent">
+                    <div class="idea-title">🏨 医疗管家</div>
+                    <span class="idea-score excellent">80分</span>
+                    <div class="idea-features">
+                        <h4>核心功能：</h4>
+                        <ul>
+                            <li>外籍患者就医全程陪护</li>
+                            <li>医院预约/翻译/接送一条龙</li>
+                            <li>术后康复酒店式服务</li>
+                            <li>中医理疗体验套餐</li>
+                        </ul>
+                    </div>
+                    <div class="idea-users">
+                        <strong>目标用户：</strong>高端医疗旅游客户、语言不通的外国患者
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 话题10: 487秒删 -->
+        <div class="topic-section">
+            <div class="topic-header">
+                <div class="topic-title">⚡ 487秒删</div>
+                <div class="topic-rank">NO.13</div>
+            </div>
+            
+            <div class="score-section">
+                <div class="score-bar">
+                    <div class="score-label">总分:</div>
+                    <div class="score-progress">
+                        <div class="score-fill score-good" style="width: 79%;">79分</div>
+                    </div>
+                </div>
+                <div class="score-bar">
+                    <div class="score-label">有趣度:</div>
+                    <div class="score-progress">
+                        <div class="score-fill score-excellent" style="width: 83.75%;">67/80</div>
+                    </div>
+                </div>
+                <div class="score-bar">
+                    <div class="score-label">有用度:</div>
+                    <div class="score-progress">
+                        <div class="score-fill score-good" style="width: 60%;">12/20</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="analysis-content">
+                <h3>📊 话题分析</h3>
+                <p><strong>背景推测：</strong>某明星或公众人物发布内容后仅保留487秒就删除，可能内容敏感或情绪失控，引发网友疯狂截图与解读。</p>
+                <p><strong>社会意义：</strong>反映公众人物言论的不可逆性、网络吃瓜文化的狂热、以及社交媒体时代信息传播的即时性与不可控性。</p>
+            </div>
+            
+            <div class="product-ideas">
+                <div class="idea-card good">
+                    <div class="idea-title">⏱️ 秒删考古队</div>
+                    <span class="idea-score good">77分</span>
+                    <div class="idea-features">
+                        <h4>核心功能：</h4>
+                        <ul>
+                            <li>明星秒删内容自动抓取存档</li>
+                            <li>删除时长精确记录与排行</li>
+                            <li>秒删内容解读与分析</li>
+                            <li>瓜田预警（监测异常动态）</li>
+                            <li>历史秒删事件回顾</li>
+                        </ul>
+                    </div>
+                    <div class="idea-users">
+                        <strong>目标用户：</strong>娱乐八卦爱好者、追星族、吃瓜群众
+                    </div>
+                </div>
+                
+                <div class="idea-card good">
+                    <div class="idea-title">🛡️ 发文后悔药</div>
+                    <span class="idea-score good">73分</span>
+                    <div class="idea-features">
+                        <h4>核心功能：</h4>
+                        <ul>
+                            <li>社交媒体内容发布前AI风险评估</li>
+                            <li>敏感词/情绪化表达智能提醒</li>
+                            <li>定时发布与冷静期设置</li>
+                            <li>发布内容撤回时间窗口</li>
+                        </ul>
+                    </div>
+                    <div class="idea-users">
+                        <strong>目标用户：</strong>公众人物、容易冲动发言者、职场人士
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 话题11: 46岁未婚独居女性离世后 -->
+        <div class="topic-section">
+            <div class="topic-header">
+                <div class="topic-title">🏠 46岁未婚独居女性离世后</div>
+                <div class="topic-rank">NO.14</div>
+            </div>
+            
+            <div class="score-section">
+                <div class="score-bar">
+                    <div class="score-label">总分:</div>
+                    <div class="score-progress">
+                        <div class="score-fill score-excellent" style="width: 82%;">82分</div>
+                    </div>
+                </div>
+                <div class="score-bar">
+                    <div class="score-label">有趣度:</div>
+                    <div class="score-progress">
+                        <div class="score-fill score-good" style="width: 77.5%;">62/80</div>
+                    </div>
+                </div>
+                <div class="score-bar">
+                    <div class="score-label">有用度:</div>
+                    <div class="score-progress">
+                        <div class="score-fill score-excellent" style="width: 100%;">20/20</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="analysis-content">
+                <h3>📊 话题分析</h3>
+                <p><strong>背景推测：</strong>独居女性在家中去世后续处理（遗产/遗物/社会关系）引发关注，折射出单身独居群体的生存困境与社会保障缺失。</p>
+                <p><strong>社会意义：</strong>反映中国单身人口激增、独居老龄化趋势、以及独居者安全保障与情感需求的社会议题，具有深刻现实意义。</p>
+            </div>
+            
+            <div class="product-ideas">
+                <div class="idea-card excellent">
+                    <div class="idea-title">👥 独居守望者</div>
+                    <span class="idea-score excellent">88分</span>
+                    <div class="idea-features">
+                        <h4>核心功能：</h4>
+                        <ul>
+                            <li>每日生命体征在线确认（签到/AI语音）</li>
+                            <li>异常情况紧急联系人自动通知</li>
+                            <li>智能家居联动健康监测</li>
+                            <li>独居互助社群与情感陪伴</li>
+                            <li>遗愿清单与数字遗产托管</li>
+                        </ul>
+                    </div>
+                    <div class="idea-users">
+                        <strong>目标用户：</strong>独居中老年人、单身女性、空巢老人、远离家乡工作者
+                    </div>
+                </div>
+                
+                <div class="idea-card excellent">
+                    <div class="idea-title">📋 生前契约</div>
+                    <span class="idea-score excellent">80分</span>
+                    <div class="idea-features">
+                        <h4>核心功能：</h4>
+                        <ul>
+                            <li>遗产分配意愿电子公证</li>
+                            <li>遗物处理指令预设</li>
+                            <li>身后事服务预约与费用托管</li>
+                            <li>数字账号继承与注销清单</li>
+                        </ul>
+                    </div>
+                    <div class="idea-users">
+                        <strong>目标用户：</strong>无直系亲属人群、财产规划需求者、独立女性
+                    </div>
+                </div>
+                
+                <div class="idea-card excellent">
+                    <div class="idea-title">🤝 孤独解药</div>
+                    <span class="idea-score excellent">76分</span>
+                    <div class="idea-features">
+                        <h4>核心功能：</h4>
+                        <li>同城独居者线下互助网络</li>
+                            <li>定期见面约定与缺席预警</li>
+                            <li>技能互换与资源共享</li>
+                            <li>情感陪伴热线</li>
+                        </ul>
+                    </div>
+                    <div class="idea-users">
+                        <strong>目标用户：</strong>独居青年、缺乏社交的单身人群、新市民
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 话题12: 交警给出27张全责交通事故图 -->
+        <div class="topic-section">
+            <div class="topic-header">
+                <div class="topic-title">🚦 交警给出27张全责交通事故图</div>
+                <div class="topic-rank">NO.15</div>
+            </div>
+            
+            <div class="score-section">
+                <div class="score-bar">
+                    <div class="score-label">总分:</div>
+                    <div class="score-progress">
+                        <div class="score-fill score-good" style="width: 76%;">76分</div>
+                    </div>
+                </div>
+                <div class="score-bar">
+                    <div class="score-label">有趣度:</div>
+                    <div class="score-progress">
+                        <div class="score-fill score-good" style="width: 70%;">56/80</div>
+                    </div>
+                </div>
+                <div class="score-bar">
+                    <div class="score-label">有用度:</div>
+                    <div class="score-progress">
+                        <div class="score-fill score-excellent" style="width: 100%;">20/20</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="analysis-content">
+                <h3>📊 话题分析</h3>
+                <p><strong>背景推测：</strong>交警部门发布27种常见全责交通事故示意图，帮助司机明确责任划分，避免事故后纠纷。</p>
+                <p><strong>社会意义：</strong>实用性极强的交通安全教育，帮助司机规避违章行为、明确事故责任，具有很强的社会价值。</p>
+            </div>
+            
+            <div class="product-ideas">
+                <div class="idea-card good">
+                    <div class="idea-title">🚗 老司机必修课</div>
+                    <span class="idea-score good">79分</span>
+                    <div class="idea-features">
+                        <h4>核心功能：</h4>
+                        <ul>
+                            <li>交通事故责任判定AI模拟器</li>
+                            <li>行车记录仪智能分析责任归属</li>
+                            <li>常见违章场景3D可视化学习</li>
+                            <li>事故现场处理流程指导</li>
+                            <li>保险理赔快速通道</li>
+                        </ul>
+                    </div>
+                    <div class="idea-users">
+                        <strong>目标用户：</strong>新手司机、网约车司机、货车司机、所有车主
+                    </div>
+                </div>
+                
+                <div class="idea-card good">
+                    <div class="idea-title">📸 事故现场助手</div>
+                    <span class="idea-score good">74分</span>
+                    <div class="idea-features">
+                        <h4>核心功能：</h4>
+                        <ul>
+                            <li>事故拍照取证标准化指引</li>
+                            <li>现场照片自动责任分析</li>
+                            <li>快速理赔材料生成</li>
+                            <li>一键报警与保险报案</li>
+                        </ul>
+                    </div>
+                    <div class="idea-users">
+                        <strong>目标用户：</strong>发生轻微事故的车主、不熟悉理赔流程的新手
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 话题13: 吃酸奶一定要备筋膜枪 -->
+        <div class="topic-section">
+            <div class="topic-header">
+                <div class="topic-title">🥛 吃酸奶一定要备筋膜枪</div>
+                <div class="topic-rank">NO.16</div>
+            </div>
+            
+            <div class="score-section">
+                <div class="score-bar">
+                    <div class="score-label">总分:</div>
+                    <div class="score-progress">
+                        <div class="score-fill score-excellent" style="width: 84%;">84分</div>
+                    </div>
+                </div>
+                <div class="score-bar">
+                    <div class="score-label">有趣度:</div>
+                    <div class="score-progress">
+                        <div class="score-fill score-excellent" style="width: 88.75%;">71/80</div>
+                    </div>
+                </div>
+                <div class="score-bar">
+                    <div class="score-label">有用度:</div>
+                    <div class="score-progress">
+                        <div class="score-fill score-good" style="width: 65%;">13/20</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="analysis-content">
+                <h3>📊 话题分析</h3>
+                <p><strong>背景推测：</strong>网友发现用筋膜枪打酸奶可以快速打匀（避免搅拌麻烦），这一脑洞大开的生活妙招在网上爆火。</p>
+                <p><strong>社会意义：</strong>展现年轻人的创意生活方式、物品多功能使用的趣味探索，反映消费降级下的"物尽其用"智慧。</p>
+            </div>
+            
+            <div class="product-ideas">
+                <div class="idea-card excellent">
+                    <div class="idea-title">💡 万物皆可玩</div>
+                    <span class="idea-score excellent">86分</span>
+                    <div class="idea-features">
+                        <h4>核心功能：</h4>
+                        <ul>
+                            <li>日常物品奇葩用法众包分享</li>
+                            <li>生活小妙招视频教程库</li>
+                            <li>物品隐藏功能挖掘挑战赛</li>
+                            <li>脑洞创意评分与排行</li>
+                            <li>省钱生活hacks集锦</li>
+                        </ul>
+                    </div>
+                    <div class="idea-users">
+                        <strong>目标用户：</strong>脑洞大开的年轻人、生活博主、省钱达人、DIY爱好者
+                    </div>
+                </div>
+                
+                <div class="idea-card excellent">
+                    <div class="idea-title">🔧 一物多用指南</div>
+                    <span class="idea-score excellent">81分</span>
+                    <div class="idea-features">
+                        <h4>核心功能：</h4>
+                        <ul>
+                            <li>扫描物品识别隐藏用途</li>
+                            <li>闲置物品再利用方案推荐</li>
+                            <li>物品使用效率评分</li>
+                            <li>环保生活方式倡导</li>
+                        </ul>
+                    </div>
+                    <div class="idea-users">
+                        <strong>目标用户：</strong>环保主义者、极简生活倡导者、学生党
+                    </div>
+                </div>
+                
+                <div class="idea-card excellent">
+                    <div class="idea-title">🎉 生活黑科技</div>
+                    <span class="idea-score excellent">82分</span>
+                    <div class="idea-features">
+                        <h4>核心功能：</h4>
+                        <ul>
+                            <li>每日推送一个生活妙招</li>
+                            <li>场景化问题解决方案库</li>
+                            <li>用户自创妙招奖励机制</li>
+                            <li>妙招实测验证与反馈</li>
+                        </ul>
+                    </div>
+                    <div class="idea-users">
+                        <strong>目标用户：</strong>生活品质追求者、懒人经济受众、好奇心强的用户
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 话题14: 公积金改革大动作要来了 -->
+        <div class="topic-section">
+            <div class="topic-header">
+                <div class="topic-title">🏦 公积金改革大动作要来了</div>
+                <div class="topic-rank">NO.17</div>
+            </div>
+            
+            <div class="score-section">
+                <div class="score-bar">
+                    <div class="score-label">总分:</div>
+                    <div class="score-progress">
+                        <div class="score-fill score-good" style="width: 68%;">68分</div>
+                    </div>
+                </div>
+                <div class="score-bar">
+                    <div class="score-label">有趣度:</div>
+                    <div class="score-progress">
+                        <div class="score-fill score-good" style="width: 60%;">48/80</div>
+                    </div>
+                </div>
+                <div class="score-bar">
+                    <div class="score-label">有用度:</div>
+                    <div class="score-progress">
+                        <div class="score-fill score-excellent" style="width: 100%;">20/20</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="analysis-content">
+                <h3>📊 话题分析</h3>
+                <p><strong>背景推测：</strong>住房公积金制度将迎来重大改革（可能涉及提取条件、使用范围、跨地区互认等），关系千万职工切身利益。</p>
+                <p><strong>社会意义：</strong>涉及民生福利的重大政策调整，对购房、租房、生活质量有直接影响，具有极强的实用价值。</p>
+            </div>
+            
+            <div class="product-ideas">
+                <div class="idea-card good">
+                    <div class="idea-title">💰 公积金管家</div>
+                    <span class="idea-score good">75分</span>
+                    <div class="idea-features">
+                        <h4>核心功能：</h4>
+                        <ul>
+                            <li>公积金余额实时查询与预测</li>
+                            <li>购房贷款额度智能计算</li>
+                            <li>提取条件智能匹配与指导</li>
+                            <li>各地公积金政策对比</li>
+                            <li>公积金使用最优方案规划</li>
+                        </ul>
+                    </div>
+                    <div class="idea-users">
+                        <strong>目标用户：</strong>有购房计划的职工、关注公积金的打工人、异地工作者
+                    </div>
+                </div>
+                
+                <div class="idea-card good">
+                    <div class="idea-title">📊 福利最大化</div>
+                    <span class="idea-score good">65分</span>
+                    <div class="idea-features">
+                        <h4>核心功能：</h4>
+                        <ul>
+                            <li>五险一金缴纳比例优化建议</li>
+                            <li>税后收入与福利综合计算</li>
+                            <li>跳槽时五险一金转移指南</li>
+                            <li>社保福利政策科普</li>
+                        </ul>
+                    </div>
+                    <div class="idea-users">
+                        <strong>目标用户：</strong>求职者、跳槽族、自由职业者、HR
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 话题15: 卢昱晓说自己跟胡羞很像 -->
+        <div class="topic-section">
+            <div class="topic-header">
+                <div class="topic-title">🎭 卢昱晓说自己跟胡羞很像</div>
+                <div class="topic-rank">NO.18</div>
+            </div>
+            
+            <div class="score-section">
+                <div class="score-bar">
+                    <div class="score-label">总分:</div>
+                    <div class="score-progress">
+                        <div class="score-fill score-good" style="width: 72%;">72分</div>
+                    </div>
+                </div>
+                <div class="score-bar">
+                    <div class="score-label">有趣度:</div>
+                    <div class="score-progress">
+                        <div class="score-fill score-good" style="width: 71.25%;">57/80</div>
+                    </div>
+                </div>
+                <div class="score-bar">
+                    <div class="score-label">有用度:</div>
+                    <div class="score-progress">
+                        <div class="score-fill score-good" style="width: 75%;">15/20</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="analysis-content">
+                <h3>📊 话题分析</h3>
+                <p><strong>背景推测：</strong>演员卢昱晓在采访中表示自己与所饰演角色胡羞性格相似，引发观众对演员与角色关系的讨论。</p>
+                <p><strong>社会意义：</strong>反映演员对角色的深度理解、本色出演的魅力，以及观众对影视作品的深度共鸣。</p>
+            </div>
+            
+            <div class="product-ideas">
+                <div class="idea-card good">
+                    <div class="idea-title">🎬 角色DNA测试</div>
+                    <span class="idea-score good">74分</span>
+                    <div class="idea-features">
+                        <h4>核心功能：</h4>
+                        <ul>
+                            <li>性格测试匹配影视角色</li>
+                            <li>你最像哪个经典角色</li>
+                            <li>角色性格深度解析</li>
+                            <li>影视角色人格图谱库</li>
+                        </ul>
+                    </div>
+                    <div class="idea-users">
+                        <strong>目标用户：</strong>影视剧爱好者、心理测试爱好者、追剧族
+                    </div>
+                </div>
+                
+                <div class="idea-card good">
+                    <div class="idea-title">👤 戏精养成所</div>
+                    <span class="idea-score good">69分</span>
+                    <div class="idea-features">
+                        <h4>核心功能：</h4>
+                        <ul>
+                            <li>经典角色台词配音挑战</li>
+                            <li>角色扮演短视频创作</li>
+                            <li>演技PK与评分</li>
+                            <li>演员自我修养课程</li>
+                        </ul>
+                    </div>
+                    <div class="idea-users">
+                        <strong>目标用户：</strong>表演爱好者、短视频创作者、演员粉丝
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 话题16: Chovy排到Xiaohu破防 -->
+        <div class="topic-section">
+            <div class="topic-header">
+                <div class="topic-title">🎮 Chovy排到Xiaohu破防</div>
+                <div class="topic-rank">NO.19</div>
+            </div>
+            
+            <div class="score-section">
+                <div class="score-bar">
+                    <div class="score-label">总分:</div>
+                    <div class="score-progress">
+                        <div class="score-fill score-good" style="width: 75%;">75分</div>
+                    </div>
+                </div>
+                <div class="score-bar">
+                    <div class="score-label">有趣度:</div>
+                    <div class="score-progress">
+                        <div class="score-fill score-good" style="width: 76.25%;">61/80</div>
+                    </div>
+                </div>
+                <div class="score-bar">
+                    <div class="score-label">有用度:</div>
+                    <div class="score-progress">
+                        <div class="score-fill score-good" style="width: 70%;">14/20</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="analysis-content">
+                <h3>📊 话题分析</h3>
+                <p><strong>背景推测：</strong>英雄联盟职业选手Chovy与Xiaohu在游戏中匹配对战，可能出现精彩操作或有趣互动，引发电竞粉丝热议。</p>
+                <p><strong>社会意义：</strong>反映电竞文化的火热、职业选手的影响力、以及游戏社交的娱乐性。</p>
+            </div>
+            
+            <div class="product-ideas">
+                <div class="idea-card good">
+                    <div class="idea-title">⚔️ 职业选手狙击</div>
+                    <span class="idea-score good">78分</span>
+                    <div class="idea-features">
+                        <h4>核心功能：</h4>
+                        <ul>
+                            <li>职业选手在线状态实时监控</li>
+                            <li>排位遇到职业选手概率计算</li>
+                            <li>职业选手对局录像库</li>
+                            <li>遇职业选手纪念徽章系统</li>
+                            <li>职业选手游戏习惯分析</li>
+                        </ul>
+                    </div>
+                    <div class="idea-users">
+                        <strong>目标用户：</strong>LOL玩家、电竞粉丝、高端局玩家
+                    </div>
+                </div>
+                
+                <div class="idea-card good">
+                    <div class="idea-title">📺 电竞追星台</div>
+                    <span class="idea-score good">72分</span>
+                    <div class="idea-features">
+                        <h4>核心功能：</h4>
+                        <ul>
+                            <li>职业选手直播聚合平台</li>
+                            <li>选手动态实时推送</li>
+                            <li>精彩操作集锦自动剪辑</li>
+                            <li>选手数据与战绩追踪</li>
+                        </ul>
+                    </div>
+                    <div class="idea-users">
+                        <strong>目标用户：</strong>电竞观众、职业选手粉丝、赛事关注者
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 话题17: 王俊凯中传映后感言 -->
+        <div class="topic-section">
+            <div class="topic-header">
+                <div class="topic-title">🎬 王俊凯中传映后感言</div>
+                <div class="topic-rank">NO.20</div>
+            </div>
+            
+            <div class="score-section">
+                <div class="score-bar">
+                    <div class="score-label">总分:</div>
+                    <div class="score-progress">
+                        <div class="score-fill score-good" style="width: 71%;">71分</div>
+                    </div>
+                </div>
+                <div class="score-bar">
+                    <div class="score-label">有趣度:</div>
+                    <div class="score-progress">
+                        <div class="score-fill score-good" style="width: 66.25%;">53/80</div>
+                    </div>
+                </div>
+                <div class="score-bar">
+                    <div class="score-label">有用度:</div>
+                    <div class="score-progress">
+                        <div class="score-fill score="excellent" style="width: 90%;">18/20</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="analysis-content">
+                <h3>📊 话题分析</h3>
+                <p><strong>背景推测：</strong>王俊凯主演电影在中国传媒大学举办映后交流，明星学子与在校师生互动，分享创作心得。</p>
+                <p><strong>社会意义：</strong>反映明星艺人对专业深造的重视、校园文化与娱乐产业的融合、以及青年偶像的正面形象塑造。</p>
+            </div>
+            
+            <div class="product-ideas">
+                <div class="idea-card good">
+                    <div class="idea-title">🎓 明星课堂</div>
+                    <span class="idea-score good">73分</span>
+                    <div class="idea-features">
+                        <h4>核心功能：</h4>
+                        <ul>
+                            <li>明星高校活动日程聚合</li>
+                            <li>映后见面会/讲座报名预约</li>
+                            <li>明星校园活动直播</li>
+                            <li>现场提问互动机会抽选</li>
+                        </ul>
+                    </div>
+                    <div class="idea-users">
+                        <strong>目标用户：</strong>在校大学生、追星族、电影爱好者
+                    </div>
+                </div>
+                
+                <div class="idea-card good">
+                    <div class="idea-title">📸 偶遇预警</div>
+                    <span class="idea-score good">68分</span>
+                    <div class="idea-features">
+                        <h4>核心功能：</h4>
+                        <ul>
+                            <li>明星行程实时追踪（合规范围内）</li>
+                            <li>同城偶遇概率计算</li>
+                            <li>粉丝打卡地图</li>
+                            <li>理性追星行为倡导</li>
+                        </ul>
+                    </div>
+                    <div class="idea-users">
+                        <strong>目标用户：</strong>理性粉丝、想偶遇明星的年轻人
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 话题18-20简化处理 -->
+        <div class="topic-section">
+            <div class="topic-header">
+                <div class="topic-title">📋 其他话题简要分析</div>
+                <div class="topic-rank">NO.4, 8, 12</div>
+            </div>
+            
+            <div class="analysis-content">
+                <h3>📊 其他话题概览</h3>
+                <p><strong>NO.4 美团医美助你过个漂亮年：</strong>商业推广话题，评分58分（有趣32/80，有用14/20）- 反映春节前医美消费热潮</p>
+                <p><strong>NO.8 超话观赛加油站：</strong>体育赛事互动话题，评分62分（有趣42/80，有用16/20）- 社交媒体体育观赛新玩法</p>
+                <p><strong>NO.12 蒯曼0比3佐藤瞳：</strong>乒乓球赛事结果，评分64分（有趣48/80，有用12/20）- 体育竞技话题，粉丝关注度较高</p>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>📊 本报告由AI智能分析生成 | 数据来源：微博热搜榜 | 生成时间：2026-01-17 10:12:20</p>
+            <p style="margin-top: 10px; font-size: 0.9em;">评分标准：有趣度(80%) + 有用度(20%) | 数据仅供参考</p>
+        </div>
+    </div>
+</body>
+</html>
