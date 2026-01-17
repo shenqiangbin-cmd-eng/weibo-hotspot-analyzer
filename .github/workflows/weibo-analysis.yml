@@ -1,0 +1,102 @@
+name: 微博热搜产品创意分析
+
+on:
+  # 定时执行：每天北京时间 9:00 和 18:00
+  schedule:
+    - cron: '0 1 * * *'   # UTC 01:00 = 北京时间 09:00
+    - cron: '0 10 * * *'  # UTC 10:00 = 北京时间 18:00
+
+  # 手动触发
+  workflow_dispatch:
+    inputs:
+      debug_mode:
+        description: '启用调试模式'
+        required: false
+        default: 'false'
+        type: choice
+        options:
+          - 'true'
+          - 'false'
+
+env:
+  ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+  ANTHROPIC_BASE_URL: ${{ secrets.ANTHROPIC_BASE_URL }}
+  TIANAPI_KEY: ${{ secrets.TIANAPI_KEY }}
+  TAVILY_API_KEY: ${{ secrets.TAVILY_API_KEY }}
+  OUTPUT_DIR: ./reports
+
+jobs:
+  analyze:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+
+      - name: 设置 Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: 安装依赖
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: 验证环境变量
+        run: |
+          echo "检查必要的环境变量..."
+          if [ -z "$ANTHROPIC_API_KEY" ]; then
+            echo "❌ 错误: ANTHROPIC_API_KEY 未配置"
+            exit 1
+          fi
+          if [ -z "$TIANAPI_KEY" ]; then
+            echo "❌ 错误: TIANAPI_KEY 未配置"
+            exit 1
+          fi
+          if [ -z "$TAVILY_API_KEY" ]; then
+            echo "❌ 错误: TAVILY_API_KEY 未配置"
+            exit 1
+          fi
+          echo "✅ 所有环境变量已配置"
+
+      - name: 创建输出目录
+        run: mkdir -p $OUTPUT_DIR
+
+      - name: 运行微博热搜分析 Agent
+        run: python weibo_agent.py
+
+      - name: 上传报告到 Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: weibo-analysis-report-${{ github.run_number }}
+          path: ${{ env.OUTPUT_DIR }}/*.html
+          retention-days: 30
+          if-no-files-found: warn
+
+      - name: 部署到 GitHub Pages (可选)
+        if: github.ref == 'refs/heads/main'
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ${{ env.OUTPUT_DIR }}
+          destination_dir: reports/${{ github.run_number }}
+          keep_files: true
+
+  notify:
+    needs: analyze
+    runs-on: ubuntu-latest
+    if: always()
+
+    steps:
+      - name: 发送通知
+        run: |
+          if [ "${{ needs.analyze.result }}" == "success" ]; then
+            echo "✅ 微博热搜分析成功完成!"
+            echo "📊 报告已上传到 Artifacts"
+          else
+            echo "❌ 微博热搜分析失败"
+            echo "请检查日志获取详细信息"
+          fi
