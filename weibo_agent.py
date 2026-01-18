@@ -57,7 +57,7 @@ async def fetch_weibo_hot(args: dict[str, Any]) -> dict[str, Any]:
                     "is_error": True
                 }
 
-            hot_list = data.get("result", {}).get("list", [])[:20]
+            hot_list = data.get("result", {}).get("list", [])[:10]
 
             result_text = f"成功获取 {len(hot_list)} 条微博热搜:\n\n"
             for item in hot_list:
@@ -110,7 +110,7 @@ async def save_report(args: dict[str, Any]) -> dict[str, Any]:
 SYSTEM_PROMPT = """你是一个专业的微博热搜产品创意分析师。
 
 你的任务是：
-1. 使用 fetch_weibo_hot 工具获取最新的微博热搜榜单（前20条）
+1. 使用 fetch_weibo_hot 工具获取最新的微博热搜榜单（前10条）
 2. 基于你的知识和对热点话题的理解，对每个话题进行分析
 3. 基于有趣度(80%)和有用度(20%)对每个话题进行评分
 4. 根据评分生成产品创意方案：
