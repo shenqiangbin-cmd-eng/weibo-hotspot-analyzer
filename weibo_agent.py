@@ -8,7 +8,7 @@
 import os
 import asyncio
 import json
-from datetime import datetime
+from datetime import datetime, timezone, timedelta
 from typing import Any
 from pathlib import Path
 
@@ -31,6 +31,9 @@ ANTHROPIC_BASE_URL = os.environ.get("ANTHROPIC_BASE_URL")  # 支持自定义代�
 
 # 输出目录
 OUTPUT_DIR = Path(os.environ.get("OUTPUT_DIR", "./reports"))
+
+# 北京时区 (UTC+8)
+BEIJING_TZ = timezone(timedelta(hours=8))
 
 
 # ============ 自定义工具定义 ============
@@ -167,17 +170,17 @@ async def run_weibo_agent():
     )
 
     # 执行 Agent
-    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    timestamp = datetime.now(BEIJING_TZ).strftime("%Y%m%d_%H%M%S")
     prompt = f"""请开始执行微博热搜产品创意分析任务。
 
-当前时间: {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}
+当前时间: {datetime.now(BEIJING_TZ).strftime("%Y-%m-%d %H:%M:%S")}
 报告文件名: weibo_hotspot_analysis_{timestamp}.html
 
 请按照系统提示的步骤执行完整分析，最后保存 HTML 报告。
 """
 
     print(f"🚀 启动微博热搜分析 Agent...")
-    print(f"📅 时间: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+    print(f"📅 时间 (北京): {datetime.now(BEIJING_TZ).strftime('%Y-%m-%d %H:%M:%S')}")
     print("-" * 50)
 
     async with ClaudeSDKClient(options=options) as client:
