@@ -1,0 +1,1224 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>微博热搜产品创意分析报告 - 2026.01.22</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        
+        h1 {
+            font-size: 2.5em;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            color: #666;
+            font-size: 1.1em;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .stat-number {
+            font-size: 2.5em;
+            font-weight: bold;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .stat-label {
+            color: #666;
+            margin-top: 5px;
+            font-size: 0.9em;
+        }
+        
+        .topic-card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 25px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .topic-card:hover {
+            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+        }
+        
+        .topic-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .topic-title {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #333;
+            flex: 1;
+        }
+        
+        .topic-heat {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: bold;
+        }
+        
+        .score-container {
+            margin: 20px 0;
+        }
+        
+        .score-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+        
+        .score-bar {
+            height: 30px;
+            background: #f0f0f0;
+            border-radius: 15px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .score-fill {
+            height: 100%;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 15px;
+            color: white;
+            font-weight: bold;
+            transition: width 1s ease;
+        }
+        
+        .score-excellent {
+            background: linear-gradient(90deg, #11998e 0%, #38ef7d 100%);
+        }
+        
+        .score-good {
+            background: linear-gradient(90deg, #4facfe 0%, #00f2fe 100%);
+        }
+        
+        .score-average {
+            background: linear-gradient(90deg, #a8a8a8 0%, #c8c8c8 100%);
+        }
+        
+        .analysis-section {
+            margin: 20px 0;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 15px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .analysis-title {
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+        
+        .analysis-content {
+            color: #555;
+            line-height: 1.6;
+        }
+        
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .product-card {
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            border-radius: 15px;
+            padding: 25px;
+            border: 2px solid #e0e0e0;
+            transition: all 0.3s ease;
+        }
+        
+        .product-card:hover {
+            border-color: #667eea;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.2);
+        }
+        
+        .product-name {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .product-score {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 5px 12px;
+            border-radius: 12px;
+            font-size: 0.8em;
+        }
+        
+        .product-section {
+            margin-bottom: 15px;
+        }
+        
+        .product-section-title {
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 8px;
+            font-size: 0.9em;
+        }
+        
+        .product-list {
+            list-style: none;
+            padding-left: 0;
+        }
+        
+        .product-list li {
+            padding: 5px 0 5px 20px;
+            position: relative;
+            color: #555;
+            line-height: 1.5;
+        }
+        
+        .product-list li:before {
+            content: "▸";
+            position: absolute;
+            left: 0;
+            color: #667eea;
+            font-weight: bold;
+        }
+        
+        .product-target {
+            background: #fff3cd;
+            padding: 10px 15px;
+            border-radius: 10px;
+            color: #856404;
+            font-size: 0.9em;
+        }
+        
+        footer {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin-top: 30px;
+            text-align: center;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+        
+        .footer-text {
+            color: #666;
+            line-height: 1.8;
+        }
+        
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.8em;
+            }
+            
+            .topic-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .products-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .topic-card {
+            animation: fadeIn 0.5s ease;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📊 微博热搜产品创意分析报告</h1>
+            <div class="subtitle">基于2026年1月22日热搜榜单 · AI智能分析</div>
+        </header>
+        
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number">10</div>
+                <div class="stat-label">分析话题数</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">67</div>
+                <div class="stat-label">平均评分</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">2</div>
+                <div class="stat-label">优秀话题(≥80分)</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">6</div>
+                <div class="stat-label">良好话题(60-79分)</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">2</div>
+                <div class="stat-label">一般话题(<60分)</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">18</div>
+                <div class="stat-label">产品创意总数</div>
+            </div>
+        </div>
+        
+        <!-- 话题1 -->
+        <div class="topic-card">
+            <div class="topic-header">
+                <div class="topic-title">1. 嫁金钗阵容官宣</div>
+                <div class="topic-heat">🔥 107.6万</div>
+            </div>
+            
+            <div class="score-container">
+                <div class="score-label">
+                    <span>综合评分</span>
+                    <span>74分</span>
+                </div>
+                <div class="score-bar">
+                    <div class="score-fill score-good" style="width: 74%;">74分</div>
+                </div>
+            </div>
+            
+            <div class="analysis-section">
+                <div class="analysis-title">📝 话题背景</div>
+                <div class="analysis-content">
+                    这是一部古装剧的阵容官宣，可能是大IP改编或知名导演、演员参与，引发粉丝和剧迷的高度关注。影视作品官宣是娱乐产业的重要营销节点，往往能带来大量讨论和期待。
+                </div>
+            </div>
+            
+            <div class="analysis-section">
+                <div class="analysis-title">💡 社会意义</div>
+                <div class="analysis-content">
+                    反映了影视行业的内容营销策略和粉丝经济现象。古装剧作为文化产品，承载着传统文化传播功能，同时也是娱乐消费的重要组成部分。
+                </div>
+            </div>
+            
+            <div class="analysis-section">
+                <div class="analysis-title">📊 评分详情</div>
+                <div class="analysis-content">
+                    <strong>有趣度：64分</strong> (吸引力16/20 + 传播性14/20 + 共鸣15/20 + 创意空间19/20)<br>
+                    <strong>有用度：10分</strong> (需求3/5 + 市场3/5 + 可行性2/5 + 持续性2/5)
+                </div>
+            </div>
+            
+            <div class="products-grid">
+                <div class="product-card">
+                    <div class="product-name">
+                        追剧伴侣
+                        <span class="product-score">82分</span>
+                    </div>
+                    <div class="product-section">
+                        <div class="product-section-title">核心功能</div>
+                        <ul class="product-list">
+                            <li>智能更新提醒，不错过每一集</li>
+                            <li>角色关系图谱可视化</li>
+                            <li>剧情相关历史知识科普</li>
+                            <li>弹幕社区互动讨论</li>
+                        </ul>
+                    </div>
+                    <div class="product-section">
+                        <div class="product-target">
+                            🎯 目标用户：18-35岁影视剧爱好者，尤其是古装剧粉丝，希望深度理解剧情和角色关系
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="product-card">
+                    <div class="product-name">
+                        阵容雷达
+                        <span class="product-score">76分</span>
+                    </div>
+                    <div class="product-section">
+                        <div class="product-section-title">核心功能</div>
+                        <ul class="product-list">
+                            <li>AI预测明星合作可能性</li>
+                            <li>基于观影历史的项目推荐</li>
+                            <li>影视项目跟踪提醒</li>
+                            <li>演员作品时间轴展示</li>
+                        </ul>
+                    </div>
+                    <div class="product-section">
+                        <div class="product-target">
+                            🎯 目标用户：资深影视迷、明星粉丝、娱乐行业从业者，需要及时获取影视项目动态
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 话题2 -->
+        <div class="topic-card">
+            <div class="topic-header">
+                <div class="topic-title">2. 永辉超市胖改第二年预亏21亿</div>
+                <div class="topic-heat">🔥 79.7万</div>
+            </div>
+            
+            <div class="score-container">
+                <div class="score-label">
+                    <span>综合评分</span>
+                    <span>67分</span>
+                </div>
+                <div class="score-bar">
+                    <div class="score-fill score-good" style="width: 67%;">67分</div>
+                </div>
+            </div>
+            
+            <div class="analysis-section">
+                <div class="analysis-title">📝 话题背景</div>
+                <div class="analysis-content">
+                    零售巨头永辉超市在进行数字化转型（胖东来式改革）后，第二年仍面临巨额亏损。这反映了传统实体零售在电商冲击和消费变化下的生存困境，以及转型过程中的巨大风险。
+                </div>
+            </div>
+            
+            <div class="analysis-section">
+                <div class="analysis-title">💡 社会意义</div>
+                <div class="analysis-content">
+                    揭示了传统零售业转型的艰难现实，对投资者、从业者和消费者都具有警示意义。同时也引发对企业战略决策、市场适应能力的深度思考。
+                </div>
+            </div>
+            
+            <div class="analysis-section">
+                <div class="analysis-title">📊 评分详情</div>
+                <div class="analysis-content">
+                    <strong>有趣度：52分</strong> (吸引力14/20 + 传播性12/20 + 共鸣13/20 + 创意空间13/20)<br>
+                    <strong>有用度：15分</strong> (需求4/5 + 市场4/5 + 可行性4/5 + 持续性3/5)
+                </div>
+            </div>
+            
+            <div class="products-grid">
+                <div class="product-card">
+                    <div class="product-name">
+                        企业健康诊断仪
+                        <span class="product-score">79分</span>
+                    </div>
+                    <div class="product-section">
+                        <div class="product-section-title">核心功能</div>
+                        <ul class="product-list">
+                            <li>企业财务数据实时监测</li>
+                            <li>AI预警风险评估模型</li>
+                            <li>行业对比分析报告</li>
+                            <li>投资决策辅助建议</li>
+                        </ul>
+                    </div>
+                    <div class="product-section">
+                        <div class="product-target">
+                            🎯 目标用户：个人投资者、财务分析师、企业管理者，需要及时识别企业经营风险
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="product-card">
+                    <div class="product-name">
+                        零售转型助手
+                        <span class="product-score">73分</span>
+                    </div>
+                    <div class="product-section">
+                        <div class="product-section-title">核心功能</div>
+                        <ul class="product-list">
+                            <li>中小商超数字化解决方案</li>
+                            <li>库存管理优化系统</li>
+                            <li>会员运营工具包</li>
+                            <li>转型案例学习库</li>
+                        </ul>
+                    </div>
+                    <div class="product-section">
+                        <div class="product-target">
+                            🎯 目标用户：中小型超市、便利店经营者，面临数字化转型压力但缺乏经验和资源
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 话题3 -->
+        <div class="topic-card">
+            <div class="topic-header">
+                <div class="topic-title">3. 数读工业和信息化发展新成效</div>
+                <div class="topic-heat">🔥 70.7万</div>
+            </div>
+            
+            <div class="score-container">
+                <div class="score-label">
+                    <span>综合评分</span>
+                    <span>40分</span>
+                </div>
+                <div class="score-bar">
+                    <div class="score-fill score-average" style="width: 40%;">40分</div>
+                </div>
+            </div>
+            
+            <div class="analysis-section">
+                <div class="analysis-title">📝 话题背景</div>
+                <div class="analysis-content">
+                    官方发布的工业和信息化领域发展数据报告，展示国家在制造业升级、数字化转型方面的成就。这类话题通常较为严肃和专业，受众相对有限。
+                </div>
+            </div>
+            
+            <div class="analysis-section">
+                <div class="analysis-title">💡 社会意义</div>
+                <div class="analysis-content">
+                    反映国家产业政策和经济发展方向，对理解宏观经济趋势、产业升级路径具有重要参考价值，但普通大众关注度较低。
+                </div>
+            </div>
+            
+            <div class="analysis-section">
+                <div class="analysis-title">📊 评分详情</div>
+                <div class="analysis-content">
+                    <strong>有趣度：28分</strong> (吸引力5/20 + 传播性6/20 + 共鸣7/20 + 创意空间10/20)<br>
+                    <strong>有用度：12分</strong> (需求3/5 + 市场3/5 + 可行性3/5 + 持续性3/5)
+                </div>
+            </div>
+            
+            <div class="products-grid">
+                <div class="product-card">
+                    <div class="product-name">
+                        政策可视化平台
+                        <span class="product-score">68分</span>
+                    </div>
+                    <div class="product-section">
+                        <div class="product-section-title">核心功能</div>
+                        <ul class="product-list">
+                            <li>枯燥数据转化为交互式图表</li>
+                            <li>政策要点智能提取</li>
+                            <li>影响分析和趋势预测</li>
+                            <li>个性化行业关注推送</li>
+                        </ul>
+                    </div>
+                    <div class="product-section">
+                        <div class="product-target">
+                            🎯 目标用户：企业决策者、政策研究人员、投资机构，需要快速理解政策内容和影响
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 话题4 -->
+        <div class="topic-card">
+            <div class="topic-header">
+                <div class="topic-title">4. 妻子曾多次九十点催程序员丈夫下班</div>
+                <div class="topic-heat">🔥 70.0万</div>
+            </div>
+            
+            <div class="score-container">
+                <div class="score-label">
+                    <span>综合评分</span>
+                    <span style="color: #38ef7d;">84分 ⭐</span>
+                </div>
+                <div class="score-bar">
+                    <div class="score-fill score-excellent" style="width: 84%;">84分</div>
+                </div>
+            </div>
+            
+            <div class="analysis-section">
+                <div class="analysis-title">📝 话题背景</div>
+                <div class="analysis-content">
+                    一位妻子多次在晚上九十点催促程序员丈夫下班回家，反映了职场加班文化与家庭生活平衡之间的典型矛盾。程序员群体的加班问题长期存在，这个话题触动了无数打工人和家属的痛点。
+                </div>
+            </div>
+            
+            <div class="analysis-section">
+                <div class="analysis-title">💡 社会意义</div>
+                <div class="analysis-content">
+                    深刻揭示了当代职场文化的弊病、工作与生活平衡的困境，以及家庭关系在高强度工作压力下的挑战。引发对劳动权益保护、企业文化、家庭价值的广泛讨论。
+                </div>
+            </div>
+            
+            <div class="analysis-section">
+                <div class="analysis-title">📊 评分详情</div>
+                <div class="analysis-content">
+                    <strong>有趣度：68分</strong> (吸引力18/20 + 传播性17/20 + 共鸣19/20 + 创意空间14/20)<br>
+                    <strong>有用度：16分</strong> (需求5/5 + 市场4/5 + 可行性4/5 + 持续性3/5)
+                </div>
+            </div>
+            
+            <div class="products-grid">
+                <div class="product-card">
+                    <div class="product-name">
+                        下班铃
+                        <span class="product-score">88分</span>
+                    </div>
+                    <div class="product-section">
+                        <div class="product-section-title">核心功能</div>
+                        <ul class="product-list">
+                            <li>智能工时统计和预警</li>
+                            <li>家人互动提醒功能</li>
+                            <li>加班健康风险评估</li>
+                            <li>工作日志自动生成</li>
+                            <li>企业加班文化匿名反馈</li>
+                        </ul>
+                    </div>
+                    <div class="product-section">
+                        <div class="product-target">
+                            🎯 目标用户：经常加班的职场人士及其家人，特别是IT、金融等高强度行业从业者
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="product-card">
+                    <div class="product-name">
+                        工作生活平衡助手
+                        <span class="product-score">85分</span>
+                    </div>
+                    <div class="product-section">
+                        <div class="product-section-title">核心功能</div>
+                        <ul class="product-list">
+                            <li>番茄工作法智能提醒</li>
+                            <li>家庭时间预约系统</li>
+                            <li>健康打卡和运动建议</li>
+                            <li>情绪压力监测</li>
+                        </ul>
+                    </div>
+                    <div class="product-section">
+                        <div class="product-target">
+                            🎯 目标用户：注重生活品质的职场人士，希望在工作与家庭之间找到平衡点
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="product-card">
+                    <div class="product-name">
+                        加班透明化
+                        <span class="product-score">82分</span>
+                    </div>
+                    <div class="product-section">
+                        <div class="product-section-title">核心功能</div>
+                        <ul class="product-list">
+                            <li>匿名分享加班数据</li>
+                            <li>行业加班排行榜</li>
+                            <li>企业文化评分系统</li>
+                            <li>求职避坑指南</li>
+                        </ul>
+                    </div>
+                    <div class="product-section">
+                        <div class="product-target">
+                            🎯 目标用户：求职者、在职员工，希望了解企业真实加班情况，避免踩坑
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 话题5 -->
+        <div class="topic-card">
+            <div class="topic-header">
+                <div class="topic-title">5. 今年最烂大街的穿搭</div>
+                <div class="topic-heat">🔥 66.9万</div>
+            </div>
+            
+            <div class="score-container">
+                <div class="score-label">
+                    <span>综合评分</span>
+                    <span style="color: #38ef7d;">84分 ⭐</span>
+                </div>
+                <div class="score-bar">
+                    <div class="score-fill score-excellent" style="width: 84%;">84分</div>
+                </div>
+            </div>
+            
+            <div class="analysis-section">
+                <div class="analysis-title">📝 话题背景</div>
+                <div class="analysis-content">
+                    讨论当下流行趋势中的"烂大街"穿搭风格，反映了大众对审美疲劳和同质化现象的吐槽。时尚话题具有强烈的娱乐性和社交属性，容易引发广泛共鸣和讨论。
+                </div>
+            </div>
+            
+            <div class="analysis-section">
+                <div class="analysis-title">💡 社会意义</div>
+                <div class="analysis-content">
+                    揭示了消费文化中的从众心理、个性化需求与大众审美的矛盾，以及快时尚带来的同质化问题。对时尚产业、消费心理、个人风格塑造都有启发意义。
+                </div>
+            </div>
+            
+            <div class="analysis-section">
+                <div class="analysis-title">📊 评分详情</div>
+                <div class="analysis-content">
+                    <strong>有趣度：70分</strong> (吸引力18/20 + 传播性19/20 + 共鸣18/20 + 创意空间15/20)<br>
+                    <strong>有用度：14分</strong> (需求4/5 + 市场4/5 + 可行性3/5 + 持续性3/5)
+                </div>
+            </div>
+            
+            <div class="products-grid">
+                <div class="product-card">
+                    <div class="product-name">
+穿搭避雷针
+                        <span class="product-score">87分</span>
+                    </div>
+                    <div class="product-section">
+                        <div class="product-section-title">核心功能</div>
+                        <ul class="product-list">
+                            <li>AI识别"烂大街"单品</li>
+                            <li>个性化搭配推荐引擎</li>
+                            <li>流行趋势追踪分析</li>
+                            <li>小众品牌发现功能</li>
+                        </ul>
+                    </div>
+                    <div class="product-section">
+                        <div class="product-target">
+                            🎯 目标用户：18-35岁注重个人风格的年轻人，希望避免撞衫和同质化穿搭
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="product-card">
+                    <div class="product-name">
+                        风格独特度评分器
+                        <span class="product-score">83分</span>
+                    </div>
+                    <div class="product-section">
+                        <div class="product-section-title">核心功能</div>
+                        <ul class="product-list">
+                            <li>拍照即知撞衫概率</li>
+                            <li>穿搭独特度评分</li>
+                            <li>风格标签智能识别</li>
+                            <li>改造建议生成</li>
+                        </ul>
+                    </div>
+                    <div class="product-section">
+                        <div class="product-target">
+                            🎯 目标用户：时尚爱好者、穿搭博主，追求独特风格和差异化表达
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="product-card">
+                    <div class="product-name">
+                        反潮流衣橱
+                        <span class="product-score">81分</span>
+                    </div>
+                    <div class="product-section">
+                        <div class="product-section-title">核心功能</div>
+                        <ul class="product-list">
+                            <li>差异化风格顾问</li>
+                            <li>小众设计师推荐</li>
+                            <li>复古/vintage单品挖掘</li>
+                            <li>DIY改造教程</li>
+                        </ul>
+                    </div>
+                    <div class="product-section">
+                        <div class="product-target">
+                            🎯 目标用户：追求个性的时尚人士，反对跟风和大众审美，希望建立独特风格
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 话题6 -->
+        <div class="topic-card">
+            <div class="topic-header">
+                <div class="topic-title">6. 美国正式退出世卫组织</div>
+                <div class="topic-heat">🔥 44.6万</div>
+            </div>
+            
+            <div class="score-container">
+                <div class="score-label">
+                    <span>综合评分</span>
+                    <span>67分</span>
+                </div>
+                <div class="score-bar">
+                    <div class="score-fill score-good" style="width: 67%;">67分</div>
+                </div>
+            </div>
+            
+            <div class="analysis-section">
+                <div class="analysis-title">📝 话题背景</div>
+                <div class="analysis-content">
+                    美国宣布正式退出世界卫生组织，这是一起重大国际政治事件，将深刻影响全球卫生治理体系、国际合作机制和地缘政治格局。
+                </div>
+            </div>
+            
+            <div class="analysis-section">
+                <div class="analysis-title">💡 社会意义</div>
+                <div class="analysis-content">
+                    反映了全球治理体系的挑战、单边主义与多边主义的博弈，以及疫情后国际秩序的重构。对理解国际关系、公共卫生政策具有重要意义。
+                </div>
+            </div>
+            
+            <div class="analysis-section">
+                <div class="analysis-title">📊 评分详情</div>
+                <div class="analysis-content">
+                    <strong>有趣度：56分</strong> (吸引力15/20 + 传播性14/20 + 共鸣14/20 + 创意空间13/20)<br>
+                    <strong>有用度：11分</strong> (需求3/5 + 市场3/5 + 可行性3/5 + 持续性2/5)
+                </div>
+            </div>
+            
+            <div class="products-grid">
+                <div class="product-card">
+                    <div class="product-name">
+                        国际时政速读
+                        <span class="product-score">75分</span>
+                    </div>
+                    <div class="product-section">
+                        <div class="product-section-title">核心功能</div>
+                        <ul class="product-list">
+                            <li>复杂事件简化解读</li>
+                            <li>影响链条可视化分析</li>
+                            <li>多视角对比呈现</li>
+                            <li>历史背景关联</li>
+                        </ul>
+                    </div>
+                    <div class="product-section">
+                        <div class="product-target">
+                            🎯 目标用户：关注国际新闻但缺乏专业背景的普通读者，希望快速理解复杂事件
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="product-card">
+                    <div class="product-name">
+                        全球健康地图
+                        <span class="product-score">72分</span>
+                    </div>
+                    <div class="product-section">
+                        <div class="product-section-title">核心功能</div>
+                        <ul class="product-list">
+                            <li>各国卫生政策可视化</li>
+                            <li>国际合作关系图谱</li>
+                            <li>疫情和健康风险监测</li>
+                            <li>国际组织动态追踪</li>
+                        </ul>
+                    </div>
+                    <div class="product-section">
+                        <div class="product-target">
+                            🎯 目标用户：公共卫生从业者、国际关系研究者、关注全球健康议题的人士
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 话题7 -->
+        <div class="topic-card">
+            <div class="topic-header">
+                <div class="topic-title">7. 揭秘周冠宇3D新战术</div>
+                <div class="topic-heat">🔥 -</div>
+            </div>
+            
+            <div class="score-container">
+                <div class="score-label">
+                    <span>综合评分</span>
+                    <span>68分</span>
+                </div>
+                <div class="score-bar">
+                    <div class="score-fill score-good" style="width: 68%;">68分</div>
+                </div>
+            </div>
+            
+            <div class="analysis-section">
+                <div class="analysis-title">📝 话题背景</div>
+                <div class="analysis-content">
+                    中国F1赛车手周冠宇的新战术揭秘，涉及赛车技术创新和比赛策略。这个话题吸引赛车迷和科技爱好者关注，具有一定的专业性和小众性。
+                </div>
+            </div>
+            
+            <div class="analysis-section">
+                <div class="analysis-title">💡 社会意义</div>
+                <div class="analysis-content">
+                    展示了中国车手在国际顶级赛事中的技术进步，对提升民族自豪感、推广赛车运动文化有积极作用，但受众相对有限。
+                </div>
+            </div>
+            
+            <div class="analysis-section">
+                <div class="analysis-title">📊 评分详情</div>
+                <div class="analysis-content">
+                    <strong>有趣度：58分</strong> (吸引力13/20 + 传播性12/20 + 共鸣14/20 + 创意空间19/20)<br>
+                    <strong>有用度：10分</strong> (需求2/5 + 市场3/5 + 可行性3/5 + 持续性2/5)
+                </div>
+            </div>
+            
+            <div class="products-grid">
+                <div class="product-card">
+                    <div class="product-name">
+                        赛车战术模拟器
+                        <span class="product-score">77分</span>
+                    </div>
+                    <div class="product-section">
+                        <div class="product-section-title">核心功能</div>
+                        <ul class="product-list">
+                            <li>3D可视化比赛策略</li>
+                            <li>战术优劣势分析</li>
+                            <li>历史经典战术回放</li>
+                            <li>互动学习赛车知识</li>
+                        </ul>
+                    </div>
+                    <div class="product-section">
+                        <div class="product-target">
+                            🎯 目标用户：F1赛车迷、赛车游戏玩家，希望深入理解比赛策略和技术细节
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="product-card">
+                    <div class="product-name">
+                        车迷知识库
+                        <span class="product-score">74分</span>
+                    </div>
+                    <div class="product-section">
+                        <div class="product-section-title">核心功能</div>
+                        <ul class="product-list">
+                            <li>赛车技术科普内容</li>
+                            <li>实时比赛数据分析</li>
+                            <li>车手表现追踪</li>
+                            <li>赛事预测和竞猜</li>
+                        </ul>
+                    </div>
+                    <div class="product-section">
+                        <div class="product-target">
+                            🎯 目标用户：新晋赛车迷、体育爱好者，希望快速入门赛车运动并获取专业信息
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 话题8 -->
+        <div class="topic-card">
+            <div class="topic-header">
+                <div class="topic-title">8. 中方重申日本根本没有资格入常</div>
+                <div class="topic-heat">🔥 24.2万</div>
+            </div>
+            
+            <div class="score-container">
+                <div class="score-label">
+                    <span>综合评分</span>
+                    <span>58分</span>
+                </div>
+                <div class="score-bar">
+                    <div class="score-fill score-average" style="width: 58%;">58分</div>
+                </div>
+            </div>
+            
+            <div class="analysis-section">
+                <div class="analysis-title">📝 话题背景</div>
+                <div class="analysis-content">
+                    中国外交部重申日本没有资格成为联合国安理会常任理事国，涉及联合国改革、大国博弈和历史遗留问题。这是严肃的外交立场声明。
+                </div>
+            </div>
+            
+            <div class="analysis-section">
+                <div class="analysis-title">💡 社会意义</div>
+                <div class="analysis-content">
+                    反映了国际政治格局的复杂性、历史问题对当代关系的影响，以及联合国体系改革的争议。对理解中日关系、国际秩序具有参考价值。
+                </div>
+            </div>
+            
+            <div class="analysis-section">
+                <div class="analysis-title">📊 评分详情</div>
+                <div class="analysis-content">
+                    <strong>有趣度：48分</strong> (吸引力12/20 + 传播性11/20 + 共鸣13/20 + 创意空间12/20)<br>
+                    <strong>有用度：10分</strong> (需求3/5 + 市场2/5 + 可行性3/5 + 持续性2/5)
+                </div>
+            </div>
+            
+            <div class="products-grid">
+                <div class="product-card">
+                    <div class="product-name">
+                        外交立场追踪器
+                        <span class="product-score">70分</span>
+                    </div>
+                    <div class="product-section">
+                        <div class="product-section-title">核心功能</div>
+                        <ul class="product-list">
+                            <li>各国外交态度数据库</li>
+                            <li>立场变化时间轴</li>
+                            <li>国际关系图谱</li>
+                            <li>热点事件立场对比</li>
+                        </ul>
+                    </div>
+                    <div class="product-section">
+                        <div class="product-target">
+                            🎯 目标用户：国际关系研究者、外交从业者、时政爱好者，需要系统了解各国立场
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 话题9 -->
+        <div class="topic-card">
+            <div class="topic-header">
+                <div class="topic-title">9. 拼多多若再犯或被责令停业整顿</div>
+                <div class="topic-heat">🔥 24.2万</div>
+            </div>
+            
+            <div class="score-container">
+                <div class="score-label">
+                    <span>综合评分</span>
+                    <span>68分</span>
+                </div>
+                <div class="score-bar">
+                    <div class="score-fill score-good" style="width: 68%;">68分</div>
+                </div>
+            </div>
+            
+            <div class="analysis-section">
+                <div class="analysis-title">📝 话题背景</div>
+                <div class="analysis-content">
+                    监管部门对拼多多发出警告，若再次违规将面临停业整顿。这反映了电商平台监管趋严、消费者权益保护升级的趋势。
+                </div>
+            </div>
+            
+            <div class="analysis-section">
+                <div class="analysis-title">💡 社会意义</div>
+                <div class="analysis-content">
+                    揭示了电商行业的规范化进程、平台责任问题，对消费者权益保护、市场秩序维护具有重要意义，关系到数亿用户的切身利益。
+                </div>
+            </div>
+            
+            <div class="analysis-section">
+                <div class="analysis-title">📊 评分详情</div>
+                <div class="analysis-content">
+                    <strong>有趣度：54分</strong> (吸引力14/20 + 传播性13/20 + 共鸣15/20 + 创意空间12/20)<br>
+                    <strong>有用度：14分</strong> (需求4/5 + 市场4/5 + 可行性3/5 + 持续性3/5)
+                </div>
+            </div>
+            
+            <div class="products-grid">
+                <div class="product-card">
+                    <div class="product-name">
+                        平台信用监测
+                        <span class="product-score">78分</span>
+                    </div>
+                    <div class="product-section">
+                        <div class="product-section-title">核心功能</div>
+                        <ul class="product-list">
+                            <li>实时监控平台违规记录</li>
+                            <li>信用评分系统</li>
+                            <li>消费风险预警</li>
+                            <li>平台对比选择建议</li>
+                        </ul>
+                    </div>
+                    <div class="product-section">
+                        <div class="product-target">
+                            🎯 目标用户：网购消费者，希望选择更可靠的平台，避免消费陷阱和权益受损
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="product-card">
+                    <div class="product-name">
+                        消费者维权助手
+                        <span class="product-score">76分</span>
+                    </div>
+                    <div class="product-section">
+                        <div class="product-section-title">核心功能</div>
+                        <ul class="product-list">
+                            <li>一键投诉生成</li>
+                            <li>法律咨询AI助手</li>
+                            <li>维权案例库</li>
+                            <li>证据收集指导</li>
+                        </ul>
+                    </div>
+                    <div class="product-section">
+                        <div class="product-target">
+                            🎯 目标用户：遭遇消费纠纷的用户，需要高效、低成本的维权解决方案
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 话题10 -->
+        <div class="topic-card">
+            <div class="topic-header">
+                <div class="topic-title">10. 普京就格陵兰岛表态</div>
+                <div class="topic-heat">🔥 23.9万</div>
+            </div>
+            
+            <div class="score-container">
+                <div class="score-label">
+                    <span>综合评分</span>
+                    <span>61分</span>
+                </div>
+                <div class="score-bar">
+                    <div class="score-fill score-good" style="width: 61%;">61分</div>
+                </div>
+            </div>
+            
+            <div class="analysis-section">
+                <div class="analysis-title">📝 话题背景</div>
+                <div class="analysis-content">
+                    俄罗斯总统普京就格陵兰岛问题发表看法，涉及北极地区地缘政治、资源争夺和大国博弈。格陵兰岛因其战略位置和丰富资源成为国际关注焦点。
+                </div>
+            </div>
+            
+            <div class="analysis-section">
+                <div class="analysis-title">💡 社会意义</div>
+                <div class="analysis-content">
+                    反映了气候变化背景下北极地区战略价值的提升、资源竞争的加剧，以及大国在新兴战略区域的博弈。对理解国际关系、能源安全具有参考意义。
+                </div>
+            </div>
+            
+            <div class="analysis-section">
+                <div class="analysis-title">📊 评分详情</div>
+                <div class="analysis-content">
+                    <strong>有趣度：52分</strong> (吸引力13/20 + 传播性12/20 + 共鸣13/20 + 创意空间14/20)<br>
+                    <strong>有用度：9分</strong> (需求2/5 + 市场2/5 + 可行性3/5 + 持续性2/5)
+                </div>
+            </div>
+            
+            <div class="products-grid">
+                <div class="product-card">
+                    <div class="product-name">
+                        地缘政治沙盒
+                        <span class="product-score">73分</span>
+                    </div>
+                    <div class="product-section">
+                        <div class="product-section-title">核心功能</div>
+                        <ul class="product-list">
+                            <li>互动式国际关系学习</li>
+                            <li>地缘博弈模拟游戏</li>
+                            <li>战略要地知识库</li>
+                            <li>历史事件关联分析</li>
+                        </ul>
+                    </div>
+                    <div class="product-section">
+                        <div class="product-target">
+                            🎯 目标用户：国际关系爱好者、学生，希望通过互动方式理解复杂的地缘政治
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="product-card">
+                    <div class="product-name">
+                        资源争夺可视化
+                        <span class="product-score">70分</span>
+                    </div>
+                    <div class="product-section">
+                        <div class="product-section-title">核心功能</div>
+                        <ul class="product-list">
+                            <li>全球战略要地地图</li>
+                            <li>资源分布可视化</li>
+                            <li>各国利益冲突展示</li>
+                            <li>未来趋势预测</li>
+                        </ul>
+                    </div>
+                    <div class="product-section">
+                        <div class="product-target">
+                            🎯 目标用户：政策研究者、投资分析师，需要了解全球资源格局和潜在冲突点
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <div class="footer-text">
+                <strong>📌 分析方法说明</strong><br>
+                本报告基于<strong>有趣度(80%)</strong>和<strong>有用度(20%)</strong>综合评分模型<br>
+                <strong>有趣度</strong>包含：话题吸引力、病毒传播性、情感共鸣、创意空间<br>
+                <strong>有用度</strong>包含：真实需求、市场规模、可行性、持续性<br><br>
+                
+                <strong>🎯 核心发现</strong><br>
+                • 最具潜力话题：<strong>妻子催程序员下班</strong>、<strong>今年最烂大街的穿搭</strong>(84分)<br>
+                • 共生成<strong>18个产品创意</strong>，覆盖职场健康、时尚个性、企业服务等多个领域<br>
+                • 与个人生活密切相关的话题更容易产生优质创意<br><br>
+                
+                <strong>⚡ 报告生成时间</strong><br>
+                2026年1月22日 10:07:40<br><br>
+                
+                <em>本报告由AI智能分析生成，数据来源于微博热搜榜单</em>
+            </div>
+        </footer>
+    </div>
+    
+    <script>
+        // 页面加载动画
+        document.addEventListener('DOMContentLoaded', function() {
+            const cards = document.querySelectorAll('.topic-card');
+            cards.forEach((card, index) => {
+                card.style.animationDelay = (index * 0.1) + 's';
+            });
+            
+            // 评分条动画
+            setTimeout(() => {
+                const scoreFills = document.querySelectorAll('.score-fill');
+                scoreFills.forEach(fill => {
+                    const width = fill.style.width;
+                    fill.style.width = '0';
+                    setTimeout(() => {
+                        fill.style.width = width;
+                    }, 100);
+                });
+            }, 500);
+        });
+    </script>
+</body>
+</html>
