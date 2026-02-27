@@ -1,0 +1,1231 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>微博热搜产品创意分析报告 - 2026年02月27日</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    background: linear-gradient(135deg, #f5f7fa 0%, #e8ecf1 100%);
+    min-height: 100vh;
+    color: #2d3748;
+  }
+
+  /* Header */
+  .header {
+    background: linear-gradient(135deg, #e53e3e 0%, #c53030 50%, #9b2c2c 100%);
+    color: white;
+    padding: 40px 20px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .header::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 60%);
+    animation: pulse 4s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); opacity: 0.5; }
+    50% { transform: scale(1.1); opacity: 1; }
+  }
+  .header-badge {
+    display: inline-block;
+    background: rgba(255,255,255,0.2);
+    border: 1px solid rgba(255,255,255,0.3);
+    border-radius: 20px;
+    padding: 4px 16px;
+    font-size: 12px;
+    letter-spacing: 2px;
+    margin-bottom: 12px;
+    backdrop-filter: blur(10px);
+  }
+  .header h1 {
+    font-size: clamp(20px, 4vw, 32px);
+    font-weight: 800;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+    position: relative;
+    z-index: 1;
+  }
+  .header p {
+    font-size: 14px;
+    opacity: 0.85;
+    position: relative;
+    z-index: 1;
+  }
+  .weibo-icon {
+    font-size: 40px;
+    margin-bottom: 12px;
+    display: block;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Container */
+  .container { max-width: 1200px; margin: 0 auto; padding: 30px 20px; }
+
+  /* Stats Overview */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 16px;
+    margin-bottom: 40px;
+  }
+  .stat-card {
+    background: white;
+    border-radius: 16px;
+    padding: 24px 20px;
+    text-align: center;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+    border: 1px solid rgba(255,255,255,0.8);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    animation: slideUp 0.5s ease forwards;
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  .stat-card:hover { transform: translateY(-4px); box-shadow: 0 12px 40px rgba(0,0,0,0.12); }
+  @keyframes slideUp {
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .stat-card:nth-child(1) { animation-delay: 0.1s; }
+  .stat-card:nth-child(2) { animation-delay: 0.2s; }
+  .stat-card:nth-child(3) { animation-delay: 0.3s; }
+  .stat-card:nth-child(4) { animation-delay: 0.4s; }
+  .stat-card:nth-child(5) { animation-delay: 0.5s; }
+  .stat-number {
+    font-size: 36px;
+    font-weight: 800;
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+  .stat-label {
+    font-size: 13px;
+    color: #718096;
+    font-weight: 500;
+  }
+  .stat-card.blue .stat-number { color: #3182ce; }
+  .stat-card.green .stat-number { color: #38a169; }
+  .stat-card.orange .stat-number { color: #dd6b20; }
+  .stat-card.purple .stat-number { color: #805ad5; }
+  .stat-card.gray .stat-number { color: #718096; }
+
+  /* Section Title */
+  .section-title {
+    font-size: 22px;
+    font-weight: 700;
+    color: #2d3748;
+    margin-bottom: 20px;
+    padding-left: 14px;
+    border-left: 4px solid #e53e3e;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  /* Topic Cards */
+  .topic-card {
+    background: white;
+    border-radius: 20px;
+    margin-bottom: 32px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+    overflow: hidden;
+    border: 1px solid rgba(255,255,255,0.8);
+    animation: fadeIn 0.6s ease forwards;
+    opacity: 0;
+  }
+  @keyframes fadeIn {
+    to { opacity: 1; }
+  }
+  .topic-card:nth-child(1) { animation-delay: 0.1s; }
+  .topic-card:nth-child(2) { animation-delay: 0.2s; }
+  .topic-card:nth-child(3) { animation-delay: 0.3s; }
+  .topic-card:nth-child(4) { animation-delay: 0.4s; }
+  .topic-card:nth-child(5) { animation-delay: 0.5s; }
+  .topic-card:nth-child(6) { animation-delay: 0.6s; }
+  .topic-card:nth-child(7) { animation-delay: 0.7s; }
+  .topic-card:nth-child(8) { animation-delay: 0.8s; }
+  .topic-card:nth-child(9) { animation-delay: 0.9s; }
+  .topic-card:nth-child(10) { animation-delay: 1.0s; }
+
+  .topic-header {
+    padding: 20px 24px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .topic-header.excellent { background: linear-gradient(135deg, #f0fff4, #c6f6d5); border-bottom: 2px solid #68d391; }
+  .topic-header.good { background: linear-gradient(135deg, #ebf8ff, #bee3f8); border-bottom: 2px solid #63b3ed; }
+  .topic-header.normal { background: linear-gradient(135deg, #f7fafc, #e2e8f0); border-bottom: 2px solid #a0aec0; }
+
+  .rank-badge {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 800;
+    flex-shrink: 0;
+    color: white;
+  }
+  .rank-badge.rank-1 { background: linear-gradient(135deg, #e53e3e, #c53030); }
+  .rank-badge.rank-2 { background: linear-gradient(135deg, #dd6b20, #c05621); }
+  .rank-badge.rank-3 { background: linear-gradient(135deg, #d69e2e, #b7791f); }
+  .rank-badge.rank-other { background: linear-gradient(135deg, #718096, #4a5568); }
+
+  .topic-title { font-size: 18px; font-weight: 700; color: #2d3748; flex: 1; min-width: 200px; }
+
+  .score-section { display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
+  .score-badge {
+    font-size: 26px;
+    font-weight: 800;
+    padding: 4px 0;
+  }
+  .score-badge.excellent { color: #276749; }
+  .score-badge.good { color: #2b6cb0; }
+  .score-badge.normal { color: #4a5568; }
+
+  .level-tag {
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+  }
+  .level-tag.excellent { background: #276749; color: white; }
+  .level-tag.good { background: #2b6cb0; color: white; }
+  .level-tag.normal { background: #4a5568; color: white; }
+
+  .hot-meta { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .hot-num {
+    font-size: 12px;
+    color: #e53e3e;
+    background: #fff5f5;
+    padding: 3px 10px;
+    border-radius: 10px;
+    font-weight: 600;
+    border: 1px solid #fed7d7;
+  }
+  .hot-tag {
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 8px;
+    font-weight: 600;
+  }
+  .hot-tag.boil { background: #e53e3e; color: white; }
+  .hot-tag.new { background: #38a169; color: white; }
+  .hot-tag.movie { background: #805ad5; color: white; }
+  .hot-tag.variety { background: #dd6b20; color: white; }
+
+  .topic-body { padding: 20px 24px; }
+
+  /* Score breakdown */
+  .score-breakdown { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+  @media (max-width: 600px) { .score-breakdown { grid-template-columns: 1fr; } }
+
+  .score-item label { font-size: 12px; color: #718096; margin-bottom: 6px; display: block; font-weight: 500; }
+  .progress-bar {
+    height: 8px;
+    background: #edf2f7;
+    border-radius: 10px;
+    overflow: hidden;
+    position: relative;
+  }
+  .progress-fill {
+    height: 100%;
+    border-radius: 10px;
+    transition: width 1s ease;
+    position: relative;
+  }
+  .progress-fill::after {
+    content: attr(data-score);
+    position: absolute;
+    right: -30px;
+    top: -5px;
+    font-size: 11px;
+    font-weight: 700;
+    color: #4a5568;
+  }
+  .progress-fill.interesting { background: linear-gradient(90deg, #f6ad55, #ed8936); }
+  .progress-fill.useful { background: linear-gradient(90deg, #68d391, #38a169); }
+
+  .topic-analysis {
+    background: #f7fafc;
+    border-radius: 12px;
+    padding: 14px 16px;
+    margin-bottom: 20px;
+    border-left: 3px solid #cbd5e0;
+  }
+  .topic-analysis h4 { font-size: 13px; color: #4a5568; font-weight: 600; margin-bottom: 6px; }
+  .topic-analysis p { font-size: 13px; color: #718096; line-height: 1.7; }
+
+  /* Product Ideas */
+  .ideas-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: #2d3748;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .ideas-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 14px;
+  }
+
+  .idea-card {
+    border-radius: 14px;
+    padding: 16px;
+    border: 1px solid;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    position: relative;
+    overflow: hidden;
+  }
+  .idea-card:hover { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(0,0,0,0.1); }
+  .idea-card.excellent { background: linear-gradient(135deg, #f0fff4, #e6ffed); border-color: #9ae6b4; }
+  .idea-card.good { background: linear-gradient(135deg, #ebf8ff, #e0f2fe); border-color: #90cdf4; }
+  .idea-card.normal { background: linear-gradient(135deg, #f7fafc, #f0f4f8); border-color: #cbd5e0; }
+
+  .idea-name {
+    font-size: 18px;
+    font-weight: 800;
+    margin-bottom: 4px;
+  }
+  .idea-name.excellent { color: #22543d; }
+  .idea-name.good { color: #2a4365; }
+  .idea-name.normal { color: #2d3748; }
+
+  .idea-score {
+    font-size: 11px;
+    padding: 2px 10px;
+    border-radius: 10px;
+    display: inline-block;
+    margin-bottom: 10px;
+    font-weight: 600;
+  }
+  .idea-score.excellent { background: #c6f6d5; color: #276749; }
+  .idea-score.good { background: #bee3f8; color: #2b6cb0; }
+  .idea-score.normal { background: #e2e8f0; color: #4a5568; }
+
+  .idea-users {
+    font-size: 12px;
+    color: #718096;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .idea-features { list-style: none; }
+  .idea-features li {
+    font-size: 12px;
+    color: #4a5568;
+    padding: 3px 0;
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+    line-height: 1.5;
+  }
+  .idea-features li::before {
+    content: '▸';
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .idea-features li.excellent::before { color: #38a169; }
+  .idea-features li.good::before { color: #3182ce; }
+  .idea-features li.normal::before { color: #718096; }
+
+  /* Divider */
+  .divider { height: 1px; background: linear-gradient(90deg, transparent, #e2e8f0, transparent); margin: 40px 0; }
+
+  /* Footer */
+  .footer {
+    text-align: center;
+    padding: 30px 20px;
+    color: #a0aec0;
+    font-size: 13px;
+  }
+  .footer strong { color: #718096; }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .topic-header { padding: 16px 18px; }
+    .topic-body { padding: 16px 18px; }
+    .topic-title { font-size: 16px; }
+    .score-badge { font-size: 22px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<div class="header">
+  <div class="header-badge">🔥 WEIBO HOT SEARCH ANALYSIS</div>
+  <span class="weibo-icon">🌐</span>
+  <h1>微博热搜产品创意分析报告</h1>
+  <p>生成时间：2026年02月27日 10:29:23 ｜ 分析话题：10条 ｜ 评分权重：有趣度80% + 有用度20%</p>
+</div>
+
+<!-- Container -->
+<div class="container">
+
+  <!-- Stats Overview -->
+  <div class="stats-grid">
+    <div class="stat-card blue">
+      <div class="stat-number">10</div>
+      <div class="stat-label">📊 分析话题数</div>
+    </div>
+    <div class="stat-card purple">
+      <div class="stat-number">76.8</div>
+      <div class="stat-label">⭐ 综合平均分</div>
+    </div>
+    <div class="stat-card green">
+      <div class="stat-number">4</div>
+      <div class="stat-label">🌟 优秀话题（≥80）</div>
+    </div>
+    <div class="stat-card orange">
+      <div class="stat-number">5</div>
+      <div class="stat-label">👍 良好话题（60-79）</div>
+    </div>
+    <div class="stat-card gray">
+      <div class="stat-number">1</div>
+      <div class="stat-label">💡 一般话题（&lt;60）</div>
+    </div>
+  </div>
+
+  <div class="section-title">🔥 热搜话题产品创意分析</div>
+
+  <!-- ===== TOPIC 1: 中国人民银行公告 ===== -->
+  <div class="topic-card">
+    <div class="topic-header good">
+      <div class="rank-badge rank-1">1</div>
+      <div>
+        <div class="topic-title">中国人民银行公告</div>
+        <div class="hot-meta">
+          <span class="hot-num">🔥 1,083,159</span>
+        </div>
+      </div>
+      <div class="score-section">
+        <div class="score-badge good">67<span style="font-size:14px;font-weight:500;">分</span></div>
+        <div class="level-tag good">良好</div>
+      </div>
+    </div>
+    <div class="topic-body">
+      <div class="score-breakdown">
+        <div class="score-item">
+          <label>有趣度评分（满分80）</label>
+          <div style="display:flex; align-items:center; gap:10px;">
+            <div class="progress-bar" style="flex:1;">
+              <div class="progress-fill interesting" style="width:61.25%;"></div>
+            </div>
+            <span style="font-size:13px;font-weight:700;color:#ed8936;">49/80</span>
+          </div>
+        </div>
+        <div class="score-item">
+          <label>有用度评分（满分20）</label>
+          <div style="display:flex; align-items:center; gap:10px;">
+            <div class="progress-bar" style="flex:1;">
+              <div class="progress-fill useful" style="width:90%;"></div>
+            </div>
+            <span style="font-size:13px;font-weight:700;color:#38a169;">18/20</span>
+          </div>
+        </div>
+      </div>
+      <div class="topic-analysis">
+        <h4>📌 话题背景推测</h4>
+        <p>中国人民银行发布重大政策公告，可能涉及降准、降息或货币政策调整，引发广泛关注。此类话题热度极高（超百万），体现了公众对宏观经济政策与个人资产安全的高度敏感性，财经话题虽专业性强但实用价值突出。</p>
+      </div>
+      <div class="ideas-title">💡 产品创意方案（2个）</div>
+      <div class="ideas-grid">
+        <div class="idea-card good">
+          <div class="idea-name good">央财通</div>
+          <div class="idea-score good">创意评分 82</div>
+          <div class="idea-users">👥 目标用户：普通投资者、理财小白、上班族</div>
+          <ul class="idea-features">
+            <li class="good">AI大白话解读央行政策公告</li>
+            <li class="good">政策对个人资产的影响评估</li>
+            <li class="good">实时推送重大政策变化预警</li>
+            <li class="good">历次政策对比与趋势分析</li>
+            <li class="good">个性化理财建议联动推送</li>
+          </ul>
+        </div>
+        <div class="idea-card good">
+          <div class="idea-name good">政策雷达</div>
+          <div class="idea-score good">创意评分 75</div>
+          <div class="idea-users">👥 目标用户：企业主、财务人员、金融从业者</div>
+          <ul class="idea-features">
+            <li class="good">金融政策实时监控与分类整理</li>
+            <li class="good">政策影响传导链路可视化</li>
+            <li class="good">行业专家解读内容聚合</li>
+            <li class="good">订阅特定政策领域精准推送</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== TOPIC 2: 四六级查分 ===== -->
+  <div class="topic-card">
+    <div class="topic-header excellent">
+      <div class="rank-badge rank-2">2</div>
+      <div>
+        <div class="topic-title">四六级查分</div>
+        <div class="hot-meta">
+          <span class="hot-num">🔥 785,106</span>
+          <span class="hot-tag boil">沸</span>
+        </div>
+      </div>
+      <div class="score-section">
+        <div class="score-badge excellent">90<span style="font-size:14px;font-weight:500;">分</span></div>
+        <div class="level-tag excellent">优秀</div>
+      </div>
+    </div>
+    <div class="topic-body">
+      <div class="score-breakdown">
+        <div class="score-item">
+          <label>有趣度评分（满分80）</label>
+          <div style="display:flex; align-items:center; gap:10px;">
+            <div class="progress-bar" style="flex:1;">
+              <div class="progress-fill interesting" style="width:90%;"></div>
+            </div>
+            <span style="font-size:13px;font-weight:700;color:#ed8936;">72/80</span>
+          </div>
+        </div>
+        <div class="score-item">
+          <label>有用度评分（满分20）</label>
+          <div style="display:flex; align-items:center; gap:10px;">
+            <div class="progress-bar" style="flex:1;">
+              <div class="progress-fill useful" style="width:90%;"></div>
+            </div>
+            <span style="font-size:13px;font-weight:700;color:#38a169;">18/20</span>
+          </div>
+        </div>
+      </div>
+      <div class="topic-analysis">
+        <h4>📌 话题背景推测</h4>
+        <p>全国英语四六级考试成绩放榜，数百万应试者同步涌入查分平台，产生强烈的集体情绪共振——有人欣喜过关，有人捶胸顿足。这种高度同质化的共同体验具备极强的社群凝聚力和病毒传播性，是绝佳的产品切入点。</p>
+      </div>
+      <div class="ideas-title">💡 产品创意方案（4个）</div>
+      <div class="ideas-grid">
+        <div class="idea-card excellent">
+          <div class="idea-name excellent">分数时刻</div>
+          <div class="idea-score excellent">创意评分 91</div>
+          <div class="idea-users">👥 目标用户：在校大学生、备考英语的职场人</div>
+          <ul class="idea-features">
+            <li class="excellent">成绩实时推送与历史记录</li>
+            <li class="excellent">情绪打卡与心情胶囊</li>
+            <li class="excellent">全国成绩分布可视化排名</li>
+            <li class="excellent">与好友互晒成绩PK功能</li>
+            <li class="excellent">AI个性化下次备考建议</li>
+          </ul>
+        </div>
+        <div class="idea-card excellent">
+          <div class="idea-name excellent">英语升级路</div>
+          <div class="idea-score excellent">创意评分 88</div>
+          <div class="idea-users">👥 目标用户：四六级未通过的大学生、英语提升者</div>
+          <ul class="idea-features">
+            <li class="excellent">基于成绩智能诊断薄弱项</li>
+            <li class="excellent">AI定制化学习路径规划</li>
+            <li class="excellent">每日精准练习任务推送</li>
+            <li class="excellent">进步可视化追踪图表</li>
+          </ul>
+        </div>
+        <div class="idea-card excellent">
+          <div class="idea-name excellent">备考圈</div>
+          <div class="idea-score excellent">创意评分 84</div>
+          <div class="idea-users">👥 目标用户：正在备考四六级的在校大学生</div>
+          <ul class="idea-features">
+            <li class="excellent">备考学习打卡社区</li>
+            <li class="excellent">高频题库智能刷题系统</li>
+            <li class="excellent">同城备考搭子匹配功能</li>
+            <li class="excellent">考前冲刺30天计划</li>
+          </ul>
+        </div>
+        <div class="idea-card excellent">
+          <div class="idea-name excellent">词霸闯关</div>
+          <div class="idea-score excellent">创意评分 80</div>
+          <div class="idea-users">👥 目标用户：英语词汇薄弱的大学生</div>
+          <ul class="idea-features">
+            <li class="excellent">四六级核心词汇游戏闯关</li>
+            <li class="excellent">好友实时单词PK对战</li>
+            <li class="excellent">错词本智能复习提醒</li>
+            <li class="excellent">排行榜激励成就系统</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== TOPIC 3: 美国发动网攻侵占全球虚拟资产 ===== -->
+  <div class="topic-card">
+    <div class="topic-header good">
+      <div class="rank-badge rank-3">3</div>
+      <div>
+        <div class="topic-title">美国发动网攻侵占全球虚拟资产</div>
+        <div class="hot-meta">
+          <span class="hot-num">🔥 612,874</span>
+        </div>
+      </div>
+      <div class="score-section">
+        <div class="score-badge good">75<span style="font-size:14px;font-weight:500;">分</span></div>
+        <div class="level-tag good">良好</div>
+      </div>
+    </div>
+    <div class="topic-body">
+      <div class="score-breakdown">
+        <div class="score-item">
+          <label>有趣度评分（满分80）</label>
+          <div style="display:flex; align-items:center; gap:10px;">
+            <div class="progress-bar" style="flex:1;">
+              <div class="progress-fill interesting" style="width:73.75%;"></div>
+            </div>
+            <span style="font-size:13px;font-weight:700;color:#ed8936;">59/80</span>
+          </div>
+        </div>
+        <div class="score-item">
+          <label>有用度评分（满分20）</label>
+          <div style="display:flex; align-items:center; gap:10px;">
+            <div class="progress-bar" style="flex:1;">
+              <div class="progress-fill useful" style="width:80%;"></div>
+            </div>
+            <span style="font-size:13px;font-weight:700;color:#38a169;">16/20</span>
+          </div>
+        </div>
+      </div>
+      <div class="topic-analysis">
+        <h4>📌 话题背景推测</h4>
+        <p>据报道美国实施大规模网络攻击行动，目标指向全球加密货币与数字资产平台，引发国际社会对数字资产安全的高度警惕。此话题折射出虚拟资产安全保护的真实刚需，也凸显了个人数字主权保护意识的觉醒。</p>
+      </div>
+      <div class="ideas-title">💡 产品创意方案（2个）</div>
+      <div class="ideas-grid">
+        <div class="idea-card good">
+          <div class="idea-name good">链盾</div>
+          <div class="idea-score good">创意评分 79</div>
+          <div class="idea-users">👥 目标用户：加密货币持有者、数字资产投资者</div>
+          <ul class="idea-features">
+            <li class="good">多链数字资产异常检测预警</li>
+            <li class="good">钱包安全评分与漏洞扫描</li>
+            <li class="good">攻击事件实时情报推送</li>
+            <li class="good">资产安全最佳实践指南</li>
+          </ul>
+        </div>
+        <div class="idea-card good">
+          <div class="idea-name good">数字防线</div>
+          <div class="idea-score good">创意评分 72</div>
+          <div class="idea-users">👥 目标用户：关注网络安全的普通网民</div>
+          <ul class="idea-features">
+            <li class="good">个人数字资产一站式保护</li>
+            <li class="good">钓鱼网站与欺诈识别系统</li>
+            <li class="good">资产分散存储安全建议</li>
+            <li class="good">网络安全知识科普专栏</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== TOPIC 4: 南京档案馆找到谷爱凌外婆户籍卡 ===== -->
+  <div class="topic-card">
+    <div class="topic-header good">
+      <div class="rank-badge rank-other">4</div>
+      <div>
+        <div class="topic-title">南京档案馆找到谷爱凌外婆户籍卡</div>
+        <div class="hot-meta">
+          <span class="hot-num">🔥 386,247</span>
+          <span class="hot-tag new">新</span>
+        </div>
+      </div>
+      <div class="score-section">
+        <div class="score-badge good">78<span style="font-size:14px;font-weight:500;">分</span></div>
+        <div class="level-tag good">良好</div>
+      </div>
+    </div>
+    <div class="topic-body">
+      <div class="score-breakdown">
+        <div class="score-item">
+          <label>有趣度评分（满分80）</label>
+          <div style="display:flex; align-items:center; gap:10px;">
+            <div class="progress-bar" style="flex:1;">
+              <div class="progress-fill interesting" style="width:78.75%;"></div>
+            </div>
+            <span style="font-size:13px;font-weight:700;color:#ed8936;">63/80</span>
+          </div>
+        </div>
+        <div class="score-item">
+          <label>有用度评分（满分20）</label>
+          <div style="display:flex; align-items:center; gap:10px;">
+            <div class="progress-bar" style="flex:1;">
+              <div class="progress-fill useful" style="width:75%;"></div>
+            </div>
+            <span style="font-size:13px;font-weight:700;color:#38a169;">15/20</span>
+          </div>
+        </div>
+      </div>
+      <div class="topic-analysis">
+        <h4>📌 话题背景推测</h4>
+        <p>南京市档案馆在整理历史资料过程中，意外发现了冬奥冠军谷爱凌外祖母的户籍登记卡，以纸质档案的方式连接了跨越数十年的家族记忆。这一事件引发了公众对寻根文化、家族记忆数字化保存的广泛共鸣与思考。</p>
+      </div>
+      <div class="ideas-title">💡 产品创意方案（3个）</div>
+      <div class="ideas-grid">
+        <div class="idea-card good">
+          <div class="idea-name good">寻根树</div>
+          <div class="idea-score good">创意评分 82</div>
+          <div class="idea-users">👥 目标用户：对家族历史感兴趣的35岁以上用户</div>
+          <ul class="idea-features">
+            <li class="good">AI辅助家族族谱智能构建</li>
+            <li class="good">老照片AI修复与上色</li>
+            <li class="good">档案OCR识别与数字化</li>
+            <li class="good">跨平台家族信息共享</li>
+            <li class="good">DNA数据与族谱联动</li>
+          </ul>
+        </div>
+        <div class="idea-card good">
+          <div class="idea-name good">岁月相册</div>
+          <div class="idea-score good">创意评分 78</div>
+          <div class="idea-users">👥 目标用户：重视家族传承的中老年用户及子女</div>
+          <ul class="idea-features">
+            <li class="good">旧照片AI高清修复增强</li>
+            <li class="good">家族故事AI辅助记录</li>
+            <li class="good">电子族谱纪念册制作</li>
+            <li class="good">家族记忆时间胶囊功能</li>
+          </ul>
+        </div>
+        <div class="idea-card good">
+          <div class="idea-name good">档案探索</div>
+          <div class="idea-score good">创意评分 70</div>
+          <div class="idea-users">👥 目标用户：有查询历史档案需求的研究者、普通用户</div>
+          <ul class="idea-features">
+            <li class="good">全国各地档案馆资源整合</li>
+            <li class="good">在线档案查询申请服务</li>
+            <li class="good">历史文献数字化共享</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== TOPIC 5: 巴基斯坦空袭阿富汗 ===== -->
+  <div class="topic-card">
+    <div class="topic-header normal">
+      <div class="rank-badge rank-other">5</div>
+      <div>
+        <div class="topic-title">巴基斯坦空袭阿富汗</div>
+        <div class="hot-meta">
+          <span class="hot-num">🔥 269,836</span>
+        </div>
+      </div>
+      <div class="score-section">
+        <div class="score-badge normal">54<span style="font-size:14px;font-weight:500;">分</span></div>
+        <div class="level-tag normal">一般</div>
+      </div>
+    </div>
+    <div class="topic-body">
+      <div class="score-breakdown">
+        <div class="score-item">
+          <label>有趣度评分（满分80）</label>
+          <div style="display:flex; align-items:center; gap:10px;">
+            <div class="progress-bar" style="flex:1;">
+              <div class="progress-fill interesting" style="width:51.25%;"></div>
+            </div>
+            <span style="font-size:13px;font-weight:700;color:#ed8936;">41/80</span>
+          </div>
+        </div>
+        <div class="score-item">
+          <label>有用度评分（满分20）</label>
+          <div style="display:flex; align-items:center; gap:10px;">
+            <div class="progress-bar" style="flex:1;">
+              <div class="progress-fill useful" style="width:65%;"></div>
+            </div>
+            <span style="font-size:13px;font-weight:700;color:#38a169;">13/20</span>
+          </div>
+        </div>
+      </div>
+      <div class="topic-analysis">
+        <h4>📌 话题背景推测</h4>
+        <p>巴基斯坦对阿富汗境内的武装力量展开空袭行动，地区紧张局势升级。作为中国周边的地缘政治热点，此话题对国际关系关注者有较强吸引力，但与普通用户日常生活关联度有限，产品创意空间相对较窄。</p>
+      </div>
+      <div class="ideas-title">💡 产品创意方案（2个）</div>
+      <div class="ideas-grid">
+        <div class="idea-card normal">
+          <div class="idea-name normal">全球视野</div>
+          <div class="idea-score normal">创意评分 60</div>
+          <div class="idea-users">👥 目标用户：关注国际局势的知识分子、学生、记者</div>
+          <ul class="idea-features">
+            <li class="normal">全球冲突实时地图可视化</li>
+            <li class="normal">AI背景知识自动补充</li>
+            <li class="normal">多方立场中立呈现</li>
+            <li class="normal">事件时间线梳理</li>
+          </ul>
+        </div>
+        <div class="idea-card normal">
+          <div class="idea-name normal">热点速递</div>
+          <div class="idea-score normal">创意评分 55</div>
+          <div class="idea-users">👥 目标用户：希望高效了解国际时事的忙碌上班族</div>
+          <ul class="idea-features">
+            <li class="normal">5分钟国际时事早报</li>
+            <li class="normal">复杂事件背景科普</li>
+            <li class="normal">专家观点智能聚合</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== TOPIC 6: 好潦草的烟花真是设计鬼才 ===== -->
+  <div class="topic-card">
+    <div class="topic-header excellent">
+      <div class="rank-badge rank-other">6</div>
+      <div>
+        <div class="topic-title">好潦草的烟花真是设计鬼才</div>
+        <div class="hot-meta">
+          <span class="hot-num">🔥 269,427</span>
+        </div>
+      </div>
+      <div class="score-section">
+        <div class="score-badge excellent">94<span style="font-size:14px;font-weight:500;">分</span></div>
+        <div class="level-tag excellent">优秀</div>
+      </div>
+    </div>
+    <div class="topic-body">
+      <div class="score-breakdown">
+        <div class="score-item">
+          <label>有趣度评分（满分80）</label>
+          <div style="display:flex; align-items:center; gap:10px;">
+            <div class="progress-bar" style="flex:1;">
+              <div class="progress-fill interesting" style="width:97.5%;"></div>
+            </div>
+            <span style="font-size:13px;font-weight:700;color:#ed8936;">78/80</span>
+          </div>
+        </div>
+        <div class="score-item">
+          <label>有用度评分（满分20）</label>
+          <div style="display:flex; align-items:center; gap:10px;">
+            <div class="progress-bar" style="flex:1;">
+              <div class="progress-fill useful" style="width:80%;"></div>
+            </div>
+            <span style="font-size:13px;font-weight:700;color:#38a169;">16/20</span>
+          </div>
+        </div>
+      </div>
+      <div class="topic-analysis">
+        <h4>📌 话题背景推测</h4>
+        <p>网友晒出某处节日烟花的视觉效果图或摄影作品，因其"潦草随性"的造型意外获封"设计鬼才"称号，引发全网爆笑热议。此类"反美学审美"话题具有极强的幽默传播性和二创激发力，是目前得分最高的话题，产品创意空间巨大。</p>
+      </div>
+      <div class="ideas-title">💡 产品创意方案（4个）</div>
+      <div class="ideas-grid">
+        <div class="idea-card excellent">
+          <div class="idea-name excellent">鬼才设计局</div>
+          <div class="idea-score excellent">创意评分 95</div>
+          <div class="idea-users">👥 目标用户：热爱搞笑内容的Z世代、设计爱好者</div>
+          <ul class="idea-features">
+            <li class="excellent">AI生成"故意糟糕"的搞怪设计</li>
+            <li class="excellent">一键将照片"潦草化"处理</li>
+            <li class="excellent">节日祝福"鬼才版"生成</li>
+            <li class="excellent">全网梗图素材创作社区</li>
+            <li class="excellent">社交分享与病毒传播机制</li>
+          </ul>
+        </div>
+        <div class="idea-card excellent">
+          <div class="idea-name excellent">烂到出圈</div>
+          <div class="idea-score excellent">创意评分 91</div>
+          <div class="idea-users">👥 目标用户：内容创作者、搞笑博主、普通网民</div>
+          <ul class="idea-features">
+            <li class="excellent">潦草烟花模拟互动游戏</li>
+            <li class="excellent">反美学风格滤镜工具</li>
+            <li class="excellent">用户提交最"鬼才"作品评选</li>
+            <li class="excellent">多人投票排行榜</li>
+          </ul>
+        </div>
+        <div class="idea-card excellent">
+          <div class="idea-name excellent">美学翻转</div>
+          <div class="idea-score excellent">创意评分 86</div>
+          <div class="idea-users">👥 目标用户：职场打工人、需要轻松娱乐的年轻白领</div>
+          <ul class="idea-features">
+            <li class="excellent">任意图片一键"设计鬼才"化</li>
+            <li class="excellent">多种"糟糕"风格主题切换</li>
+            <li class="excellent">节日贺卡批量搞笑生成</li>
+            <li class="excellent">好友之间趣味设计PK</li>
+          </ul>
+        </div>
+        <div class="idea-card excellent">
+          <div class="idea-name excellent">节日创意坊</div>
+          <div class="idea-score excellent">创意评分 82</div>
+          <div class="idea-users">👥 目标用户：需要创意节日素材的普通用户和商家</div>
+          <ul class="idea-features">
+            <li class="excellent">AI节日视觉素材生成</li>
+            <li class="excellent">精美/鬼才双风格随心切</li>
+            <li class="excellent">节日活动策划AI助手</li>
+            <li class="excellent">优质模板社区共享</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== TOPIC 7: 网传现在就出发4没有金晨 ===== -->
+  <div class="topic-card">
+    <div class="topic-header good">
+      <div class="rank-badge rank-other">7</div>
+      <div>
+        <div class="topic-title">网传现在就出发4没有金晨</div>
+        <div class="hot-meta">
+          <span class="hot-num">🔥 263,333</span>
+          <span class="hot-tag variety">综艺</span>
+        </div>
+      </div>
+      <div class="score-section">
+        <div class="score-badge good">64<span style="font-size:14px;font-weight:500;">分</span></div>
+        <div class="level-tag good">良好</div>
+      </div>
+    </div>
+    <div class="topic-body">
+      <div class="score-breakdown">
+        <div class="score-item">
+          <label>有趣度评分（满分80）</label>
+          <div style="display:flex; align-items:center; gap:10px;">
+            <div class="progress-bar" style="flex:1;">
+              <div class="progress-fill interesting" style="width:63.75%;"></div>
+            </div>
+            <span style="font-size:13px;font-weight:700;color:#ed8936;">51/80</span>
+          </div>
+        </div>
+        <div class="score-item">
+          <label>有用度评分（满分20）</label>
+          <div style="display:flex; align-items:center; gap:10px;">
+            <div class="progress-bar" style="flex:1;">
+              <div class="progress-fill useful" style="width:65%;"></div>
+            </div>
+            <span style="font-size:13px;font-weight:700;color:#38a169;">13/20</span>
+          </div>
+        </div>
+      </div>
+      <div class="topic-analysis">
+        <h4>📌 话题背景推测</h4>
+        <p>有消息称热门户外综艺《现在就出发》第4季嘉宾阵容已定，金晨未在名单之列，引发粉丝热议与讨论。此话题在综艺爱好者圈层中传播迅速，折射出公众对户外旅行类内容的持续热情与真人秀文化的影响力。</p>
+      </div>
+      <div class="ideas-title">💡 产品创意方案（2个）</div>
+      <div class="ideas-grid">
+        <div class="idea-card good">
+          <div class="idea-name good">追综雷达</div>
+          <div class="idea-score good">创意评分 70</div>
+          <div class="idea-users">👥 目标用户：热衷追综艺的18-35岁年轻用户</div>
+          <ul class="idea-features">
+            <li class="good">综艺嘉宾阵容实时追踪</li>
+            <li class="good">开播日期智能提醒</li>
+            <li class="good">综艺相关动态一站聚合</li>
+            <li class="good">粉丝兴趣圈子讨论社区</li>
+          </ul>
+        </div>
+        <div class="idea-card good">
+          <div class="idea-name good">出发搭子</div>
+          <div class="idea-score good">创意评分 76</div>
+          <div class="idea-users">👥 目标用户：喜欢户外旅行、寻找同伴的年轻人</div>
+          <ul class="idea-features">
+            <li class="good">同城旅行搭子精准匹配</li>
+            <li class="good">目的地共同计划制定工具</li>
+            <li class="good">旅行故事Vlog式分享</li>
+            <li class="good">综艺取景地打卡任务</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== TOPIC 8: 飞驰人生3 ===== -->
+  <div class="topic-card">
+    <div class="topic-header good">
+      <div class="rank-badge rank-other">8</div>
+      <div>
+        <div class="topic-title">飞驰人生3</div>
+        <div class="hot-meta">
+          <span class="hot-num">🔥 244,929</span>
+          <span class="hot-tag movie">电影</span>
+          <span class="hot-tag new">新</span>
+        </div>
+      </div>
+      <div class="score-section">
+        <div class="score-badge good">75<span style="font-size:14px;font-weight:500;">分</span></div>
+        <div class="level-tag good">良好</div>
+      </div>
+    </div>
+    <div class="topic-body">
+      <div class="score-breakdown">
+        <div class="score-item">
+          <label>有趣度评分（满分80）</label>
+          <div style="display:flex; align-items:center; gap:10px;">
+            <div class="progress-bar" style="flex:1;">
+              <div class="progress-fill interesting" style="width:75%;"></div>
+            </div>
+            <span style="font-size:13px;font-weight:700;color:#ed8936;">60/80</span>
+          </div>
+        </div>
+        <div class="score-item">
+          <label>有用度评分（满分20）</label>
+          <div style="display:flex; align-items:center; gap:10px;">
+            <div class="progress-bar" style="flex:1;">
+              <div class="progress-fill useful" style="width:75%;"></div>
+            </div>
+            <span style="font-size:13px;font-weight:700;color:#38a169;">15/20</span>
+          </div>
+        </div>
+      </div>
+      <div class="topic-analysis">
+        <h4>📌 话题背景推测</h4>
+        <p>韩寒导演的《飞驰人生》系列迎来第三部，预告片或相关物料发布引发粉丝热议。该系列以赛车和追梦为核心主题，融合喜剧与励志元素，拥有庞大的受众基础，也激发了大众对赛车文化和奋斗精神的共鸣。</p>
+      </div>
+      <div class="ideas-title">💡 产品创意方案（2个）</div>
+      <div class="ideas-grid">
+        <div class="idea-card good">
+          <div class="idea-name good">人生加速器</div>
+          <div class="idea-score good">创意评分 80</div>
+          <div class="idea-users">👥 目标用户：喜欢赛车文化的电影迷、追求目标的年轻人</div>
+          <ul class="idea-features">
+            <li class="good">个人目标"赛道"可视化设计</li>
+            <li class="good">阶段性成就赛车里程解锁</li>
+            <li class="good">朋友间目标进度PK系统</li>
+            <li class="good">赛车主题沉浸式激励界面</li>
+            <li class="good">电影角色台词每日励志推送</li>
+          </ul>
+        </div>
+        <div class="idea-card good">
+          <div class="idea-name good">电影旅行</div>
+          <div class="idea-score good">创意评分 73</div>
+          <div class="idea-users">👥 目标用户：热爱旅行与电影的年轻用户</div>
+          <ul class="idea-features">
+            <li class="good">热门电影取景地地图导览</li>
+            <li class="good">电影场景同款打卡挑战</li>
+            <li class="good">周边城市旅行路线规划</li>
+            <li class="good">影迷社区评分与分享</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== TOPIC 9: 00后女骑手送餐遭顾客骚扰报警 ===== -->
+  <div class="topic-card">
+    <div class="topic-header excellent">
+      <div class="rank-badge rank-other">9</div>
+      <div>
+        <div class="topic-title">00后女骑手送餐遭顾客骚扰报警</div>
+        <div class="hot-meta">
+          <span class="hot-num">🔥 147,330</span>
+        </div>
+      </div>
+      <div class="score-section">
+        <div class="score-badge excellent">84<span style="font-size:14px;font-weight:500;">分</span></div>
+        <div class="level-tag excellent">优秀</div>
+      </div>
+    </div>
+    <div class="topic-body">
+      <div class="score-breakdown">
+        <div class="score-item">
+          <label>有趣度评分（满分80）</label>
+          <div style="display:flex; align-items:center; gap:10px;">
+            <div class="progress-bar" style="flex:1;">
+              <div class="progress-fill interesting" style="width:82.5%;"></div>
+            </div>
+            <span style="font-size:13px;font-weight:700;color:#ed8936;">66/80</span>
+          </div>
+        </div>
+        <div class="score-item">
+          <label>有用度评分（满分20）</label>
+          <div style="display:flex; align-items:center; gap:10px;">
+            <div class="progress-bar" style="flex:1;">
+              <div class="progress-fill useful" style="width:90%;"></div>
+            </div>
+            <span style="font-size:13px;font-weight:700;color:#38a169;">18/20</span>
+          </div>
+        </div>
+      </div>
+      <div class="topic-analysis">
+        <h4>📌 话题背景推测</h4>
+        <p>一名00后女性外卖骑手在送餐过程中遭到顾客骚扰，随即选择报警维权，此举获得广泛网友声援。该事件揭示了灵活就业群体（尤其是女性骑手）在工作中面临的安全隐患，以及维权意识的提升，具有强烈的社会共鸣与持续性的真实需求。</p>
+      </div>
+      <div class="ideas-title">💡 产品创意方案（4个）</div>
+      <div class="ideas-grid">
+        <div class="idea-card excellent">
+          <div class="idea-name excellent">骑士护盾</div>
+          <div class="idea-score excellent">创意评分 92</div>
+          <div class="idea-users">👥 目标用户：外卖/快递骑手，尤其是女性从业者</div>
+          <ul class="idea-features">
+            <li class="excellent">一键SOS精准定位报警</li>
+            <li class="excellent">骚扰事件自动录音存证</li>
+            <li class="excellent">平台骚扰投诉联动处理</li>
+            <li class="excellent">法律维权流程智能引导</li>
+            <li class="excellent">安全事件证据链保全</li>
+          </ul>
+        </div>
+        <div class="idea-card excellent">
+          <div class="idea-name excellent">护航外卖</div>
+          <div class="idea-score excellent">创意评分 85</div>
+          <div class="idea-users">👥 目标用户：关注职业安全的平台方与骑手群体</div>
+          <ul class="idea-features">
+            <li class="excellent">消费者文明行为评价体系</li>
+            <li class="excellent">骚扰用户黑名单预警共享</li>
+            <li class="excellent">文明点单社会公约倡议</li>
+            <li class="excellent">平台联动惩戒处理机制</li>
+          </ul>
+        </div>
+        <div class="idea-card excellent">
+          <div class="idea-name excellent">送餐安全官</div>
+          <div class="idea-score excellent">创意评分 80</div>
+          <div class="idea-users">👥 目标用户：新入行外卖骑手及平台运营人员</div>
+          <ul class="idea-features">
+            <li class="excellent">骚扰场景应对情景训练</li>
+            <li class="excellent">劳动权益法律知识库</li>
+            <li class="excellent">高风险配送地址安全图</li>
+            <li class="excellent">同行互助紧急求助网络</li>
+          </ul>
+        </div>
+        <div class="idea-card excellent">
+          <div class="idea-name excellent">灵活护卫</div>
+          <div class="idea-score excellent">创意评分 78</div>
+          <div class="idea-users">👥 目标用户：外卖、快递、网约车等灵活就业从业者</div>
+          <ul class="idea-features">
+            <li class="excellent">灵活就业者权益保护平台</li>
+            <li class="excellent">收入纠纷调解与跟进</li>
+            <li class="excellent">法律援助机构快速对接</li>
+            <li class="excellent">行业政策动态实时更新</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== TOPIC 10: 你看到四六级分数的反应 ===== -->
+  <div class="topic-card">
+    <div class="topic-header excellent">
+      <div class="rank-badge rank-other">10</div>
+      <div>
+        <div class="topic-title">你看到四六级分数的反应</div>
+        <div class="hot-meta">
+          <span class="hot-num">🔥 147,280</span>
+        </div>
+      </div>
+      <div class="score-section">
+        <div class="score-badge excellent">87<span style="font-size:14px;font-weight:500;">分</span></div>
+        <div class="level-tag excellent">优秀</div>
+      </div>
+    </div>
+    <div class="topic-body">
+      <div class="score-breakdown">
+        <div class="score-item">
+          <label>有趣度评分（满分80）</label>
+          <div style="display:flex; align-items:center; gap:10px;">
+            <div class="progress-bar" style="flex:1;">
+              <div class="progress-fill interesting" style="width:87.5%;"></div>
+            </div>
+            <span style="font-size:13px;font-weight:700;color:#ed8936;">70/80</span>
+          </div>
+        </div>
+        <div class="score-item">
+          <label>有用度评分（满分20）</label>
+          <div style="display:flex; align-items:center; gap:10px;">
+            <div class="progress-bar" style="flex:1;">
+              <div class="progress-fill useful" style="width:85%;"></div>
+            </div>
+            <span style="font-size:13px;font-weight:700;color:#38a169;">17/20</span>
+          </div>
+        </div>
+      </div>
+      <div class="topic-analysis">
+        <h4>📌 话题背景推测</h4>
+        <p>伴随四六级成绩发布，网友纷纷用表情包、视频片段来表达看到成绩瞬间的真实反应——从喜极而泣到欲哭无泪，各种情绪形态引发大规模的集体共情与二次创作。这类"情绪共振"话题具有极强的社交传播属性和表达欲激发力。</p>
+      </div>
+      <div class="ideas-title">💡 产品创意方案（3个）</div>
+      <div class="ideas-grid">
+        <div class="idea-card excellent">
+          <div class="idea-name excellent">考后心情站</div>
+          <div class="idea-score excellent">创意评分 90</div>
+          <div class="idea-users">👥 目标用户：参加各类资格考试的学生与职场人</div>
+          <ul class="idea-features">
+            <li class="excellent">考后情绪雷达图可视化</li>
+            <li class="excellent">与全国同场考生情绪对比</li>
+            <li class="excellent">考前/考后情绪时间胶囊</li>
+            <li class="excellent">AI情感支持聊天机器人</li>
+            <li class="excellent">情绪互动社群与共鸣功能</li>
+          </ul>
+        </div>
+        <div class="idea-card excellent">
+          <div class="idea-name excellent">表情鉴定所</div>
+          <div class="idea-score excellent">创意评分 88</div>
+          <div class="idea-users">👥 目标用户：热爱制作和传播表情包的Z世代</div>
+          <ul class="idea-features">
+            <li class="excellent">考试场景专属表情包生成</li>
+            <li class="excellent">AI人脸情绪夸张化处理</li>
+            <li class="excellent">全国考生情绪热力地图</li>
+            <li class="excellent">表情包挑战赛与投票</li>
+          </ul>
+        </div>
+        <div class="idea-card excellent">
+          <div class="idea-name excellent">成绩侦探</div>
+          <div class="idea-score excellent">创意评分 83</div>
+          <div class="idea-users">👥 目标用户：想系统提升英语水平的在校大学生</div>
+          <ul class="idea-features">
+            <li class="excellent">历次成绩趋势智能分析</li>
+            <li class="excellent">弱项科目自动识别诊断</li>
+            <li class="excellent">同城/全国排名参考系统</li>
+            <li class="excellent">下次备考个性化计划生成</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Scoring Guide -->
+  <div style="background:white; border-radius:20px; padding:24px; box-shadow:0 4px 20px rgba(0,0,0,0.06); margin-bottom:30px;">
+    <div class="section-title" style="margin-bottom:16px;">📐 评分体系说明</div>
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:16px;">
+      <div style="background:#f7fafc; border-radius:12px; padding:16px;">
+        <div style="font-size:13px; font-weight:700; color:#2d3748; margin-bottom:10px;">🎯 有趣度（80分）</div>
+        <div style="font-size:12px; color:#718096; line-height:1.8;">
+          ▸ 话题吸引力（20分）<br>
+          ▸ 病毒传播性（20分）<br>
+          ▸ 情感共鸣度（20分）<br>
+          ▸ 产品创意空间（20分）
+        </div>
+      </div>
+      <div style="background:#f7fafc; border-radius:12px; padding:16px;">
+        <div style="font-size:13px; font-weight:700; color:#2d3748; margin-bottom:10px;">🔧 有用度（20分）</div>
+        <div style="font-size:12px; color:#718096; line-height:1.8;">
+          ▸ 真实需求验证（5分）<br>
+          ▸ 市场规模潜力（5分）<br>
+          ▸ 产品可行性（5分）<br>
+          ▸ 需求持续性（5分）
+        </div>
+      </div>
+      <div style="background:#f7fafc; border-radius:12px; padding:16px;">
+        <div style="font-size:13px; font-weight:700; color:#2d3748; margin-bottom:10px;">📊 创意数量规则</div>
+        <div style="font-size:12px; color:#718096; line-height:1.8;">
+          ▸ <span style="color:#276749; font-weight:600;">≥80分</span>：生成3-5个创意<br>
+          ▸ <span style="color:#2b6cb0; font-weight:600;">60-79分</span>：生成2-3个创意<br>
+          ▸ <span style="color:#4a5568; font-weight:600;">&lt;60分</span>：生成1-2个创意
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Footer -->
+<div class="footer">
+  <p>🤖 <strong>微博热搜产品创意分析报告</strong> ｜ 生成时间：2026-02-27 10:29:23</p>
+  <p style="margin-top:6px;">基于有趣度(80%) + 有用度(20%)综合评分体系 ｜ 共分析 10 个热搜话题 ｜ 生成 30 个产品创意</p>
+</div>
+
+</body>
+</html>
