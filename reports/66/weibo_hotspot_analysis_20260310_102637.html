@@ -1,0 +1,1264 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>微博热搜产品创意分析报告 · 2026-03-10</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+  :root {
+    --green: #10b981;
+    --green-light: #d1fae5;
+    --green-dark: #059669;
+    --blue: #3b82f6;
+    --blue-light: #dbeafe;
+    --blue-dark: #2563eb;
+    --gray: #6b7280;
+    --gray-light: #f3f4f6;
+    --gray-dark: #374151;
+    --orange: #f59e0b;
+    --purple: #8b5cf6;
+    --pink: #ec4899;
+    --bg: #f8fafc;
+    --card: #ffffff;
+    --border: #e2e8f0;
+    --text: #1e293b;
+    --text-muted: #64748b;
+    --shadow: 0 4px 6px -1px rgba(0,0,0,.07), 0 2px 4px -1px rgba(0,0,0,.04);
+    --shadow-lg: 0 10px 25px -3px rgba(0,0,0,.1), 0 4px 8px -2px rgba(0,0,0,.05);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Hiragino Sans GB', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+  }
+
+  /* === HEADER === */
+  .hero {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+    padding: 56px 24px 64px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Ccircle cx='30' cy='30' r='4'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  }
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(255,255,255,0.2);
+    backdrop-filter: blur(10px);
+    color: #fff;
+    padding: 6px 16px;
+    border-radius: 100px;
+    font-size: 13px; font-weight: 500;
+    margin-bottom: 20px;
+    border: 1px solid rgba(255,255,255,0.3);
+  }
+  .hero h1 {
+    color: #fff;
+    font-size: clamp(28px, 5vw, 48px);
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    margin-bottom: 12px;
+  }
+  .hero p {
+    color: rgba(255,255,255,0.85);
+    font-size: 16px;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+  .hero-meta {
+    margin-top: 24px;
+    display: flex; align-items: center; justify-content: center;
+    gap: 24px; flex-wrap: wrap;
+  }
+  .hero-meta span {
+    color: rgba(255,255,255,0.9);
+    font-size: 13px;
+    display: flex; align-items: center; gap: 6px;
+  }
+
+  /* === CONTAINER === */
+  .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+
+  /* === STATS === */
+  .stats-section { margin: -36px auto 0; padding: 0 24px; max-width: 1200px; position: relative; z-index: 10; }
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+  }
+  .stat-card {
+    background: var(--card);
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: var(--shadow-lg);
+    border: 1px solid var(--border);
+    display: flex; align-items: center; gap: 16px;
+    animation: slideUp 0.5s ease forwards;
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  .stat-card:nth-child(1) { animation-delay: 0.1s; }
+  .stat-card:nth-child(2) { animation-delay: 0.2s; }
+  .stat-card:nth-child(3) { animation-delay: 0.3s; }
+  .stat-card:nth-child(4) { animation-delay: 0.4s; }
+  .stat-icon {
+    width: 52px; height: 52px;
+    border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 24px; flex-shrink: 0;
+  }
+  .stat-icon.purple { background: linear-gradient(135deg, #8b5cf6, #7c3aed); }
+  .stat-icon.green { background: linear-gradient(135deg, #10b981, #059669); }
+  .stat-icon.blue { background: linear-gradient(135deg, #3b82f6, #2563eb); }
+  .stat-icon.orange { background: linear-gradient(135deg, #f59e0b, #d97706); }
+  .stat-value { font-size: 28px; font-weight: 700; color: var(--text); line-height: 1; }
+  .stat-label { font-size: 13px; color: var(--text-muted); margin-top: 4px; }
+
+  /* === SECTION TITLE === */
+  .section { margin: 48px auto; padding: 0 24px; max-width: 1200px; }
+  .section-header { margin-bottom: 24px; display: flex; align-items: center; gap: 12px; }
+  .section-icon {
+    width: 40px; height: 40px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+  }
+  .section-title { font-size: 22px; font-weight: 700; color: var(--text); }
+  .section-sub { font-size: 14px; color: var(--text-muted); margin-top: 2px; }
+
+  /* === TOPIC CARD === */
+  .topic-card {
+    background: var(--card);
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow);
+    margin-bottom: 32px;
+    overflow: hidden;
+    animation: slideUp 0.6s ease forwards;
+    opacity: 0;
+    transform: translateY(24px);
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
+  }
+  .topic-card:hover {
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-2px);
+  }
+  .topic-card:nth-child(1) { animation-delay: 0.1s; }
+  .topic-card:nth-child(2) { animation-delay: 0.15s; }
+  .topic-card:nth-child(3) { animation-delay: 0.2s; }
+  .topic-card:nth-child(4) { animation-delay: 0.25s; }
+  .topic-card:nth-child(5) { animation-delay: 0.3s; }
+  .topic-card:nth-child(6) { animation-delay: 0.35s; }
+  .topic-card:nth-child(7) { animation-delay: 0.4s; }
+  .topic-card:nth-child(8) { animation-delay: 0.45s; }
+  .topic-card:nth-child(9) { animation-delay: 0.5s; }
+  .topic-card:nth-child(10) { animation-delay: 0.55s; }
+
+  .topic-header {
+    padding: 24px 28px;
+    display: flex; align-items: flex-start; gap: 16px;
+    flex-wrap: wrap;
+  }
+  .topic-rank {
+    width: 40px; height: 40px;
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 16px; color: #fff;
+    flex-shrink: 0;
+  }
+  .rank-1 { background: linear-gradient(135deg, #ff6b6b, #ee5a24); }
+  .rank-2 { background: linear-gradient(135deg, #fd9644, #e55039); }
+  .rank-3 { background: linear-gradient(135deg, #f7b731, #f0932b); }
+  .rank-n { background: linear-gradient(135deg, #a29bfe, #6c5ce7); }
+
+  .topic-info { flex: 1; min-width: 200px; }
+  .topic-name { font-size: 20px; font-weight: 700; color: var(--text); }
+  .topic-meta { margin-top: 6px; display: flex; gap: 12px; flex-wrap: wrap; }
+  .topic-tag {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 3px 10px; border-radius: 100px;
+    font-size: 12px; font-weight: 500;
+  }
+  .tag-hot { background: #fef3c7; color: #92400e; }
+  .tag-category { background: #ede9fe; color: #5b21b6; }
+
+  .topic-score-block { text-align: right; flex-shrink: 0; }
+  .score-circle {
+    width: 72px; height: 72px;
+    border-radius: 50%;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    margin-left: auto;
+  }
+  .score-excellent { background: linear-gradient(135deg, #10b981, #059669); }
+  .score-good { background: linear-gradient(135deg, #3b82f6, #2563eb); }
+  .score-normal { background: linear-gradient(135deg, #9ca3af, #6b7280); }
+  .score-num { font-size: 22px; font-weight: 800; color: #fff; line-height: 1; }
+  .score-label { font-size: 11px; color: rgba(255,255,255,0.85); margin-top: 2px; }
+
+  /* === SCORE BREAKDOWN === */
+  .score-breakdown {
+    padding: 0 28px 4px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  @media (max-width: 640px) { .score-breakdown { grid-template-columns: 1fr; } }
+  .score-row { display: flex; align-items: center; gap: 10px; }
+  .score-row-label { font-size: 12px; color: var(--text-muted); width: 120px; flex-shrink: 0; }
+  .progress-bar-wrap {
+    flex: 1; height: 8px;
+    background: var(--gray-light);
+    border-radius: 100px; overflow: hidden;
+  }
+  .progress-bar-fill {
+    height: 100%; border-radius: 100px;
+    transition: width 1s ease;
+  }
+  .fill-green { background: linear-gradient(90deg, #10b981, #34d399); }
+  .fill-blue { background: linear-gradient(90deg, #3b82f6, #60a5fa); }
+  .fill-gray { background: linear-gradient(90deg, #9ca3af, #d1d5db); }
+  .score-row-val { font-size: 12px; font-weight: 600; color: var(--text); width: 28px; text-align: right; }
+
+  /* === ANALYSIS === */
+  .topic-analysis {
+    margin: 8px 28px 20px;
+    padding: 16px 20px;
+    background: var(--gray-light);
+    border-radius: 12px;
+  }
+  .analysis-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 640px) { .analysis-grid { grid-template-columns: 1fr; } }
+  .analysis-block h4 {
+    font-size: 12px; font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase; letter-spacing: 0.8px;
+    margin-bottom: 6px;
+  }
+  .analysis-block p { font-size: 13px; color: var(--text); line-height: 1.6; }
+
+  /* === PRODUCT IDEAS === */
+  .ideas-section { padding: 0 28px 28px; }
+  .ideas-title {
+    font-size: 14px; font-weight: 600;
+    color: var(--text-muted);
+    margin-bottom: 14px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .ideas-title::before { content: ''; flex: none; width: 3px; height: 16px; border-radius: 2px; background: currentColor; }
+  .ideas-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 14px;
+  }
+  .idea-card {
+    border-radius: 14px;
+    padding: 18px;
+    border: 1px solid transparent;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  .idea-card:hover { transform: translateY(-3px); box-shadow: 0 8px 20px -4px rgba(0,0,0,.12); }
+  .idea-card.green { background: #f0fdf4; border-color: #bbf7d0; }
+  .idea-card.blue { background: #eff6ff; border-color: #bfdbfe; }
+  .idea-card.gray { background: #f9fafb; border-color: #e5e7eb; }
+
+  .idea-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+  .idea-name { font-size: 16px; font-weight: 700; color: var(--text); }
+  .idea-score-badge {
+    font-size: 12px; font-weight: 700;
+    padding: 3px 10px; border-radius: 100px; color: #fff;
+  }
+  .badge-green { background: linear-gradient(135deg, #10b981, #059669); }
+  .badge-blue { background: linear-gradient(135deg, #3b82f6, #2563eb); }
+  .badge-gray { background: linear-gradient(135deg, #9ca3af, #6b7280); }
+
+  .idea-features { margin-bottom: 10px; }
+  .idea-features li {
+    font-size: 12px; color: var(--text); line-height: 1.8;
+    padding-left: 14px; position: relative;
+    list-style: none;
+  }
+  .idea-features li::before {
+    content: '▸';
+    position: absolute; left: 0;
+    color: var(--text-muted);
+  }
+  .idea-users {
+    font-size: 11px; color: var(--text-muted);
+    display: flex; align-items: center; gap: 4px;
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px solid rgba(0,0,0,0.06);
+  }
+
+  /* === DIVIDER === */
+  .topic-divider {
+    height: 1px;
+    background: var(--border);
+    margin: 0 28px 20px;
+  }
+
+  /* === FOOTER === */
+  .footer {
+    background: var(--card);
+    border-top: 1px solid var(--border);
+    padding: 32px 24px;
+    text-align: center;
+    margin-top: 48px;
+  }
+  .footer p { font-size: 13px; color: var(--text-muted); }
+  .footer strong { color: var(--text); }
+
+  /* === LEGEND === */
+  .legend {
+    display: flex; gap: 20px; flex-wrap: wrap;
+    margin-bottom: 20px;
+  }
+  .legend-item {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 13px; color: var(--text-muted);
+  }
+  .legend-dot {
+    width: 12px; height: 12px;
+    border-radius: 50%;
+  }
+
+  /* === ANIMATION === */
+  @keyframes slideUp {
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* === SCROLLBAR === */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: #f1f5f9; }
+  ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+
+  /* === RESPONSIVE === */
+  @media (max-width: 768px) {
+    .topic-header { flex-direction: column; }
+    .topic-score-block { text-align: left; }
+    .score-circle { margin-left: 0; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-badge">🔥 微博热搜 · 产品创意分析</div>
+  <h1>热搜洞察 × 产品创意报告</h1>
+  <p>基于实时热搜话题，结合有趣度&有用度双维度评分，为每个热点生成可落地产品创意</p>
+  <div class="hero-meta">
+    <span>📅 2026年03月10日 10:26</span>
+    <span>📊 10个话题深度分析</span>
+    <span>💡 28个产品创意方案</span>
+    <span>🤖 AI智能生成</span>
+  </div>
+</div>
+
+<!-- STATS -->
+<div class="stats-section">
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-icon purple">📌</div>
+      <div>
+        <div class="stat-value">10</div>
+        <div class="stat-label">分析话题总数</div>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon green">⭐</div>
+      <div>
+        <div class="stat-value">76<span style="font-size:16px;color:#64748b"> 分</span></div>
+        <div class="stat-label">平均综合评分</div>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon orange">🏆</div>
+      <div>
+        <div class="stat-value">4<span style="font-size:16px;color:#64748b"> 个</span></div>
+        <div class="stat-label">优秀话题 (≥80分)</div>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon blue">💡</div>
+      <div>
+        <div class="stat-value">28<span style="font-size:16px;color:#64748b"> 个</span></div>
+        <div class="stat-label">产品创意总数</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN CONTENT -->
+<div class="section">
+  <div class="section-header">
+    <div class="section-icon" style="background:linear-gradient(135deg,#f093fb,#f5576c)">🔥</div>
+    <div>
+      <div class="section-title">热搜话题产品创意分析</div>
+      <div class="section-sub">评分维度：有趣度(80%) = 吸引力+传播性+共鸣+创意空间 · 有用度(20%) = 需求+规模+可行性+持续性</div>
+    </div>
+  </div>
+
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot" style="background:#10b981"></div> 优秀 ≥80分（生成3-5个创意）</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#3b82f6"></div> 良好 60-79分（生成2-3个创意）</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#9ca3af"></div> 一般 &lt;60分（生成1-2个创意）</div>
+  </div>
+
+  <!-- ======== TOPIC 1 ======== -->
+  <div class="topic-card">
+    <div class="topic-header">
+      <div class="topic-rank rank-1">1</div>
+      <div class="topic-info">
+        <div class="topic-name">6G网要来了</div>
+        <div class="topic-meta">
+          <span class="topic-tag tag-hot">🔥 热度 1,131,908</span>
+          <span class="topic-tag tag-category">📡 科技前沿</span>
+        </div>
+      </div>
+      <div class="topic-score-block">
+        <div class="score-circle score-excellent">
+          <div class="score-num">86</div>
+          <div class="score-label">优秀</div>
+        </div>
+      </div>
+    </div>
+    <div class="score-breakdown">
+      <div class="score-row"><span class="score-row-label">话题吸引力(20)</span><div class="progress-bar-wrap"><div class="progress-bar-fill fill-green" style="width:90%"></div></div><span class="score-row-val">18</span></div>
+      <div class="score-row"><span class="score-row-label">病毒传播性(20)</span><div class="progress-bar-wrap"><div class="progress-bar-fill fill-green" style="width:80%"></div></div><span class="score-row-val">16</span></div>
+      <div class="score-row"><span class="score-row-label">情感共鸣(20)</span><div class="progress-bar-wrap"><div class="progress-bar-fill fill-green" style="width:75%"></div></div><span class="score-row-val">15</span></div>
+      <div class="score-row"><span class="score-row-label">创意空间(20)</span><div class="progress-bar-wrap"><div class="progress-bar-fill fill-green" style="width:90%"></div></div><span class="score-row-val">18</span></div>
+      <div class="score-row"><span class="score-row-label">真实需求(5)</span><div class="progress-bar-wrap"><div class="progress-bar-fill fill-green" style="width:100%"></div></div><span class="score-row-val">5</span></div>
+      <div class="score-row"><span class="score-row-label">市场规模(5)</span><div class="progress-bar-wrap"><div class="progress-bar-fill fill-green" style="width:100%"></div></div><span class="score-row-val">5</span></div>
+      <div class="score-row"><span class="score-row-label">可行性(5)</span><div class="progress-bar-wrap"><div class="progress-bar-fill fill-green" style="width:80%"></div></div><span class="score-row-val">4</span></div>
+      <div class="score-row"><span class="score-row-label">持续性(5)</span><div class="progress-bar-wrap"><div class="progress-bar-fill fill-green" style="width:100%"></div></div><span class="score-row-val">5</span></div>
+    </div>
+    <div class="topic-analysis">
+      <div class="analysis-grid">
+        <div class="analysis-block">
+          <h4>话题背景</h4>
+          <p>中国6G研发进入冲刺阶段，工信部、运营商、高校联合攻关，预计2028年商用。该话题代表国家科技战略高度，是5G之后最大的通信基础设施变革。</p>
+        </div>
+        <div class="analysis-block">
+          <h4>社会意义</h4>
+          <p>6G将实现Tbps级速度、亚毫秒延迟和星地一体覆盖，彻底重塑工业互联网、元宇宙、自动驾驶等赛道，催生万亿级新市场。公众对未来生活的好奇心和期待感极强。</p>
+        </div>
+      </div>
+    </div>
+    <div class="topic-divider"></div>
+    <div class="ideas-section">
+      <div class="ideas-title" style="color:#10b981">产品创意方案（优秀·4个）</div>
+      <div class="ideas-grid">
+        <div class="idea-card green">
+          <div class="idea-top">
+            <div class="idea-name">⚡ 速联星图</div>
+            <span class="idea-score-badge badge-green">92分</span>
+          </div>
+          <ul class="idea-features">
+            <li>6G网络速度体验模拟器</li>
+            <li>与历代网络对比可视化</li>
+            <li>6G应用场景沉浸式预览</li>
+            <li>全国6G基站建设进度地图</li>
+            <li>速度竞赛挑战与分享功能</li>
+          </ul>
+          <div class="idea-users">👥 科技爱好者、Z世代用户、运营商从业者</div>
+        </div>
+        <div class="idea-card green">
+          <div class="idea-top">
+            <div class="idea-name">🌐 未来网格</div>
+            <span class="idea-score-badge badge-green">88分</span>
+          </div>
+          <ul class="idea-features">
+            <li>6G时代应用场景AR体验</li>
+            <li>全息通话、数字孪生演示</li>
+            <li>超低延迟游戏/手术模拟</li>
+            <li>6G产业链上市公司追踪</li>
+          </ul>
+          <div class="idea-users">👥 投资者、科研人员、学生群体</div>
+        </div>
+        <div class="idea-card green">
+          <div class="idea-top">
+            <div class="idea-name">📡 频谱学院</div>
+            <span class="idea-score-badge badge-green">85分</span>
+          </div>
+          <ul class="idea-features">
+            <li>游戏化6G技术科普课程</li>
+            <li>每日3分钟趣味技术问答</li>
+            <li>通信技术演进时间轴</li>
+            <li>组队答题赢取周边奖励</li>
+          </ul>
+          <div class="idea-users">👥 在校学生、职场新人、好奇心强的大众</div>
+        </div>
+        <div class="idea-card green">
+          <div class="idea-top">
+            <div class="idea-name">🔌 万联中枢</div>
+            <span class="idea-score-badge badge-green">83分</span>
+          </div>
+          <ul class="idea-features">
+            <li>面向6G的IoT设备预管理平台</li>
+            <li>智慧家居场景规划模拟</li>
+            <li>超低延迟场景需求收集社区</li>
+            <li>6G应用开发者早鸟注册</li>
+          </ul>
+          <div class="idea-users">👥 智能家居用户、开发者、硬件厂商</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======== TOPIC 2 ======== -->
+  <div class="topic-card">
+    <div class="topic-header">
+      <div class="topic-rank rank-2">2</div>
+      <div class="topic-info">
+        <div class="topic-name">10日两会日程预告</div>
+        <div class="topic-meta">
+          <span class="topic-tag tag-hot">🔥 热度 818,459</span>
+          <span class="topic-tag tag-category">🏛️ 政治民生</span>
+        </div>
+      </div>
+      <div class="topic-score-block">
+        <div class="score-circle score-good">
+          <div class="score-num">60</div>
+          <div class="score-label">良好</div>
+        </div>
+      </div>
+    </div>
+    <div class="score-breakdown">
+      <div class="score-row"><span class="score-row-label">话题吸引力(20)</span><div class="progress-bar-wrap"><div class="progress-bar-fill fill-blue" style="width:60%"></div></div><span class="score-row-val">12</span></div>
+      <div class="score-row"><span class="score-row-label">病毒传播性(20)</span><div class="progress-bar-wrap"><div class="progress-bar-fill fill-blue" style="width:50%"></div></div><span class="score-row-val">10</span></div>
+      <div class="score-row"><span class="score-row-label">情感共鸣(20)</span><div class="progress-bar-wrap"><div class="progress-bar-fill fill-blue" style="width:60%"></div></div><span class="score-row-val">12</span></div>
+      <div class="score-row"><span class="score-row-label">创意空间(20)</span><div class="progress-bar-wrap"><div class="progress-bar-fill fill-blue" style="width:50%"></div></div><span class="score-row-val">10</span></div>
+      <div class="score-row"><span class="score-row-label">真实需求(5)</span><div class="progress-bar-wrap"><div class="progress-bar-fill fill-blue" style="width:80%"></div></div><span class="score-row-val">4</span></div>
+      <div class="score-row"><span class="score-row-label">市场规模(5)</span><div class="progress-bar-wrap"><div class="progress-bar-fill fill-blue" style="width:80%"></div></div><span class="score-row-val">4</span></div>
+      <div class="score-row"><span class="score-row-label">可行性(5)</span><div class="progress-bar-wrap"><div class="progress-bar-fill fill-blue" style="width:100%"></div></div><span class="score-row-val">5</span></div>
+      <div class="score-row"><span class="score-row-label">持续性(5)</span><div class="progress-bar-wrap"><div class="progress-bar-fill fill-blue" style="width:60%"></div></div><span class="score-row-val">3</span></div>
+    </div>
+    <div class="topic-analysis">
+      <div class="analysis-grid">
+        <div class="analysis-block">
+          <h4>话题背景</h4>
+          <p>2026年全国两会进行时，每日议程和重要发言备受关注。3月10日是重要会期节点，涉及表决、政府报告审议等关键环节，信息密集度极高。</p>
+        </div>
+        <div class="analysis-block">
+          <h4>社会意义</h4>
+          <p>两会政策直接影响教育、医疗、就业、房地产等民生领域，普通百姓迫切希望了解与自身相关的政策变化，但现有信息渠道复杂碎片，缺乏个性化推送。</p>
+        </div>
+      </div>
+    </div>
+    <div class="topic-divider"></div>
+    <div class="ideas-section">
+      <div class="ideas-title" style="color:#3b82f6">产品创意方案（良好·2个）</div>
+      <div class="ideas-grid">
+        <div class="idea-card blue">
+          <div class="idea-top">
+            <div class="idea-name">🏛️ 会议追踪</div>
+            <span class="idea-score-badge badge-blue">79分</span>
+          </div>
+          <ul class="idea-features">
+            <li>两会议程实时追踪与日历同步</li>
+            <li>AI白话文解读政策要点</li>
+            <li>按话题订阅（教育/医疗/就业）</li>
+            <li>关键词热度趋势分析图</li>
+          </ul>
+          <div class="idea-users">👥 政策关注者、公务员、企业主、媒体从业者</div>
+        </div>
+        <div class="idea-card blue">
+          <div class="idea-top">
+            <div class="idea-name">📋 政策雷达</div>
+            <span class="idea-score-badge badge-blue">75分</span>
+          </div>
+          <ul class="idea-features">
+            <li>个性化政策影响测评问卷</li>
+            <li>智能推送与用户相关政策</li>
+            <li>政策落地进度跟踪提醒</li>
+          </ul>
+          <div class="idea-users">👥 普通市民、中小企业主、在校学生</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======== TOPIC 3 ======== -->
+  <div class="topic-card">
+    <div class="topic-header">
+      <div class="topic-rank rank-3">3</div>
+      <div class="topic-info">
+        <div class="topic-name">2026这些区域将迎发展</div>
+        <div class="topic-meta">
+          <span class="topic-tag tag-hot">🔥 热度 669,015</span>
+          <span class="topic-tag tag-category">🏙️ 区域经济</span>
+        </div>
+      </div>
+      <div class="topic-score-block">
+        <div class="score-circle score-good">
+          <div class="score-num">77</div>
+          <div class="score-label">良好</div>
+        </div>
+      </div>
+    </div>
+    <div class="score-breakdown">
+      <div class="score-row"><span class="score-row-label">话题吸引力(20)</span><div class="progress-bar-wrap"><div class="progress-bar-fill fill-blue" style="width:75%"></div></div><span class="score-row-val">15</span></div>
+      <div class="score-row"><span class="score-row-label">病毒传播性(20)</span><div class="progress-bar-wrap"><div class="progress-bar-fill fill-blue" style="width:70%"></div></div><span class="score-row-val">14</span></div>
+      <div class="score-row"><span class="score-row-label">情感共鸣(20)</span><div class="progress-bar-wrap"><div class="progress-bar-fill fill-blue" style="width:70%"></div></div><span class="score-row-val">14</span></div>
+      <div class="score-row"><span class="score-row-label">创意空间(20)</span><div class="progress-bar-wrap"><div class="progress-bar-fill fill-blue" style="width:80%"></div></div><span class="score-row-val">16</span></div>
+      <div class="score-row"><span class="score-row-label">真实需求(5)</span><div class="progress-bar-wrap"><div class="progress-bar-fill fill-blue" style="width:100%"></div></div><span class="score-row-val">5</span></div>
+      <div class="score-row"><span class="score-row-label">市场规模(5)</span><div class="progress-bar-wrap"><div class="progress-bar-fill fill-blue" style="width:100%"></div></div><span class="score-row-val">5</span></div>
+      <div class="score-row"><span class="score-row-label">可行性(5)</span><div class="progress-bar-wrap"><div class="progress-bar-fill fill-blue" style="width:80%"></div></div><span class="score-row-val">4</span></div>
+      <div class="score-row"><span class="score-row-label">持续性(5)</span><div class="progress-bar-wrap"><div class="progress-bar-fill fill-blue" style="width:80%"></div></div><span class="score-row-val">4</span></div>
+    </div>
+    <div class="topic-analysis">
+      <div class="analysis-grid">
+        <div class="analysis-block">
+          <h4>话题背景</h4>
+          <p>两会公布的"十五五"规划重点区域名单引发广泛关注，包括大湾区、长三角、成渝双城、东北振兴、西部陆海新通道等多个战略区域获得政策红利加持。</p>
+        </div>
+        <div class="analysis-block">
+          <h4>社会意义</h4>
+          <p>区域发展规划直接影响就业、房价、创业机会和产业布局。年轻人关注哪里机会多、哪里值得定居，企业关注产业转移和扩张方向，投资者关注资产配置。</p>
+        </div>
+      </div>
+    </div>
+    <div class="topic-divider"></div>
+    <div class="ideas-section">
+      <div class="ideas-title" style="color:#3b82f6">产品创意方案（良好·3个）</div>
+      <div class="ideas-grid">
+        <div class="idea-card blue">
+          <div class="idea-top">
+            <div class="idea-name">🗺️ 区域洞察</div>
+            <span class="idea-score-badge badge-blue">82分</span>
+          </div>
+          <ul class="idea-features">
+            <li>全国城市发展潜力综合评分</li>
+            <li>政策红利 × 人才吸引力热力图</li>
+            <li>产业落地追踪和就业机会预测</li>
+            <li>个人城市迁移收益评估工具</li>
+          </ul>
+          <div class="idea-users">👥 求职者、企业选址决策者、投资者</div>
+        </div>
+        <div class="idea-card blue">
+          <div class="idea-top">
+            <div class="idea-name">🏙️ 城市热图</div>
+            <span class="idea-score-badge badge-blue">77分</span>
+          </div>
+          <ul class="idea-features">
+            <li>区域经济发展可视化大屏</li>
+            <li>GDP/人口/房价多维对比</li>
+            <li>政策落地进度实时更新</li>
+          </ul>
+          <div class="idea-users">👥 媒体从业者、政府研究人员、高校师生</div>
+        </div>
+        <div class="idea-card blue">
+          <div class="idea-top">
+            <div class="idea-name">🧳 迁居参谋</div>
+            <span class="idea-score-badge badge-blue">80分</span>
+          </div>
+          <ul class="idea-features">
+            <li>基于发展规划的城市生活成本计算</li>
+            <li>职业发展机会 × 生活质量综合打分</li>
+            <li>同城真实用户生活体验分享社区</li>
+          </ul>
+          <div class="idea-users">👥 毕业生、跨城求职者、计划定居的年轻人</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======== TOPIC 4 ======== -->
+  <div class="topic-card">
+    <div class="topic-header">
+      <div class="topic-rank rank-n">4</div>
+      <div class="topic-info">
+        <div class="topic-name">MiuMiu巴黎时装秀</div>
+        <div class="topic-meta">
+          <span class="topic-tag tag-hot">🔥 时尚热搜</span>
+          <span class="topic-tag tag-category">👗 时尚奢品</span>
+        </div>
+      </div>
+      <div class="topic-score-block">
+        <div class="score-circle score-excellent">
+          <div class="score-num">82</div>
+          <div class="score-label">优秀</div>
+        </div>
+      </div>
+    </div>
+    <div class="score-breakdown">
+      <div class="score-row"><span class="score-row-label">话题吸引力(20)</span><div class="progress-bar-wrap"><div class="progress-bar-fill fill-green" style="width:80%"></div></div><span class="score-row-val">16</span></div>
+      <div class="score-row"><span class="score-row-label">病毒传播性(20)</span><div class="progress-bar-wrap"><div class="progress-bar-fill fill-green" style="width:90%"></div></div><span class="score-row-val">18</span></div>
+      <div class="score-row"><span class="score-row-label">情感共鸣(20)</span><div class="progress-bar-wrap"><div class="progress-bar-fill fill-green" style="width:80%"></div></div><span class="score-row-val">16</span></div>
+      <div class="score-row"><span class="score-row-label">创意空间(20)</span><div class="progress-bar-wrap"><div class="progress-bar-fill fill-green" style="width:85%"></div></div><span class="score-row-val">17</span></div>
+      <div class="score-row"><span class="score-row-label">真实需求(5)</span><div class="progress-bar-wrap"><div class="progress-bar-fill fill-green" style="width:80%"></div></div><span class="score-row-val">4</span></div>
+      <div class="score-row"><span class="score-row-label">市场规模(5)</span><div class="progress-bar-wrap"><div class="progress-bar-fill fill-green" style="width:80%"></div></div><span class="score-row-val">4</span></div>
+      <div class="score-row"><span class="score-row-label">可行性(5)</span><div class="progress-bar-wrap"><div class="progress-bar-fill fill-green" style="width:80%"></div></div><span class="score-row-val">4</span></div>
+      <div class="score-row"><span class="score-row-label">持续性(5)</span><div class="progress-bar-wrap"><div class="progress-bar-fill fill-green" style="width:60%"></div></div><span class="score-row-val">3</span></div>
+    </div>
+    <div class="topic-analysis">
+      <div class="analysis-grid">
+        <div class="analysis-block">
+          <h4>话题背景</h4>
+          <p>Miuccia Prada旗下品牌MiuMiu在巴黎时装周发布2026秋冬系列，凭借独特的"反奢侈"美学和大量明星坐阵，成为社交媒体最热门的秀场之一。</p>
+        </div>
+        <div class="analysis-block">
+          <h4>社会意义</h4>
+          <p>MiuMiu代表当代年轻女性对时尚的重新定义，其"书呆子美学""校园少女感"深度契合Z世代审美。时装秀热搜折射出中国消费者对国际时尚话语权的主动参与意识。</p>
+        </div>
+      </div>
+    </div>
+    <div class="topic-divider"></div>
+    <div class="ideas-section">
+      <div class="ideas-title" style="color:#10b981">产品创意方案（优秀·4个）</div>
+      <div class="ideas-grid">
+        <div class="idea-card green">
+          <div class="idea-top">
+            <div class="idea-name">✨ 秀场速递</div>
+            <span class="idea-score-badge badge-green">90分</span>
+          </div>
+          <ul class="idea-features">
+            <li>四大时装周实时直播与解说</li>
+            <li>AI造型师解读秀场穿搭密码</li>
+            <li>明星同款单品快速比价</li>
+            <li>设计师灵感故事纪录短片</li>
+          </ul>
+          <div class="idea-users">👥 时尚博主、奢品消费者、穿搭爱好者</div>
+        </div>
+        <div class="idea-card green">
+          <div class="idea-top">
+            <div class="idea-name">👗 穿搭克隆</div>
+            <span class="idea-score-badge badge-green">88分</span>
+          </div>
+          <ul class="idea-features">
+            <li>秀场款AI平价替代品推荐</li>
+            <li>上传照片智能识别同款单品</li>
+            <li>百元预算完成大牌同款穿搭</li>
+            <li>用户穿搭UGC社区分享</li>
+          </ul>
+          <div class="idea-users">👥 学生党、时尚平民用户、穿搭博主</div>
+        </div>
+        <div class="idea-card green">
+          <div class="idea-top">
+            <div class="idea-name">🪞 虚拟试衣</div>
+            <span class="idea-score-badge badge-green">85分</span>
+          </div>
+          <ul class="idea-features">
+            <li>AR实时试穿秀场同款单品</li>
+            <li>虚拟全身镜支持多尺码模拟</li>
+            <li>穿搭效果图一键分享朋友圈</li>
+          </ul>
+          <div class="idea-users">👥 时尚消费者、线上购物用户</div>
+        </div>
+        <div class="idea-card green">
+          <div class="idea-top">
+            <div class="idea-name">📚 时尚图鉴</div>
+            <span class="idea-score-badge badge-green">82分</span>
+          </div>
+          <ul class="idea-features">
+            <li>各大品牌历届秀场档案库</li>
+            <li>设计趋势预测AI分析报告</li>
+            <li>流行色彩/廓形/面料数据库</li>
+          </ul>
+          <div class="idea-users">👥 设计师、买手、时尚研究者</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======== TOPIC 5 ======== -->
+  <div class="topic-card">
+    <div class="topic-header">
+      <div class="topic-rank rank-n">5</div>
+      <div class="topic-info">
+        <div class="topic-name">司宫令</div>
+        <div class="topic-meta">
+          <span class="topic-tag tag-hot">🔥 热度 212,499</span>
+          <span class="topic-tag tag-category">🎬 影视娱乐</span>
+        </div>
+      </div>
+      <div class="topic-score-block">
+        <div class="score-circle score-good">
+          <div class="score-num">76</div>
+          <div class="score-label">良好</div>
+        </div>
+      </div>
+    </div>
+    <div class="score-breakdown">
+      <div class="score-row"><span class="score-row-label">话题吸引力(20)</span><div class="progress-bar-wrap"><div class="progress-bar-fill fill-blue" style="width:75%"></div></div><span class="score-row-val">15</span></div>
+      <div class="score-row"><span class="score-row-label">病毒传播性(20)</span><div class="progress-bar-wrap"><div class="progress-bar-fill fill-blue" style="width:80%"></div></div><span class="score-row-val">16</span></div>
+      <div class="score-row"><span class="score-row-label">情感共鸣(20)</span><div class="progress-bar-wrap"><div class="progress-bar-fill fill-blue" style="width:85%"></div></div><span class="score-row-val">17</span></div>
+      <div class="score-row"><span class="score-row-label">创意空间(20)</span><div class="progress-bar-wrap"><div class="progress-bar-fill fill-blue" style="width:70%"></div></div><span class="score-row-val">14</span></div>
+      <div class="score-row"><span class="score-row-label">真实需求(5)</span><div class="progress-bar-wrap"><div class="progress-bar-fill fill-blue" style="width:60%"></div></div><span class="score-row-val">3</span></div>
+      <div class="score-row"><span class="score-row-label">市场规模(5)</span><div class="progress-bar-wrap"><div class="progress-bar-fill fill-blue" style="width:80%"></div></div><span class="score-row-val">4</span></div>
+      <div class="score-row"><span class="score-row-label">可行性(5)</span><div class="progress-bar-wrap"><div class="progress-bar-fill fill-blue" style="width:80%"></div></div><span class="score-row-val">4</span></div>
+      <div class="score-row"><span class="score-row-label">持续性(5)</span><div class="progress-bar-wrap"><div class="progress-bar-fill fill-blue" style="width:60%"></div></div><span class="score-row-val">3</span></div>
+    </div>
+    <div class="topic-analysis">
+      <div class="analysis-grid">
+        <div class="analysis-block">
+          <h4>话题背景</h4>
+          <p>《司宫令》是2026年开年古装权谋剧，讲述女主在宫廷中凭智谋逆袭的故事。精良服化道和紧凑剧情吸引大批粉丝，持续占据剧集热搜榜前列。</p>
+        </div>
+        <div class="analysis-block">
+          <h4>社会意义</h4>
+          <p>古装宫斗剧长期是华语剧集的重要品类，反映观众对历史文化、人情世故的浓厚兴趣。剧中涉及的历史典故、礼制服饰具有极强的科普和二创价值。</p>
+        </div>
+      </div>
+    </div>
+    <div class="topic-divider"></div>
+    <div class="ideas-section">
+      <div class="ideas-title" style="color:#3b82f6">产品创意方案（良好·2个）</div>
+      <div class="ideas-grid">
+        <div class="idea-card blue">
+          <div class="idea-top">
+            <div class="idea-name">📖 追剧神器</div>
+            <span class="idea-score-badge badge-blue">80分</span>
+          </div>
+          <ul class="idea-features">
+            <li>AI实时解读剧情人物关系图谱</li>
+            <li>古代官制/礼仪/诗词背景速查</li>
+            <li>弹幕考据社区（史实vs剧情）</li>
+            <li>剧情下集预测投票竞猜</li>
+          </ul>
+          <div class="idea-users">👥 古装剧粉丝、历史爱好者、二创UP主</div>
+        </div>
+        <div class="idea-card blue">
+          <div class="idea-top">
+            <div class="idea-name">🏯 宫廷秘籍</div>
+            <span class="idea-score-badge badge-blue">74分</span>
+          </div>
+          <ul class="idea-features">
+            <li>游戏化古代宫廷文化学习</li>
+            <li>服饰/饮食/制度知识闯关</li>
+            <li>IP周边虚拟换装体验</li>
+          </ul>
+          <div class="idea-users">👥 学生、国潮爱好者、剧粉二创创作者</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======== TOPIC 6 ======== -->
+  <div class="topic-card">
+    <div class="topic-header">
+      <div class="topic-rank rank-n">6</div>
+      <div class="topic-info">
+        <div class="topic-name">未来5年中国要建设的重大工程</div>
+        <div class="topic-meta">
+          <span class="topic-tag tag-hot">🔥 热度 210,313</span>
+          <span class="topic-tag tag-category">🏗️ 国家战略</span>
+        </div>
+      </div>
+      <div class="topic-score-block">
+        <div class="score-circle score-excellent">
+          <div class="score-num">82</div>
+          <div class="score-label">优秀</div>
+        </div>
+      </div>
+    </div>
+    <div class="score-breakdown">
+      <div class="score-row"><span class="score-row-label">话题吸引力(20)</span><div class="progress-bar-wrap"><div class="progress-bar-fill fill-green" style="width:80%"></div></div><span class="score-row-val">16</span></div>
+      <div class="score-row"><span class="score-row-label">病毒传播性(20)</span><div class="progress-bar-wrap"><div class="progress-bar-fill fill-green" style="width:70%"></div></div><span class="score-row-val">14</span></div>
+      <div class="score-row"><span class="score-row-label">情感共鸣(20)</span><div class="progress-bar-wrap"><div class="progress-bar-fill fill-green" style="width:80%"></div></div><span class="score-row-val">16</span></div>
+      <div class="score-row"><span class="score-row-label">创意空间(20)</span><div class="progress-bar-wrap"><div class="progress-bar-fill fill-green" style="width:85%"></div></div><span class="score-row-val">17</span></div>
+      <div class="score-row"><span class="score-row-label">真实需求(5)</span><div class="progress-bar-wrap"><div class="progress-bar-fill fill-green" style="width:100%"></div></div><span class="score-row-val">5</span></div>
+      <div class="score-row"><span class="score-row-label">市场规模(5)</span><div class="progress-bar-wrap"><div class="progress-bar-fill fill-green" style="width:100%"></div></div><span class="score-row-val">5</span></div>
+      <div class="score-row"><span class="score-row-label">可行性(5)</span><div class="progress-bar-wrap"><div class="progress-bar-fill fill-green" style="width:80%"></div></div><span class="score-row-val">4</span></div>
+      <div class="score-row"><span class="score-row-label">持续性(5)</span><div class="progress-bar-wrap"><div class="progress-bar-fill fill-green" style="width:100%"></div></div><span class="score-row-val">5</span></div>
+    </div>
+    <div class="topic-analysis">
+      <div class="analysis-grid">
+        <div class="analysis-block">
+          <h4>话题背景</h4>
+          <p>"十五五"规划提出未来5年将在川藏铁路、西部超算中心、深地深海工程、新能源特高压、量子通信骨干网等领域推进重大项目，总投资规模超20万亿。</p>
+        </div>
+        <div class="analysis-block">
+          <h4>社会意义</h4>
+          <p>重大工程带动就业、产业链升级和区域经济腾飞，是普通人了解国家经济走向的最直观窗口。工程师、产业工人、投资者均可从中发现个人机遇。</p>
+        </div>
+      </div>
+    </div>
+    <div class="topic-divider"></div>
+    <div class="ideas-section">
+      <div class="ideas-title" style="color:#10b981">产品创意方案（优秀·3个）</div>
+      <div class="ideas-grid">
+        <div class="idea-card green">
+          <div class="idea-top">
+            <div class="idea-name">🏗️ 工程地图</div>
+            <span class="idea-score-badge badge-green">91分</span>
+          </div>
+          <ul class="idea-features">
+            <li>全国重大工程可视化地图追踪</li>
+            <li>工程进度实时更新与里程碑记录</li>
+            <li>工程科普短视频与纪录片合集</li>
+            <li>工程相关岗位招聘信息聚合</li>
+            <li>"参与建设"UGC工人故事社区</li>
+          </ul>
+          <div class="idea-users">👥 工程技术人才、爱国情怀用户、学生、媒体</div>
+        </div>
+        <div class="idea-card green">
+          <div class="idea-top">
+            <div class="idea-name">💼 就业罗盘</div>
+            <span class="idea-score-badge badge-green">86分</span>
+          </div>
+          <ul class="idea-features">
+            <li>基于重大工程的岗位需求预测</li>
+            <li>专业技能 × 工程匹配度测评</li>
+            <li>工程所在地生活指南与薪资对比</li>
+            <li>相关专业院校推荐与培训课程</li>
+          </ul>
+          <div class="idea-users">👥 应届毕业生、转行求职者、工程类从业者</div>
+        </div>
+        <div class="idea-card green">
+          <div class="idea-top">
+            <div class="idea-name">📈 投资雷达</div>
+            <span class="idea-score-badge badge-green">83分</span>
+          </div>
+          <ul class="idea-features">
+            <li>重大工程受益产业链股票筛选</li>
+            <li>工程进度与股价联动分析</li>
+            <li>相关ETF/主题基金智能推荐</li>
+          </ul>
+          <div class="idea-users">👥 个人投资者、机构研究员、理财爱好者</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======== TOPIC 7 ======== -->
+  <div class="topic-card">
+    <div class="topic-header">
+      <div class="topic-rank rank-n">7</div>
+      <div class="topic-info">
+        <div class="topic-name">伊朗称驱逐美以大使可过霍尔木兹</div>
+        <div class="topic-meta">
+          <span class="topic-tag tag-hot">🔥 热度 206,677</span>
+          <span class="topic-tag tag-category">🌍 国际时事</span>
+        </div>
+      </div>
+      <div class="topic-score-block">
+        <div class="score-circle score-good">
+          <div class="score-num">67</div>
+          <div class="score-label">良好</div>
+        </div>
+      </div>
+    </div>
+    <div class="score-breakdown">
+      <div class="score-row"><span class="score-row-label">话题吸引力(20)</span><div class="progress-bar-wrap"><div class="progress-bar-fill fill-blue" style="width:70%"></div></div><span class="score-row-val">14</span></div>
+      <div class="score-row"><span class="score-row-label">病毒传播性(20)</span><div class="progress-bar-wrap"><div class="progress-bar-fill fill-blue" style="width:75%"></div></div><span class="score-row-val">15</span></div>
+      <div class="score-row"><span class="score-row-label">情感共鸣(20)</span><div class="progress-bar-wrap"><div class="progress-bar-fill fill-blue" style="width:60%"></div></div><span class="score-row-val">12</span></div>
+      <div class="score-row"><span class="score-row-label">创意空间(20)</span><div class="progress-bar-wrap"><div class="progress-bar-fill fill-blue" style="width:60%"></div></div><span class="score-row-val">12</span></div>
+      <div class="score-row"><span class="score-row-label">真实需求(5)</span><div class="progress-bar-wrap"><div class="progress-bar-fill fill-blue" style="width:80%"></div></div><span class="score-row-val">4</span></div>
+      <div class="score-row"><span class="score-row-label">市场规模(5)</span><div class="progress-bar-wrap"><div class="progress-bar-fill fill-blue" style="width:60%"></div></div><span class="score-row-val">3</span></div>
+      <div class="score-row"><span class="score-row-label">可行性(5)</span><div class="progress-bar-wrap"><div class="progress-bar-fill fill-blue" style="width:60%"></div></div><span class="score-row-val">3</span></div>
+      <div class="score-row"><span class="score-row-label">持续性(5)</span><div class="progress-bar-wrap"><div class="progress-bar-fill fill-blue" style="width:80%"></div></div><span class="score-row-val">4</span></div>
+    </div>
+    <div class="topic-analysis">
+      <div class="analysis-grid">
+        <div class="analysis-block">
+          <h4>话题背景</h4>
+          <p>伊核谈判陷入僵局，伊朗发出强硬信号，声称若美以持续施压可封锁霍尔木兹海峡。该海峡是全球20%石油的必经通道，地缘博弈牵动全球能源市场神经。</p>
+        </div>
+        <div class="analysis-block">
+          <h4>社会意义</h4>
+          <p>中东局势直接影响全球油价和中国能源安全。普通人虽难以深入参与，但面对信息碎片化，对地缘政治形势的专业解读和能源价格预测有现实需求。</p>
+        </div>
+      </div>
+    </div>
+    <div class="topic-divider"></div>
+    <div class="ideas-section">
+      <div class="ideas-title" style="color:#3b82f6">产品创意方案（良好·2个）</div>
+      <div class="ideas-grid">
+        <div class="idea-card blue">
+          <div class="idea-top">
+            <div class="idea-name">🌐 地缘追踪</div>
+            <span class="idea-score-badge badge-blue">72分</span>
+          </div>
+          <ul class="idea-features">
+            <li>全球地缘政治事件地图可视化</li>
+            <li>中东/俄乌/台海多线追踪面板</li>
+            <li>专家解读与AI摘要双轨呈现</li>
+            <li>局势影响中国股市的相关性分析</li>
+          </ul>
+          <div class="idea-users">👥 投资者、国际关系学生、政策研究者、媒体人</div>
+        </div>
+        <div class="idea-card blue">
+          <div class="idea-top">
+            <div class="idea-name">⛽ 能源预警</div>
+            <span class="idea-score-badge badge-blue">68分</span>
+          </div>
+          <ul class="idea-features">
+            <li>霍尔木兹局势 × 油价联动预警</li>
+            <li>国内油价调整预测与出行建议</li>
+            <li>能源股票/期货相关机会提示</li>
+          </ul>
+          <div class="idea-users">👥 有车一族、能源行业从业者、大宗商品投资者</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======== TOPIC 8 ======== -->
+  <div class="topic-card">
+    <div class="topic-header">
+      <div class="topic-rank rank-n">8</div>
+      <div class="topic-info">
+        <div class="topic-name">CELINE 2026冬季时装秀</div>
+        <div class="topic-meta">
+          <span class="topic-tag tag-hot">🆕 最新热搜</span>
+          <span class="topic-tag tag-category">👗 时尚奢品</span>
+        </div>
+      </div>
+      <div class="topic-score-block">
+        <div class="score-circle score-good">
+          <div class="score-num">76</div>
+          <div class="score-label">良好</div>
+        </div>
+      </div>
+    </div>
+    <div class="score-breakdown">
+      <div class="score-row"><span class="score-row-label">话题吸引力(20)</span><div class="progress-bar-wrap"><div class="progress-bar-fill fill-blue" style="width:75%"></div></div><span class="score-row-val">15</span></div>
+      <div class="score-row"><span class="score-row-label">病毒传播性(20)</span><div class="progress-bar-wrap"><div class="progress-bar-fill fill-blue" style="width:80%"></div></div><span class="score-row-val">16</span></div>
+      <div class="score-row"><span class="score-row-label">情感共鸣(20)</span><div class="progress-bar-wrap"><div class="progress-bar-fill fill-blue" style="width:70%"></div></div><span class="score-row-val">14</span></div>
+      <div class="score-row"><span class="score-row-label">创意空间(20)</span><div class="progress-bar-wrap"><div class="progress-bar-fill fill-blue" style="width:80%"></div></div><span class="score-row-val">16</span></div>
+      <div class="score-row"><span class="score-row-label">真实需求(5)</span><div class="progress-bar-wrap"><div class="progress-bar-fill fill-blue" style="width:80%"></div></div><span class="score-row-val">4</span></div>
+      <div class="score-row"><span class="score-row-label">市场规模(5)</span><div class="progress-bar-wrap"><div class="progress-bar-fill fill-blue" style="width:80%"></div></div><span class="score-row-val">4</span></div>
+      <div class="score-row"><span class="score-row-label">可行性(5)</span><div class="progress-bar-wrap"><div class="progress-bar-fill fill-blue" style="width:80%"></div></div><span class="score-row-val">4</span></div>
+      <div class="score-row"><span class="score-row-label">持续性(5)</span><div class="progress-bar-wrap"><div class="progress-bar-fill fill-blue" style="width:60%"></div></div><span class="score-row-val">3</span></div>
+    </div>
+    <div class="topic-analysis">
+      <div class="analysis-grid">
+        <div class="analysis-block">
+          <h4>话题背景</h4>
+          <p>LVMH旗下CELINE发布2026冬季系列，延续Michael Kors接任后的美式极简风格转型。秀场邀请了多位亚洲明星出席，在中国引发广泛社交媒体讨论。</p>
+        </div>
+        <div class="analysis-block">
+          <h4>社会意义</h4>
+          <p>CELINE代表着从极简奢侈到现代都市的品牌转型，中国消费者对其设计迭代的关注折射出国内高端消费力和审美品位的成熟。品牌与明星效应持续催化流量。</p>
+        </div>
+      </div>
+    </div>
+    <div class="topic-divider"></div>
+    <div class="ideas-section">
+      <div class="ideas-title" style="color:#3b82f6">产品创意方案（良好·2个）</div>
+      <div class="ideas-grid">
+        <div class="idea-card blue">
+          <div class="idea-top">
+            <div class="idea-name">💼 奢品解码</div>
+            <span class="idea-score-badge badge-blue">78分</span>
+          </div>
+          <ul class="idea-features">
+            <li>各大奢侈品牌风格DNA档案库</li>
+            <li>新旧系列对比与设计迭代分析</li>
+            <li>鉴别真伪与购买指南一站式</li>
+            <li>奢品保值率大数据追踪</li>
+          </ul>
+          <div class="idea-users">👥 奢品消费者、时尚博主、二手奢品从业者</div>
+        </div>
+        <div class="idea-card blue">
+          <div class="idea-top">
+            <div class="idea-name">🎨 风格进化</div>
+            <span class="idea-score-badge badge-blue">73分</span>
+          </div>
+          <ul class="idea-features">
+            <li>国际大牌设计风格演变时间轴</li>
+            <li>设计总监更迭前后对比分析</li>
+            <li>收藏价值潜力评估报告</li>
+          </ul>
+          <div class="idea-users">👥 时装史爱好者、设计专业学生、收藏家</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======== TOPIC 9 ======== -->
+  <div class="topic-card">
+    <div class="topic-header">
+      <div class="topic-rank rank-n">9</div>
+      <div class="topic-info">
+        <div class="topic-name">物业管理改服务住建部采纳了</div>
+        <div class="topic-meta">
+          <span class="topic-tag tag-hot">🔥 热度 202,364</span>
+          <span class="topic-tag tag-category">🏠 民生政策</span>
+        </div>
+      </div>
+      <div class="topic-score-block">
+        <div class="score-circle score-excellent">
+          <div class="score-num">82</div>
+          <div class="score-label">优秀</div>
+        </div>
+      </div>
+    </div>
+    <div class="score-breakdown">
+      <div class="score-row"><span class="score-row-label">话题吸引力(20)</span><div class="progress-bar-wrap"><div class="progress-bar-fill fill-green" style="width:75%"></div></div><span class="score-row-val">15</span></div>
+      <div class="score-row"><span class="score-row-label">病毒传播性(20)</span><div class="progress-bar-wrap"><div class="progress-bar-fill fill-green" style="width:70%"></div></div><span class="score-row-val">14</span></div>
+      <div class="score-row"><span class="score-row-label">情感共鸣(20)</span><div class="progress-bar-wrap"><div class="progress-bar-fill fill-green" style="width:90%"></div></div><span class="score-row-val">18</span></div>
+      <div class="score-row"><span class="score-row-label">创意空间(20)</span><div class="progress-bar-wrap"><div class="progress-bar-fill fill-green" style="width:80%"></div></div><span class="score-row-val">16</span></div>
+      <div class="score-row"><span class="score-row-label">真实需求(5)</span><div class="progress-bar-wrap"><div class="progress-bar-fill fill-green" style="width:100%"></div></div><span class="score-row-val">5</span></div>
+      <div class="score-row"><span class="score-row-label">市场规模(5)</span><div class="progress-bar-wrap"><div class="progress-bar-fill fill-green" style="width:100%"></div></div><span class="score-row-val">5</span></div>
+      <div class="score-row"><span class="score-row-label">可行性(5)</span><div class="progress-bar-wrap"><div class="progress-bar-fill fill-green" style="width:80%"></div></div><span class="score-row-val">4</span></div>
+      <div class="score-row"><span class="score-row-label">持续性(5)</span><div class="progress-bar-wrap"><div class="progress-bar-fill fill-green" style="width:100%"></div></div><span class="score-row-val">5</span></div>
+    </div>
+    <div class="topic-analysis">
+      <div class="analysis-grid">
+        <div class="analysis-block">
+          <h4>话题背景</h4>
+          <p>住建部正式采纳全国人大代表建议，将物业公司定位从"管理者"改为"服务者"，明确业主权利优先，推动物业费收支透明化，为后续立法奠定基础。</p>
+        </div>
+        <div class="analysis-block">
+          <h4>社会意义</h4>
+          <p>物业矛盾是中国城市居民日常痛点之一，涉及数亿业主切身利益。政策转变信号极强，未来物业数字化透明化改革空间巨大，业主自治数字平台需求强烈。</p>
+        </div>
+      </div>
+    </div>
+    <div class="topic-divider"></div>
+    <div class="ideas-section">
+      <div class="ideas-title" style="color:#10b981">产品创意方案（优秀·4个）</div>
+      <div class="ideas-grid">
+        <div class="idea-card green">
+          <div class="idea-top">
+            <div class="idea-name">🏘️ 邻里通</div>
+            <span class="idea-score-badge badge-green">93分</span>
+          </div>
+          <ul class="idea-features">
+            <li>业主诉求数字化提交与追踪</li>
+            <li>物业服务响应时效实时公示</li>
+            <li>小区公共经费收支透明账单</li>
+            <li>业主满意度月度评分榜</li>
+            <li>维权证据一键归档与推送</li>
+          </ul>
+          <div class="idea-users">👥 全国城市业主群体（潜在用户5亿+）</div>
+        </div>
+        <div class="idea-card green">
+          <div class="idea-top">
+            <div class="idea-name">⭐ 物业评测</div>
+            <span class="idea-score-badge badge-green">88分</span>
+          </div>
+          <ul class="idea-features">
+            <li>全国小区物业服务质量评分</li>
+            <li>买房前必看的物业口碑查询</li>
+            <li>物业公司黑名单/白名单数据库</li>
+            <li>换物业投票发起与组织功能</li>
+          </ul>
+          <div class="idea-users">👥 购房者、换房者、业委会成员</div>
+        </div>
+        <div class="idea-card green">
+          <div class="idea-top">
+            <div class="idea-name">🗳️ 社区自治</div>
+            <span class="idea-score-badge badge-green">85分</span>
+          </div>
+          <ul class="idea-features">
+            <li>业委会数字化管理与会议记录</li>
+            <li>业主大会在线投票系统</li>
+            <li>物业合同模板与法律条款解读</li>
+          </ul>
+          <div class="idea-users">👥 业委会成员、积极业主、物业法律顾问</div>
+        </div>
+        <div class="idea-card green">
+          <div class="idea-top">
+            <div class="idea-name">⚖️ 维权助手</div>
+            <span class="idea-score-badge badge-green">82分</span>
+          </div>
+          <ul class="idea-features">
+            <li>物业纠纷AI智能问诊分析</li>
+            <li>投诉信自动生成与一键提交</li>
+            <li>法律援助律师在线匹配</li>
+          </ul>
+          <div class="idea-users">👥 遭遇物业矛盾的业主、法律援助机构</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======== TOPIC 10 ======== -->
+  <div class="topic-card">
+    <div class="topic-header">
+      <div class="topic-rank rank-n">10</div>
+      <div class="topic-info">
+        <div class="topic-name">历届SMG视后</div>
+        <div class="topic-meta">
+          <span class="topic-tag tag-hot">🔥 热度 202,349</span>
+          <span class="topic-tag tag-category">🎭 娱乐盛典</span>
+        </div>
+      </div>
+      <div class="topic-score-block">
+        <div class="score-circle score-good">
+          <div class="score-num">72</div>
+          <div class="score-label">良好</div>
+        </div>
+      </div>
+    </div>
+    <div class="score-breakdown">
+      <div class="score-row"><span class="score-row-label">话题吸引力(20)</span><div class="progress-bar-wrap"><div class="progress-bar-fill fill-blue" style="width:70%"></div></div><span class="score-row-val">14</span></div>
+      <div class="score-row"><span class="score-row-label">病毒传播性(20)</span><div class="progress-bar-wrap"><div class="progress-bar-fill fill-blue" style="width:75%"></div></div><span class="score-row-val">15</span></div>
+      <div class="score-row"><span class="score-row-label">情感共鸣(20)</span><div class="progress-bar-wrap"><div class="progress-bar-fill fill-blue" style="width:80%"></div></div><span class="score-row-val">16</span></div>
+      <div class="score-row"><span class="score-row-label">创意空间(20)</span><div class="progress-bar-wrap"><div class="progress-bar-fill fill-blue" style="width:70%"></div></div><span class="score-row-val">14</span></div>
+      <div class="score-row"><span class="score-row-label">真实需求(5)</span><div class="progress-bar-wrap"><div class="progress-bar-fill fill-blue" style="width:60%"></div></div><span class="score-row-val">3</span></div>
+      <div class="score-row"><span class="score-row-label">市场规模(5)</span><div class="progress-bar-wrap"><div class="progress-bar-fill fill-blue" style="width:60%"></div></div><span class="score-row-val">3</span></div>
+      <div class="score-row"><span class="score-row-label">可行性(5)</span><div class="progress-bar-wrap"><div class="progress-bar-fill fill-blue" style="width:80%"></div></div><span class="score-row-val">4</span></div>
+      <div class="score-row"><span class="score-row-label">持续性(5)</span><div class="progress-bar-wrap"><div class="progress-bar-fill fill-blue" style="width:60%"></div></div><span class="score-row-val">3</span></div>
+    </div>
+    <div class="topic-analysis">
+      <div class="analysis-grid">
+        <div class="analysis-block">
+          <h4>话题背景</h4>
+          <p>SMG（上海文广）旗下白玉兰奖颁奖季引发对历届最佳女演员（视后）的盘点讨论。从陈数到颜丙燕，历届视后各具风格，话题引发大量回忆杀和粉丝争论。</p>
+        </div>
+        <div class="analysis-block">
+          <h4>社会意义</h4>
+          <p>华语剧集视后档案是中国影视文化的重要侧写，折射出不同年代的审美趣味和社会价值观变迁。粉丝文化与怀旧情绪叠加，具备一定的社区情感价值。</p>
+        </div>
+      </div>
+    </div>
+    <div class="topic-divider"></div>
+    <div class="ideas-section">
+      <div class="ideas-title" style="color:#3b82f6">产品创意方案（良好·2个）</div>
+      <div class="ideas-grid">
+        <div class="idea-card blue">
+          <div class="idea-top">
+            <div class="idea-name">🎬 影视年鉴</div>
+            <span class="idea-score-badge badge-blue">76分</span>
+          </div>
+          <ul class="idea-features">
+            <li>华语剧集获奖史全档案数据库</li>
+            <li>演员生涯轨迹可视化时间轴</li>
+            <li>各年度最佳剧集评分回顾</li>
+            <li>AI票选"观众心目中的视后"</li>
+          </ul>
+          <div class="idea-users">👥 老剧迷、华语影视研究者、内容创作者</div>
+        </div>
+        <div class="idea-card blue">
+          <div class="idea-top">
+            <div class="idea-name">🌟 剧迷星球</div>
+            <span class="idea-score-badge badge-blue">71分</span>
+          </div>
+          <ul class="idea-features">
+            <li>影视达人自定义年度评选活动</li>
+            <li>粉丝圈子与追剧小组功能</li>
+            <li>经典剧集重映打卡挑战</li>
+          </ul>
+          <div class="idea-users">👥 影视粉丝社群、内容平台、剧集出品方</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+  <p style="font-size:16px;font-weight:600;color:#1e293b;margin-bottom:8px">📊 分析完成 · 共 10 个话题 · 28 个产品创意</p>
+  <p>生成时间：<strong>2026年03月10日 10:26:37</strong> &nbsp;·&nbsp; 数据来源：<strong>微博热搜实时榜单</strong> &nbsp;·&nbsp; 分析引擎：<strong>Claude AI</strong></p>
+  <p style="margin-top:8px;font-size:12px;color:#94a3b8">评分说明：有趣度(80%) = 吸引力(20) + 传播性(20) + 共鸣(20) + 创意空间(20)  ·  有用度(20%) = 需求(5) + 规模(5) + 可行性(5) + 持续性(5)</p>
+</div>
+
+</body>
+</html>
