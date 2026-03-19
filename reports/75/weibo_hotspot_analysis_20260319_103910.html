@@ -1,0 +1,1174 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>微博热搜产品创意分析报告 - 2026年03月19日</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    padding: 20px;
+    color: #333;
+  }
+  .container { max-width: 1200px; margin: 0 auto; }
+
+  /* 报告头部 */
+  .report-header {
+    background: rgba(255,255,255,0.97);
+    border-radius: 20px;
+    padding: 40px;
+    margin-bottom: 30px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .report-header::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 5px;
+    background: linear-gradient(90deg, #ff6b6b, #feca57, #48dbfb, #ff9ff3, #54a0ff);
+  }
+  .report-title {
+    font-size: 2.2em;
+    font-weight: 800;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 10px;
+  }
+  .report-subtitle {
+    color: #888;
+    font-size: 1em;
+    margin-bottom: 8px;
+  }
+  .report-meta {
+    display: inline-flex;
+    gap: 20px;
+    background: #f8f9ff;
+    padding: 10px 24px;
+    border-radius: 50px;
+    font-size: 0.88em;
+    color: #666;
+    margin-top: 10px;
+  }
+  .report-meta span { display: flex; align-items: center; gap: 5px; }
+
+  /* 统计概览 */
+  .stats-section {
+    background: rgba(255,255,255,0.97);
+    border-radius: 20px;
+    padding: 35px;
+    margin-bottom: 30px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+  }
+  .section-title {
+    font-size: 1.4em;
+    font-weight: 700;
+    color: #2d3748;
+    margin-bottom: 25px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .section-title::before {
+    content: '';
+    width: 4px; height: 22px;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    border-radius: 2px;
+  }
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+  }
+  .stat-card {
+    background: linear-gradient(135deg, #f8f9ff, #fff);
+    border: 1px solid #e8ecff;
+    border-radius: 16px;
+    padding: 24px;
+    text-align: center;
+    transition: transform 0.2s, box-shadow 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+  .stat-card:hover { transform: translateY(-3px); box-shadow: 0 10px 30px rgba(102,126,234,0.15); }
+  .stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+  }
+  .stat-card.total::before { background: linear-gradient(90deg, #667eea, #764ba2); }
+  .stat-card.avg::before { background: linear-gradient(90deg, #f093fb, #f5576c); }
+  .stat-card.excellent::before { background: linear-gradient(90deg, #11998e, #38ef7d); }
+  .stat-card.good::before { background: linear-gradient(90deg, #3498db, #2980b9); }
+  .stat-card.normal::before { background: linear-gradient(90deg, #a0a0a0, #c0c0c0); }
+  .stat-number {
+    font-size: 2.8em;
+    font-weight: 800;
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+  .stat-card.total .stat-number { color: #667eea; }
+  .stat-card.avg .stat-number { color: #f5576c; }
+  .stat-card.excellent .stat-number { color: #11998e; }
+  .stat-card.good .stat-number { color: #3498db; }
+  .stat-card.normal .stat-number { color: #a0a0a0; }
+  .stat-label { font-size: 0.9em; color: #888; font-weight: 500; }
+  .stat-sub { font-size: 0.75em; color: #bbb; margin-top: 4px; }
+
+  /* 评分标准说明 */
+  .scoring-info {
+    background: linear-gradient(135deg, #f8f9ff, #fff0f6);
+    border: 1px dashed #c3b1e1;
+    border-radius: 14px;
+    padding: 20px 24px;
+    margin-top: 20px;
+    display: flex;
+    gap: 30px;
+    flex-wrap: wrap;
+  }
+  .scoring-item { flex: 1; min-width: 200px; }
+  .scoring-item h4 { font-size: 0.9em; font-weight: 600; color: #764ba2; margin-bottom: 6px; }
+  .scoring-item p { font-size: 0.8em; color: #777; line-height: 1.6; }
+
+  /* 话题分析卡片 */
+  .topics-section { margin-bottom: 30px; }
+  .topic-card {
+    background: rgba(255,255,255,0.97);
+    border-radius: 20px;
+    padding: 30px;
+    margin-bottom: 25px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.2s, box-shadow 0.2s;
+    animation: fadeInUp 0.5s ease forwards;
+    opacity: 0;
+  }
+  .topic-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.12);
+  }
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .topic-card:nth-child(1) { animation-delay: 0.1s; }
+  .topic-card:nth-child(2) { animation-delay: 0.15s; }
+  .topic-card:nth-child(3) { animation-delay: 0.2s; }
+  .topic-card:nth-child(4) { animation-delay: 0.25s; }
+  .topic-card:nth-child(5) { animation-delay: 0.3s; }
+  .topic-card:nth-child(6) { animation-delay: 0.35s; }
+  .topic-card:nth-child(7) { animation-delay: 0.4s; }
+  .topic-card:nth-child(8) { animation-delay: 0.45s; }
+  .topic-card:nth-child(9) { animation-delay: 0.5s; }
+  .topic-card:nth-child(10) { animation-delay: 0.55s; }
+
+  .topic-card.excellent-card { border-left: 5px solid #11998e; }
+  .topic-card.good-card { border-left: 5px solid #3498db; }
+  .topic-card.normal-card { border-left: 5px solid #a0a0a0; }
+
+  /* 话题头部 */
+  .topic-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .topic-rank {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 0.9em;
+    color: white; flex-shrink: 0;
+  }
+  .excellent-card .topic-rank { background: linear-gradient(135deg, #11998e, #38ef7d); }
+  .good-card .topic-rank { background: linear-gradient(135deg, #3498db, #54a0ff); }
+  .normal-card .topic-rank { background: linear-gradient(135deg, #a0a0a0, #c0c0c0); }
+
+  .topic-title-wrap { flex: 1; padding: 0 12px; }
+  .topic-name {
+    font-size: 1.2em;
+    font-weight: 700;
+    color: #1a202c;
+    margin-bottom: 5px;
+    line-height: 1.4;
+  }
+  .topic-meta { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 6px; }
+  .topic-badge {
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 0.75em;
+    font-weight: 600;
+  }
+  .badge-hot { background: #fff0f0; color: #e74c3c; }
+  .badge-category { background: #f0f7ff; color: #3498db; }
+  .badge-new { background: #fff9e6; color: #f39c12; }
+
+  /* 总分显示 */
+  .total-score-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 80px;
+  }
+  .score-circle {
+    width: 70px; height: 70px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    flex-direction: column;
+    font-weight: 800;
+    font-size: 1.4em;
+    color: white;
+    position: relative;
+  }
+  .excellent-card .score-circle { background: linear-gradient(135deg, #11998e, #38ef7d); box-shadow: 0 8px 24px rgba(17,153,142,0.4); }
+  .good-card .score-circle { background: linear-gradient(135deg, #3498db, #54a0ff); box-shadow: 0 8px 24px rgba(52,152,219,0.4); }
+  .normal-card .score-circle { background: linear-gradient(135deg, #a0a0a0, #c0c0c0); box-shadow: 0 8px 24px rgba(160,160,160,0.3); }
+  .score-label { font-size: 0.7em; font-weight: 500; margin-top: 2px; }
+
+  /* 评分条 */
+  .score-bars { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 18px 0; }
+  .score-bar-item { }
+  .score-bar-label { font-size: 0.78em; color: #777; margin-bottom: 4px; display: flex; justify-content: space-between; }
+  .score-bar-track {
+    height: 8px;
+    background: #f0f0f0;
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  .score-bar-fill {
+    height: 100%;
+    border-radius: 10px;
+    transition: width 1s ease;
+  }
+  .bar-interesting { background: linear-gradient(90deg, #f093fb, #f5576c); }
+  .bar-useful { background: linear-gradient(90deg, #4facfe, #00f2fe); }
+  .bar-total-excellent { background: linear-gradient(90deg, #11998e, #38ef7d); }
+  .bar-total-good { background: linear-gradient(90deg, #3498db, #54a0ff); }
+  .bar-total-normal { background: linear-gradient(90deg, #a0a0a0, #c0c0c0); }
+
+  /* 话题分析内容 */
+  .topic-analysis {
+    background: #f8f9ff;
+    border-radius: 12px;
+    padding: 16px;
+    margin: 16px 0;
+    font-size: 0.88em;
+    color: #555;
+    line-height: 1.7;
+  }
+  .topic-analysis strong { color: #333; }
+
+  /* 产品创意 */
+  .ideas-title {
+    font-size: 1em;
+    font-weight: 700;
+    color: #2d3748;
+    margin: 20px 0 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .ideas-title::before {
+    content: '💡';
+    font-size: 1em;
+  }
+  .ideas-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 14px;
+  }
+  .idea-card {
+    border-radius: 14px;
+    padding: 18px;
+    position: relative;
+    overflow: hidden;
+    border: 1px solid;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .idea-card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.1); }
+  .excellent-card .idea-card { background: linear-gradient(135deg, #f0fff8, #e8fdf5); border-color: #b2f5ea; }
+  .good-card .idea-card { background: linear-gradient(135deg, #ebf8ff, #e3f2fd); border-color: #bee3f8; }
+  .normal-card .idea-card { background: linear-gradient(135deg, #f9f9f9, #f3f3f3); border-color: #ddd; }
+
+  .idea-name {
+    font-size: 1.05em;
+    font-weight: 800;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+  }
+  .excellent-card .idea-name { color: #0d6e63; }
+  .good-card .idea-name { color: #1a5f8f; }
+  .normal-card .idea-name { color: #555; }
+
+  .idea-score-badge {
+    padding: 2px 8px;
+    border-radius: 20px;
+    font-size: 0.72em;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+  .excellent-card .idea-score-badge { background: #11998e; color: white; }
+  .good-card .idea-score-badge { background: #3498db; color: white; }
+  .normal-card .idea-score-badge { background: #a0a0a0; color: white; }
+
+  .idea-features {
+    list-style: none;
+    margin: 8px 0;
+    font-size: 0.82em;
+    color: #555;
+    line-height: 1.8;
+  }
+  .idea-features li::before { content: '▸ '; color: #999; }
+  .idea-users {
+    font-size: 0.78em;
+    margin-top: 10px;
+    padding: 6px 10px;
+    border-radius: 8px;
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+    line-height: 1.5;
+  }
+  .excellent-card .idea-users { background: rgba(17,153,142,0.1); color: #0d6e63; }
+  .good-card .idea-users { background: rgba(52,152,219,0.1); color: #1a5f8f; }
+  .normal-card .idea-users { background: rgba(160,160,160,0.1); color: #555; }
+
+  /* 评分图例 */
+  .legend {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-top: 8px;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.82em;
+    color: #666;
+  }
+  .legend-dot {
+    width: 12px; height: 12px;
+    border-radius: 3px;
+  }
+
+  /* 页脚 */
+  .report-footer {
+    background: rgba(255,255,255,0.9);
+    border-radius: 16px;
+    padding: 24px;
+    text-align: center;
+    font-size: 0.85em;
+    color: #888;
+    margin-top: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+  }
+  .report-footer strong { color: #667eea; }
+
+  /* 响应式 */
+  @media (max-width: 768px) {
+    body { padding: 12px; }
+    .report-header { padding: 24px 20px; }
+    .report-title { font-size: 1.6em; }
+    .stats-grid { grid-template-columns: repeat(2, 1fr); }
+    .topic-header { flex-direction: column; }
+    .total-score-wrap { flex-direction: row; align-items: center; gap: 10px; }
+    .score-bars { grid-template-columns: 1fr; }
+    .ideas-grid { grid-template-columns: 1fr; }
+    .scoring-info { flex-direction: column; }
+    .report-meta { flex-direction: column; gap: 6px; }
+  }
+  @media (max-width: 480px) {
+    .stats-grid { grid-template-columns: 1fr 1fr; }
+    .stat-number { font-size: 2em; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- 报告头部 -->
+  <div class="report-header">
+    <div class="report-title">🔥 微博热搜产品创意分析报告</div>
+    <div class="report-subtitle">基于实时热搜数据，挖掘有趣创业机会与产品灵感</div>
+    <div class="report-meta">
+      <span>📅 2026年03月19日 10:39</span>
+      <span>📊 共分析 10 条热搜</span>
+      <span>💡 共生成 34 个产品创意</span>
+    </div>
+  </div>
+
+  <!-- 统计概览 -->
+  <div class="stats-section">
+    <div class="section-title">📈 统计概览</div>
+    <div class="stats-grid">
+      <div class="stat-card total">
+        <div class="stat-number">10</div>
+        <div class="stat-label">分析话题数</div>
+        <div class="stat-sub">今日前十热搜</div>
+      </div>
+      <div class="stat-card avg">
+        <div class="stat-number">72.8</div>
+        <div class="stat-label">平均综合评分</div>
+        <div class="stat-sub">有趣×80% + 有用×20%</div>
+      </div>
+      <div class="stat-card excellent">
+        <div class="stat-number">4</div>
+        <div class="stat-label">🌟 优秀话题</div>
+        <div class="stat-sub">≥80分，生成3-5个创意</div>
+      </div>
+      <div class="stat-card good">
+        <div class="stat-number">4</div>
+        <div class="stat-label">✅ 良好话题</div>
+        <div class="stat-sub">60-79分，生成2-3个创意</div>
+      </div>
+      <div class="stat-card normal">
+        <div class="stat-number">2</div>
+        <div class="stat-label">📌 一般话题</div>
+        <div class="stat-sub">&lt;60分，生成1-2个创意</div>
+      </div>
+    </div>
+    <div class="scoring-info">
+      <div class="scoring-item">
+        <h4>🎯 有趣度（占比80分）</h4>
+        <p>话题吸引力(20) + 病毒传播性(20) + 情感共鸣(20) + 创意空间(20)</p>
+      </div>
+      <div class="scoring-item">
+        <h4>💼 有用度（占比20分）</h4>
+        <p>真实需求(5) + 市场规模(5) + 可行性(5) + 持续性(5)</p>
+      </div>
+      <div class="scoring-item">
+        <h4>🏷️ 评分颜色对照</h4>
+        <div class="legend">
+          <div class="legend-item"><div class="legend-dot" style="background:#11998e;"></div> 优秀 ≥80</div>
+          <div class="legend-item"><div class="legend-dot" style="background:#3498db;"></div> 良好 60-79</div>
+          <div class="legend-item"><div class="legend-dot" style="background:#a0a0a0;"></div> 一般 &lt;60</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 话题分析卡片 -->
+  <div class="topics-section">
+    <div class="section-title" style="background:rgba(255,255,255,0.97);padding:20px 28px;border-radius:14px;margin-bottom:20px;box-shadow:0 5px 20px rgba(0,0,0,0.06);">📋 话题详细分析</div>
+
+    <!-- 话题1：4S店吃饭 -->
+    <div class="topic-card excellent-card">
+      <div class="topic-header">
+        <div class="topic-rank">1</div>
+        <div class="topic-title-wrap">
+          <div class="topic-name">#4S店称吃饭超260次客户已报警#</div>
+          <div class="topic-meta">
+            <span class="topic-badge badge-hot">🔥 热度 1,066,284</span>
+            <span class="topic-badge" style="background:#e8f8e8;color:#27ae60;">社会热点</span>
+          </div>
+        </div>
+        <div class="total-score-wrap">
+          <div class="score-circle">82<div class="score-label">分</div></div>
+        </div>
+      </div>
+      <div class="score-bars">
+        <div class="score-bar-item">
+          <div class="score-bar-label"><span>有趣度</span><span>68/80</span></div>
+          <div class="score-bar-track"><div class="score-bar-fill bar-interesting" style="width:85%"></div></div>
+        </div>
+        <div class="score-bar-item">
+          <div class="score-bar-label"><span>有用度</span><span>14/20</span></div>
+          <div class="score-bar-track"><div class="score-bar-fill bar-useful" style="width:70%"></div></div>
+        </div>
+        <div class="score-bar-item" style="grid-column:1/-1;">
+          <div class="score-bar-label"><span>综合评分</span><span>82/100</span></div>
+          <div class="score-bar-track" style="height:10px;"><div class="score-bar-fill bar-total-excellent" style="width:82%"></div></div>
+        </div>
+      </div>
+      <div class="topic-analysis">
+        <strong>📖 话题背景：</strong>某4S汽车经销商投诉一位客户利用看车理由，在店内免费餐厅累计用餐超260次，4S店不堪重负向媒体求助，该客户反称自己有意购车故已报警维权。<br><br>
+        <strong>🔍 社会意义：</strong>折射出当下4S店重度依赖服务留客的经营困境，以及消费者维权意识觉醒与商家边界感模糊之间的矛盾。话题引发广泛讨论：商家免费服务该有规则吗？消费者能无限"占便宜"吗？极强的戏剧性和道德争议性使其成为本日最高热搜。
+      </div>
+      <div class="ideas-title">产品创意方案（共4个）</div>
+      <div class="ideas-grid">
+        <div class="idea-card">
+          <div class="idea-name">薅羊毛宝典 <span class="idea-score-badge">创意★88</span></div>
+          <ul class="idea-features">
+            <li>地图聚合各商家免费福利、试吃、试用活动</li>
+            <li>用户社区分享薅羊毛经验与攻略</li>
+            <li>商家免费服务使用次数提醒与记录</li>
+            <li>积分系统：合法薅羊毛赚回馈奖励</li>
+          </ul>
+          <div class="idea-users">👥 目标用户：25-40岁精打细算的都市白领、学生群体</div>
+        </div>
+        <div class="idea-card">
+          <div class="idea-name">消费存证卫士 <span class="idea-score-badge">创意★85</span></div>
+          <ul class="idea-features">
+            <li>一键记录消费时间、地点、凭证</li>
+            <li>消费争议AI法律建议与维权指导</li>
+            <li>商家不当对待举报与投诉快捷通道</li>
+            <li>消费黑名单/灰名单商家预警</li>
+          </ul>
+          <div class="idea-users">👥 目标用户：有过消费纠纷经历或重视维权的消费者</div>
+        </div>
+        <div class="idea-card">
+          <div class="idea-name">4S点评帮 <span class="idea-score-badge">创意★80</span></div>
+          <ul class="idea-features">
+            <li>专注于汽车4S店真实买车体验评价</li>
+            <li>销售套路曝光与透明化定价对比</li>
+            <li>购车计划智能辅助：防忽悠指南</li>
+            <li>4S店服务质量年度排行榜</li>
+          </ul>
+          <div class="idea-users">👥 目标用户：准购车用户、汽车消费者权益维护人群</div>
+        </div>
+        <div class="idea-card">
+          <div class="idea-name">商家边界君 <span class="idea-score-badge">创意★76</span></div>
+          <ul class="idea-features">
+            <li>商家免费服务规则透明公示平台</li>
+            <li>客户积分管理与服务次数智能限制</li>
+            <li>商家服务边界AI顾问定制方案</li>
+          </ul>
+          <div class="idea-users">👥 目标用户：中小商家主、汽车经销商运营团队</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 话题2：胖东来戒指 -->
+    <div class="topic-card excellent-card">
+      <div class="topic-header">
+        <div class="topic-rank">2</div>
+        <div class="topic-title-wrap">
+          <div class="topic-name">#胖东来小方糖戒指重新上架3天售罄#</div>
+          <div class="topic-meta">
+            <span class="topic-badge badge-hot">🔥 热度 794,925</span>
+            <span class="topic-badge" style="background:#fff3e0;color:#e67e22;">消费零售</span>
+          </div>
+        </div>
+        <div class="total-score-wrap">
+          <div class="score-circle">81<div class="score-label">分</div></div>
+        </div>
+      </div>
+      <div class="score-bars">
+        <div class="score-bar-item">
+          <div class="score-bar-label"><span>有趣度</span><span>65/80</span></div>
+          <div class="score-bar-track"><div class="score-bar-fill bar-interesting" style="width:81%"></div></div>
+        </div>
+        <div class="score-bar-item">
+          <div class="score-bar-label"><span>有用度</span><span>16/20</span></div>
+          <div class="score-bar-track"><div class="score-bar-fill bar-useful" style="width:80%"></div></div>
+        </div>
+        <div class="score-bar-item" style="grid-column:1/-1;">
+          <div class="score-bar-label"><span>综合评分</span><span>81/100</span></div>
+          <div class="score-bar-track" style="height:10px;"><div class="score-bar-fill bar-total-excellent" style="width:81%"></div></div>
+        </div>
+      </div>
+      <div class="topic-analysis">
+        <strong>📖 话题背景：</strong>河南许昌超市品牌"胖东来"推出的创意糖果戒指商品，因其高颜值、高性价比和独特创意，在重新上架后仅3天便再度售罄，引发全网热议。<br><br>
+        <strong>🔍 社会意义：</strong>胖东来已成为国内零售"神话"与情怀象征。此事件折射出当代消费者对"有创意、有温度"产品的强烈渴望，以及国货情怀与小众趣味商品的爆发力。"排队抢购"文化与稀缺效应在社交媒体时代被无限放大。
+      </div>
+      <div class="ideas-title">产品创意方案（共4个）</div>
+      <div class="ideas-grid">
+        <div class="idea-card">
+          <div class="idea-name">爆款雷达站 <span class="idea-score-badge">创意★90</span></div>
+          <ul class="idea-features">
+            <li>全网监控线上线下爆款商品补货动态</li>
+            <li>关键词订阅+库存到货实时推送</li>
+            <li>用户爆款商品口碑评价社区</li>
+            <li>爆款商品趋势预测与热度图谱</li>
+          </ul>
+          <div class="idea-users">👥 目标用户：爱抢购限量商品的年轻消费者、潮流爱好者</div>
+        </div>
+        <div class="idea-card">
+          <div class="idea-name">一物一故事 <span class="idea-score-badge">创意★86</span></div>
+          <ul class="idea-features">
+            <li>小众有创意商品背后故事挖掘与分享</li>
+            <li>UGC创意商品测评图文/短视频社区</li>
+            <li>与小众品牌合作推出联名限量款</li>
+            <li>创意礼品DIY定制与推荐功能</li>
+          </ul>
+          <div class="idea-users">👥 目标用户：18-35岁追求个性、热爱分享的创意消费人群</div>
+        </div>
+        <div class="idea-card">
+          <div class="idea-name">国货宝藏馆 <span class="idea-score-badge">创意★83</span></div>
+          <ul class="idea-features">
+            <li>专注挖掘国内小众高质量创意商品</li>
+            <li>买手团队严选+用户众测双重认证</li>
+            <li>地域特色商品地图：各省宝藏好货</li>
+          </ul>
+          <div class="idea-users">👥 目标用户：偏爱国货、有独特审美的消费者群体</div>
+        </div>
+        <div class="idea-card">
+          <div class="idea-name">情感礼品测评 <span class="idea-score-badge">创意★78</span></div>
+          <ul class="idea-features">
+            <li>节日/场景化创意礼品专项测评</li>
+            <li>礼品情感价值评分与送礼建议</li>
+            <li>AI礼品推荐：根据对象偏好智能匹配</li>
+          </ul>
+          <div class="idea-users">👥 目标用户：重视礼物品质、需要送礼灵感的都市人群</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 话题3：外资项目 -->
+    <div class="topic-card normal-card">
+      <div class="topic-header">
+        <div class="topic-rank">3</div>
+        <div class="topic-title-wrap">
+          <div class="topic-name">#新一批重大外资项目要来了#</div>
+          <div class="topic-meta">
+            <span class="topic-badge badge-hot">🔥 热度 598,080</span>
+            <span class="topic-badge" style="background:#e8f5e9;color:#27ae60;">经济政策</span>
+          </div>
+        </div>
+        <div class="total-score-wrap">
+          <div class="score-circle">54<div class="score-label">分</div></div>
+        </div>
+      </div>
+      <div class="score-bars">
+        <div class="score-bar-item">
+          <div class="score-bar-label"><span>有趣度</span><span>36/80</span></div>
+          <div class="score-bar-track"><div class="score-bar-fill bar-interesting" style="width:45%"></div></div>
+        </div>
+        <div class="score-bar-item">
+          <div class="score-bar-label"><span>有用度</span><span>18/20</span></div>
+          <div class="score-bar-track"><div class="score-bar-fill bar-useful" style="width:90%"></div></div>
+        </div>
+        <div class="score-bar-item" style="grid-column:1/-1;">
+          <div class="score-bar-label"><span>综合评分</span><span>54/100</span></div>
+          <div class="score-bar-track" style="height:10px;"><div class="score-bar-fill bar-total-normal" style="width:54%"></div></div>
+        </div>
+      </div>
+      <div class="topic-analysis">
+        <strong>📖 话题背景：</strong>国家发改委或商务部发布新一轮重大外商投资项目清单，涵盖先进制造、绿色能源、科技研发等领域，是政府推动高水平对外开放的重要信号。<br><br>
+        <strong>🔍 社会意义：</strong>外资项目话题对普通网民的情感吸引力较低，但经济层面意义重大。反映出当前经济形势下政府主动招商引资的迫切性，以及市场对优质外资的期待。话题本身创意空间有限，但产品价值较高。
+      </div>
+      <div class="ideas-title">产品创意方案（共2个）</div>
+      <div class="ideas-grid">
+        <div class="idea-card">
+          <div class="idea-name">外资雷达 <span class="idea-score-badge">创意★72</span></div>
+          <ul class="idea-features">
+            <li>实时追踪重大外资项目落地动态</li>
+            <li>外资项目地图：可视化展示区域分布</li>
+            <li>产业链机遇分析：相关就业/商机提醒</li>
+            <li>外资政策解读AI助手</li>
+          </ul>
+          <div class="idea-users">👥 目标用户：企业主、投资人、产业研究者、求职者</div>
+        </div>
+        <div class="idea-card">
+          <div class="idea-name">招商引资助手 <span class="idea-score-badge">创意★65</span></div>
+          <ul class="idea-features">
+            <li>各地招商政策对比与解读工具</li>
+            <li>外资项目对接撮合信息平台</li>
+            <li>区域营商环境评分与排行</li>
+          </ul>
+          <div class="idea-users">👥 目标用户：地方政府招商团队、外资企业本土化团队</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 话题4：热巴甄稀 -->
+    <div class="topic-card good-card">
+      <div class="topic-header">
+        <div class="topic-rank">4</div>
+        <div class="topic-title-wrap">
+          <div class="topic-name">#和热巴共享甄稀美妙时刻#</div>
+          <div class="topic-meta">
+            <span class="topic-badge" style="background:#fce4ec;color:#c0392b;">品牌推广</span>
+            <span class="topic-badge" style="background:#f3e5f5;color:#8e44ad;">明星代言</span>
+          </div>
+        </div>
+        <div class="total-score-wrap">
+          <div class="score-circle">65<div class="score-label">分</div></div>
+        </div>
+      </div>
+      <div class="score-bars">
+        <div class="score-bar-item">
+          <div class="score-bar-label"><span>有趣度</span><span>54/80</span></div>
+          <div class="score-bar-track"><div class="score-bar-fill bar-interesting" style="width:67%"></div></div>
+        </div>
+        <div class="score-bar-item">
+          <div class="score-bar-label"><span>有用度</span><span>11/20</span></div>
+          <div class="score-bar-track"><div class="score-bar-fill bar-useful" style="width:55%"></div></div>
+        </div>
+        <div class="score-bar-item" style="grid-column:1/-1;">
+          <div class="score-bar-label"><span>综合评分</span><span>65/100</span></div>
+          <div class="score-bar-track" style="height:10px;"><div class="score-bar-fill bar-total-good" style="width:65%"></div></div>
+        </div>
+      </div>
+      <div class="topic-analysis">
+        <strong>📖 话题背景：</strong>甄稀（伊利高端冰淇淋品牌）与代言人迪丽热巴开展联合营销活动，"共享美妙时刻"系列话题引发粉丝及冰淇淋爱好者互动参与。<br><br>
+        <strong>🔍 社会意义：</strong>明星代言与品牌营销的高度结合，折射出Z世代消费者将情感消费与明星崇拜融合的趋势。话题以娱乐性为主，产品创意偏向粉丝经济和体验营销方向。
+      </div>
+      <div class="ideas-title">产品创意方案（共3个）</div>
+      <div class="ideas-grid">
+        <div class="idea-card">
+          <div class="idea-name">明星同款追踪器 <span class="idea-score-badge">创意★78</span></div>
+          <ul class="idea-features">
+            <li>实时抓取明星同款美食/零食信息</li>
+            <li>明星代言商品评价与真实用户反馈</li>
+            <li>明星同款购买渠道与价格比较</li>
+          </ul>
+          <div class="idea-users">👥 目标用户：追星族、时尚美食消费者、15-30岁年轻女性</div>
+        </div>
+        <div class="idea-card">
+          <div class="idea-name">甜蜜打卡圈 <span class="idea-score-badge">创意★72</span></div>
+          <ul class="idea-features">
+            <li>冰淇淋/甜品打卡专属内容社区</li>
+            <li>明星联名甜品限定地图导航</li>
+            <li>甜品 DIY 教程+明星同款复刻挑战</li>
+            <li>粉丝与偶像"共享时刻"虚拟互动玩法</li>
+          </ul>
+          <div class="idea-users">👥 目标用户：甜食爱好者、粉丝群体、小红书重度用户</div>
+        </div>
+        <div class="idea-card">
+          <div class="idea-name">联名限定猎手 <span class="idea-score-badge">创意★68</span></div>
+          <ul class="idea-features">
+            <li>品牌联名限定产品发布预告聚合</li>
+            <li>限定商品到货提醒与购买攻略</li>
+            <li>联名产品二手流通与收藏价值评估</li>
+          </ul>
+          <div class="idea-users">👥 目标用户：联名产品收藏爱好者、潮流消费人群</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 话题5：沙县减脂餐 -->
+    <div class="topic-card excellent-card">
+      <div class="topic-header">
+        <div class="topic-rank">5</div>
+        <div class="topic-title-wrap">
+          <div class="topic-name">#沙县鸡腿饭中国宝宝的减脂餐#</div>
+          <div class="topic-meta">
+            <span class="topic-badge badge-hot">🔥 热度 290,563</span>
+            <span class="topic-badge" style="background:#e8f5e9;color:#27ae60;">健康饮食</span>
+            <span class="topic-badge" style="background:#f3e5f5;color:#8e44ad;">生活方式</span>
+          </div>
+        </div>
+        <div class="total-score-wrap">
+          <div class="score-circle">86<div class="score-label">分</div></div>
+        </div>
+      </div>
+      <div class="score-bars">
+        <div class="score-bar-item">
+          <div class="score-bar-label"><span>有趣度</span><span>66/80</span></div>
+          <div class="score-bar-track"><div class="score-bar-fill bar-interesting" style="width:82%"></div></div>
+        </div>
+        <div class="score-bar-item">
+          <div class="score-bar-label"><span>有用度</span><span>20/20</span></div>
+          <div class="score-bar-track"><div class="score-bar-fill bar-useful" style="width:100%"></div></div>
+        </div>
+        <div class="score-bar-item" style="grid-column:1/-1;">
+          <div class="score-bar-label"><span>综合评分</span><span>86/100</span></div>
+          <div class="score-bar-track" style="height:10px;"><div class="score-bar-fill bar-total-excellent" style="width:86%"></div></div>
+        </div>
+      </div>
+      <div class="topic-analysis">
+        <strong>📖 话题背景：</strong>网友发现沙县小吃的经典鸡腿饭（蒸鸡腿+米饭+汤）热量低、蛋白质高、价格亲民，将其封为"国民减脂餐"，在健身减肥人群中迅速出圈。<br><br>
+        <strong>🔍 社会意义：</strong>折射出当代年轻人既想减脂又不愿花大钱的现实需求，以及"平价健康"消费理念的崛起。沙县小吃国民符号属性赋予话题极高的传播力与情感共鸣，且饮食健康需求是持续性真实痛点，产品创意价值极高。
+      </div>
+      <div class="ideas-title">产品创意方案（共5个）</div>
+      <div class="ideas-grid">
+        <div class="idea-card">
+          <div class="idea-name">街边减脂宝典 <span class="idea-score-badge">创意★92</span></div>
+          <ul class="idea-features">
+            <li>收录沙县、兰州拉面等平价餐厅减脂搭配</li>
+            <li>附近减脂友好餐厅地图导航</li>
+            <li>每日减脂餐计划：按预算智能推荐</li>
+            <li>热量速查：扫描菜单即知卡路里</li>
+            <li>减脂打卡社区：晒饭搭子互相监督</li>
+          </ul>
+          <div class="idea-users">👥 目标用户：20-35岁上班族减脂人群、健身初学者</div>
+        </div>
+        <div class="idea-card">
+          <div class="idea-name">沙县热量表 <span class="idea-score-badge">创意★88</span></div>
+          <ul class="idea-features">
+            <li>专注大众街边餐厅的精准热量数据库</li>
+            <li>AI图像识别：拍照即知热量与营养</li>
+            <li>减脂餐搭配建议：科学配比自动计算</li>
+            <li>用户UGC补充各地特色平价减脂餐</li>
+          </ul>
+          <div class="idea-users">👥 目标用户：外卖族、学生党、热爱健身的上班族</div>
+        </div>
+        <div class="idea-card">
+          <div class="idea-name">平价健康食谱 <span class="idea-score-badge">创意★85</span></div>
+          <ul class="idea-features">
+            <li>15元内的高蛋白低脂食谱视频教程</li>
+            <li>按预算分类：5元/10元/15元减脂方案</li>
+            <li>明星网红同款平价版复刻食谱</li>
+          </ul>
+          <div class="idea-users">👥 目标用户：学生、低预算健身人群、宿舍减脂党</div>
+        </div>
+        <div class="idea-card">
+          <div class="idea-name">国民减脂榜 <span class="idea-score-badge">创意★82</span></div>
+          <ul class="idea-features">
+            <li>基于真实大众饮食的减脂效果排行榜</li>
+            <li>科学评测：各类国民食物的减脂适配度</li>
+            <li>周榜月榜：减脂打卡用户成果展示</li>
+            <li>减脂博主PK挑战：平价vs昂贵减脂对比</li>
+          </ul>
+          <div class="idea-users">👥 目标用户：关注健康减重的全年龄段普通大众</div>
+        </div>
+        <div class="idea-card">
+          <div class="idea-name">减脂搭子App <span class="idea-score-badge">创意★79</span></div>
+          <ul class="idea-features">
+            <li>同城减脂搭子匹配：一起吃减脂餐</li>
+            <li>减脂饮食互相监督打卡系统</li>
+            <li>共享购菜清单：合买省钱减脂食材</li>
+          </ul>
+          <div class="idea-users">👥 目标用户：独居年轻人、减脂路上需要陪伴的用户</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 话题6：冒充消防员 -->
+    <div class="topic-card good-card">
+      <div class="topic-header">
+        <div class="topic-rank">6</div>
+        <div class="topic-title-wrap">
+          <div class="topic-name">#男子因虚荣心冒充消防员多店检查#</div>
+          <div class="topic-meta">
+            <span class="topic-badge badge-hot">🔥 热度 284,698</span>
+            <span class="topic-badge badge-new">官宣</span>
+            <span class="topic-badge" style="background:#fce4ec;color:#c0392b;">社会新闻</span>
+          </div>
+        </div>
+        <div class="total-score-wrap">
+          <div class="score-circle">76<div class="score-label">分</div></div>
+        </div>
+      </div>
+      <div class="score-bars">
+        <div class="score-bar-item">
+          <div class="score-bar-label"><span>有趣度</span><span>62/80</span></div>
+          <div class="score-bar-track"><div class="score-bar-fill bar-interesting" style="width:77%"></div></div>
+        </div>
+        <div class="score-bar-item">
+          <div class="score-bar-label"><span>有用度</span><span>14/20</span></div>
+          <div class="score-bar-track"><div class="score-bar-fill bar-useful" style="width:70%"></div></div>
+        </div>
+        <div class="score-bar-item" style="grid-column:1/-1;">
+          <div class="score-bar-label"><span>综合评分</span><span>76/100</span></div>
+          <div class="score-bar-track" style="height:10px;"><div class="score-bar-fill bar-total-good" style="width:76%"></div></div>
+        </div>
+      </div>
+      <div class="topic-analysis">
+        <strong>📖 话题背景：</strong>一名男子出于虚荣心，穿着消防制服冒充消防员，在多家商店进行"消防安全检查"，被商家发现报警。案件已由警方依法处理。<br><br>
+        <strong>🔍 社会意义：</strong>此事件既有戏剧性（为虚荣装消防员）又有社会警示意义（商家如何辨别真假执法人员）。揭示了商家在面对各类上门"检查"时的困境，以及身份核验体系的缺失。
+      </div>
+      <div class="ideas-title">产品创意方案（共3个）</div>
+      <div class="ideas-grid">
+        <div class="idea-card">
+          <div class="idea-name">证件核验助手 <span class="idea-score-badge">创意★82</span></div>
+          <ul class="idea-features">
+            <li>扫描/查询执法人员证件真伪</li>
+            <li>对接官方数据库实时验证证件有效性</li>
+            <li>各类检查人员正规流程指引手册</li>
+            <li>商家遭遇冒充人员快速报警一键通道</li>
+          </ul>
+          <div class="idea-users">👥 目标用户：中小商家主、餐厅/零售店店长</div>
+        </div>
+        <div class="idea-card">
+          <div class="idea-name">消防自查宝 <span class="idea-score-badge">创意★78</span></div>
+          <ul class="idea-features">
+            <li>商家消防安全自查清单与指导视频</li>
+            <li>消防隐患AI识别：拍照自动诊断</li>
+            <li>消防整改方案与证明文件一键生成</li>
+            <li>正规消防检查标准科普知识库</li>
+          </ul>
+          <div class="idea-users">👥 目标用户：餐饮、零售、娱乐场所等经营者</div>
+        </div>
+        <div class="idea-card">
+          <div class="idea-name">店铺防骗指南 <span class="idea-score-badge">创意★70</span></div>
+          <ul class="idea-features">
+            <li>收录常见商家遭遇诈骗/冒充案例库</li>
+            <li>识别冒充执法人员的行为特征AI分析</li>
+            <li>商家互助社区：分享防骗经验</li>
+          </ul>
+          <div class="idea-users">👥 目标用户：独立小商家、加盟店主、创业者</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 话题7：霍尔木兹海峡 -->
+    <div class="topic-card good-card">
+      <div class="topic-header">
+        <div class="topic-rank">7</div>
+        <div class="topic-title-wrap">
+          <div class="topic-name">#霍尔木兹海峡原来是石油盆地的唯一豁口#</div>
+          <div class="topic-meta">
+            <span class="topic-badge badge-hot">🔥 热度 277,119</span>
+            <span class="topic-badge" style="background:#e3f2fd;color:#1976d2;">地理科普</span>
+          </div>
+        </div>
+        <div class="total-score-wrap">
+          <div class="score-circle">72<div class="score-label">分</div></div>
+        </div>
+      </div>
+      <div class="score-bars">
+        <div class="score-bar-item">
+          <div class="score-bar-label"><span>有趣度</span><span>58/80</span></div>
+          <div class="score-bar-track"><div class="score-bar-fill bar-interesting" style="width:72%"></div></div>
+        </div>
+        <div class="score-bar-item">
+          <div class="score-bar-label"><span>有用度</span><span>14/20</span></div>
+          <div class="score-bar-track"><div class="score-bar-fill bar-useful" style="width:70%"></div></div>
+        </div>
+        <div class="score-bar-item" style="grid-column:1/-1;">
+          <div class="score-bar-label"><span>综合评分</span><span>72/100</span></div>
+          <div class="score-bar-track" style="height:10px;"><div class="score-bar-fill bar-total-good" style="width:72%"></div></div>
+        </div>
+      </div>
+      <div class="topic-analysis">
+        <strong>📖 话题背景：</strong>科普类内容创作者发布关于霍尔木兹海峡的地理科普视频，揭示该海峡是波斯湾（全球最大石油盆地）通向外海的唯一通道，控制全球约20%的石油运输，引发大量网友感叹"原来如此"。<br><br>
+        <strong>🔍 社会意义：</strong>反映了大众对地缘政治与全球经济冷知识的强烈好奇心。"震惊式科普"在短视频时代具有极高传播力，体现知识类内容的社交价值。
+      </div>
+      <div class="ideas-title">产品创意方案（共3个）</div>
+      <div class="ideas-grid">
+        <div class="idea-card">
+          <div class="idea-name">地球冷知识 <span class="idea-score-badge">创意★85</span></div>
+          <ul class="idea-features">
+            <li>每日一条"让你惊掉下巴"地理冷知识</li>
+            <li>可视化交互地图：点击即知地点背后故事</li>
+            <li>冷知识打卡日历：365天地理知识挑战</li>
+            <li>用户出题PK：测测你的地理冷知识</li>
+          </ul>
+          <div class="idea-users">👥 目标用户：对地理历史感兴趣的好奇心旺盛的年轻人</div>
+        </div>
+        <div class="idea-card">
+          <div class="idea-name">全球油气地图 <span class="idea-score-badge">创意★76</span></div>
+          <ul class="idea-features">
+            <li>可视化展示全球能源分布与运输路线</li>
+            <li>地缘政治风险实时标注与解读</li>
+            <li>能源价格与地缘事件关联分析</li>
+            <li>专业数据订阅：对接B端研究机构</li>
+          </ul>
+          <div class="idea-users">👥 目标用户：能源行业从业者、地缘政治研究者、投资人</div>
+        </div>
+        <div class="idea-card">
+          <div class="idea-name">震惊科普站 <span class="idea-score-badge">创意★73</span></div>
+          <ul class="idea-features">
+            <li>专注"颠覆认知"系列科普内容社区</li>
+            <li>科普创作者激励计划与流量扶持</li>
+            <li>知识问答游戏化：答题赢奖励</li>
+          </ul>
+          <div class="idea-users">👥 目标用户：知识内容爱好者、科普创作者、在校学生</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 话题8：鹿晗碰杯 -->
+    <div class="topic-card normal-card">
+      <div class="topic-header">
+        <div class="topic-rank">8</div>
+        <div class="topic-title-wrap">
+          <div class="topic-name">#和鹿晗碰杯万事OK#</div>
+          <div class="topic-meta">
+            <span class="topic-badge badge-new">新</span>
+            <span class="topic-badge" style="background:#fce4ec;color:#c0392b;">品牌营销</span>
+            <span class="topic-badge" style="background:#f3e5f5;color:#8e44ad;">明星代言</span>
+          </div>
+        </div>
+        <div class="total-score-wrap">
+          <div class="score-circle">59<div class="score-label">分</div></div>
+        </div>
+      </div>
+      <div class="score-bars">
+        <div class="score-bar-item">
+          <div class="score-bar-label"><span>有趣度</span><span>50/80</span></div>
+          <div class="score-bar-track"><div class="score-bar-fill bar-interesting" style="width:62%"></div></div>
+        </div>
+        <div class="score-bar-item">
+          <div class="score-bar-label"><span>有用度</span><span>9/20</span></div>
+          <div class="score-bar-track"><div class="score-bar-fill bar-useful" style="width:45%"></div></div>
+        </div>
+        <div class="score-bar-item" style="grid-column:1/-1;">
+          <div class="score-bar-label"><span>综合评分</span><span>59/100</span></div>
+          <div class="score-bar-track" style="height:10px;"><div class="score-bar-fill bar-total-normal" style="width:59%"></div></div>
+        </div>
+      </div>
+      <div class="topic-analysis">
+        <strong>📖 话题背景：</strong>某饮品或酒类品牌邀请明星鹿晗作为代言人，发起"和鹿晗碰杯"的互动营销活动，粉丝参与度较高但公众关注度一般。<br><br>
+        <strong>🔍 社会意义：</strong>品牌借助顶流明星粉丝效应进行营销是常规打法，话题缺乏社会共鸣与原创创意空间，产品创意价值相对有限，但粉丝互动产品方向仍有市场。
+      </div>
+      <div class="ideas-title">产品创意方案（共2个）</div>
+      <div class="ideas-grid">
+        <div class="idea-card">
+          <div class="idea-name">追星碰杯馆 <span class="idea-score-badge">创意★65</span></div>
+          <ul class="idea-features">
+            <li>AR技术实现"与偶像虚拟碰杯"体验</li>
+            <li>粉丝共创：一起为偶像代言产品打call</li>
+            <li>明星同款饮品专题聚合与购买渠道</li>
+          </ul>
+          <div class="idea-users">👥 目标用户：18-28岁追星粉丝群体，以女性为主</div>
+        </div>
+        <div class="idea-card">
+          <div class="idea-name">明星营销榜 <span class="idea-score-badge">创意★60</span></div>
+          <ul class="idea-features">
+            <li>明星代言品牌效果数据追踪与分析</li>
+            <li>品牌与明星匹配度AI评估工具</li>
+            <li>营销活动ROI实时监测仪表盘</li>
+          </ul>
+          <div class="idea-users">👥 目标用户：品牌营销人员、广告代理商、市场研究机构</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 话题9：谢征毕业论文 -->
+    <div class="topic-card good-card">
+      <div class="topic-header">
+        <div class="topic-rank">9</div>
+        <div class="topic-title-wrap">
+          <div class="topic-name">#谢征的毕业论文#</div>
+          <div class="topic-meta">
+            <span class="topic-badge badge-hot">🔥 热度 238,333</span>
+            <span class="topic-badge" style="background:#e8f5e9;color:#27ae60;">剧集热播</span>
+          </div>
+        </div>
+        <div class="total-score-wrap">
+          <div class="score-circle">73<div class="score-label">分</div></div>
+        </div>
+      </div>
+      <div class="score-bars">
+        <div class="score-bar-item">
+          <div class="score-bar-label"><span>有趣度</span><span>58/80</span></div>
+          <div class="score-bar-track"><div class="score-bar-fill bar-interesting" style="width:72%"></div></div>
+        </div>
+        <div class="score-bar-item">
+          <div class="score-bar-label"><span>有用度</span><span>15/20</span></div>
+          <div class="score-bar-track"><div class="score-bar-fill bar-useful" style="width:75%"></div></div>
+        </div>
+        <div class="score-bar-item" style="grid-column:1/-1;">
+          <div class="score-bar-label"><span>综合评分</span><span>73/100</span></div>
+          <div class="score-bar-track" style="height:10px;"><div class="score-bar-fill bar-total-good" style="width:73%"></div></div>
+        </div>
+      </div>
+      <div class="topic-analysis">
+        <strong>📖 话题背景：</strong>某热播剧集中角色"谢征"的毕业论文相关剧情引发观众热议，可能涉及学术压力、代写、抄袭或论文答辩等情节，触动了大量有过论文经历的观众共鸣。<br><br>
+        <strong>🔍 社会意义：</strong>毕业论文焦虑是国内大学生群体普遍痛点，剧集将其戏剧化呈现引发强烈共鸣。创意空间集中在学术辅助工具、论文焦虑减压类产品。
+      </div>
+      <div class="ideas-title">产品创意方案（共3个）</div>
+      <div class="ideas-grid">
+        <div class="idea-card">
+          <div class="idea-name">毕业论文帮 <span class="idea-score-badge">创意★86</span></div>
+          <ul class="idea-features">
+            <li>AI辅助论文选题：基于热点话题推荐研究方向</li>
+            <li>论文大纲智能生成与框架梳理</li>
+            <li>文献综述自动整理与引用格式规范</li>
+            <li>论文写作进度管理与答辩倒计时提醒</li>
+          </ul>
+          <div class="idea-users">👥 目标用户：本科/硕士毕业生、论文写作困难的学生群体</div>
+        </div>
+        <div class="idea-card">
+          <div class="idea-name">追剧学术馆 <span class="idea-score-badge">创意★75</span></div>
+          <ul class="idea-features">
+            <li>将热门剧集情节转化为真实学术研究视角</li>
+            <li>"如果你是XX研究者，论文可以这样写"系列</li>
+            <li>剧情背景知识深度科普与延伸阅读</li>
+            <li>有趣的影视与学术跨界内容社区</li>
+          </ul>
+          <div class="idea-users">👥 目标用户：有学术背景的追剧人群、高校学生与老师</div>
+        </div>
+        <div class="idea-card">
+          <div class="idea-name">论文焦虑树洞 <span class="idea-score-badge">创意★70</span></div>
+          <ul class="idea-features">
+            <li>毕业生压力倾诉与互助匿名社区</li>
+            <li>学长学姐经验分享：论文避坑指南</li>
+            <li>AI心理疏导：应对论文焦虑情绪</li>
+          </ul>
+          <div class="idea-users">👥 目标用户：临近毕业的大学生、研究生群体</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 话题10：歌手2026 -->
+    <div class="topic-card excellent-card">
+      <div class="topic-header">
+        <div class="topic-rank">10</div>
+        <div class="topic-title-wrap">
+          <div class="topic-name">#歌手2026拟邀#</div>
+          <div class="topic-meta">
+            <span class="topic-badge badge-hot">🔥 热度 225,855</span>
+            <span class="topic-badge badge-new">新</span>
+            <span class="topic-badge" style="background:#f3e5f5;color:#8e44ad;">综艺娱乐</span>
+          </div>
+        </div>
+        <div class="total-score-wrap">
+          <div class="score-circle">80<div class="score-label">分</div></div>
+        </div>
+      </div>
+      <div class="score-bars">
+        <div class="score-bar-item">
+          <div class="score-bar-label"><span>有趣度</span><span>64/80</span></div>
+          <div class="score-bar-track"><div class="score-bar-fill bar-interesting" style="width:80%"></div></div>
+        </div>
+        <div class="score-bar-item">
+          <div class="score-bar-label"><span>有用度</span><span>16/20</span></div>
+          <div class="score-bar-track"><div class="score-bar-fill bar-useful" style="width:80%"></div></div>
+        </div>
+        <div class="score-bar-item" style="grid-column:1/-1;">
+          <div class="score-bar-label"><span>综合评分</span><span>80/100</span></div>
+          <div class="score-bar-track" style="height:10px;"><div class="score-bar-fill bar-total-excellent" style="width:80%"></div></div>
+        </div>
+      </div>
+      <div class="topic-analysis">
+        <strong>📖 话题背景：</strong>湖南卫视王牌音乐竞技节目《歌手》宣布2026年新一季即将开播，拟邀嘉宾名单流出（或传出），引发乐迷大量讨论与期待，预测名单话题极具传播力。<br><br>
+        <strong>🔍 社会意义：</strong>《歌手》作为国内顶级音乐竞技节目，每季引发全民热议。"拟邀名单"引发的猜测与期待具有极强的传播性和社区讨论价值，为音乐社交、竞猜互动类产品提供了绝佳创意土壤。
+      </div>
+      <div class="ideas-title">产品创意方案（共3个）</div>
+      <div class="ideas-grid">
+        <div class="idea-card">
+          <div class="idea-name">歌手预测站 <span class="idea-score-badge">创意★88</span></div>
+          <ul class="idea-features">
+            <li>综艺嘉宾预测投票与实时赔率显示</li>
+            <li>嘉宾确认后预测正确率排行奖励机制</li>
+            <li>节目未播先聊：爆料追踪与预测社区</li>
+            <li>AI分析：历届歌手选角规律与今年可能性</li>
+            <li>官方公布后的爆冷/惊喜分析报告</li>
+          </ul>
+          <div class="idea-users">👥 目标用户：音乐综艺重度爱好者、各大歌手粉丝群体</div>
+        </div>
+        <div class="idea-card">
+          <div class="idea-name">全民音乐擂台 <span class="idea-score-badge">创意★84</span></div>
+          <ul class="idea-features">
+            <li>素人参与"歌手同款"演唱挑战赛</li>
+            <li>专业评委+大众投票双轨制评分</li>
+            <li>经典歌曲翻唱PK与跨时代对比</li>
+            <li>与专业音乐人连麦指导的直播功能</li>
+          </ul>
+          <div class="idea-users">👥 目标用户：有音乐梦想的普通人、K歌爱好者、音乐学生</div>
+        </div>
+        <div class="idea-card">
+          <div class="idea-name">音乐品味图谱 <span class="idea-score-badge">创意★80</span></div>
+          <ul class="idea-features">
+            <li>基于歌手喜好匹配相似音乐品味好友</li>
+            <li>歌手粉丝圈子社交：同好一起追综艺</li>
+            <li>个人音乐DNA可视化生成与分享</li>
+            <li>节目播出时同步互动弹幕讨论广场</li>
+          </ul>
+          <div class="idea-users">👥 目标用户：18-40岁音乐爱好者、社交音乐平台用户</div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- end topics-section -->
+
+  <!-- 页脚 -->
+  <div class="report-footer">
+    <div style="font-size:1.05em;font-weight:700;color:#764ba2;margin-bottom:8px;">🤖 微博热搜产品创意分析报告</div>
+    <div>生成时间：2026年03月19日 10:39:10 &nbsp;|&nbsp; 数据来源：微博热搜实时榜单</div>
+    <div style="margin-top:6px;">本报告基于 <strong>有趣度(80%) + 有用度(20%)</strong> 综合评分体系，共分析 <strong>10</strong> 条热搜，生成 <strong>34</strong> 个产品创意</div>
+    <div style="margin-top:8px;font-size:0.8em;color:#bbb;">Powered by Claude · 仅供产品创意参考，不构成投资建议</div>
+  </div>
+
+</div>
+</body>
+</html>
