@@ -1,0 +1,1430 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>微博热搜产品创意分析报告 · 2026-04-04</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Helvetica Neue', sans-serif;
+    background: #f0f2f7;
+    color: #2d3748;
+    line-height: 1.6;
+  }
+  /* ─── HERO ─── */
+  .hero {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 40%, #0f3460 70%, #533483 100%);
+    color: #fff;
+    padding: 56px 24px 48px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Ccircle cx='30' cy='30' r='4'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    pointer-events: none;
+  }
+  .hero-badge {
+    display: inline-block;
+    background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.25);
+    border-radius: 20px;
+    padding: 4px 16px;
+    font-size: 12px;
+    letter-spacing: 1px;
+    margin-bottom: 20px;
+    backdrop-filter: blur(8px);
+  }
+  .hero h1 {
+    font-size: clamp(22px, 5vw, 38px);
+    font-weight: 800;
+    margin-bottom: 12px;
+    text-shadow: 0 2px 20px rgba(0,0,0,0.3);
+  }
+  .hero h1 span { color: #ff6b6b; }
+  .hero-sub {
+    font-size: 14px;
+    opacity: 0.7;
+    margin-top: 8px;
+  }
+  /* ─── STATS ─── */
+  .stats-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    max-width: 1100px;
+    margin: -36px auto 0;
+    padding: 0 20px;
+    position: relative;
+    z-index: 10;
+  }
+  .stat-card {
+    flex: 1 1 140px;
+    background: #fff;
+    border-radius: 16px;
+    padding: 20px 16px;
+    text-align: center;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.10);
+    transition: transform .2s;
+  }
+  .stat-card:hover { transform: translateY(-3px); }
+  .stat-num {
+    font-size: 32px;
+    font-weight: 800;
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+  .stat-label { font-size: 12px; color: #718096; }
+  .c-green  { color: #38a169; }
+  .c-blue   { color: #3182ce; }
+  .c-gray   { color: #a0aec0; }
+  .c-orange { color: #dd6b20; }
+  .c-purple { color: #805ad5; }
+  /* ─── SECTION ─── */
+  .section {
+    max-width: 1100px;
+    margin: 48px auto 0;
+    padding: 0 20px;
+  }
+  .section-title {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .section-title::after {
+    content: '';
+    flex: 1;
+    height: 2px;
+    background: linear-gradient(90deg, #e2e8f0, transparent);
+    border-radius: 2px;
+  }
+  /* ─── TOPIC CARD ─── */
+  .topic-card {
+    background: #fff;
+    border-radius: 20px;
+    padding: 28px;
+    margin-bottom: 24px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.07);
+    border-left: 5px solid #ccc;
+    transition: transform .2s, box-shadow .2s;
+    position: relative;
+    overflow: hidden;
+  }
+  .topic-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 40px rgba(0,0,0,0.12);
+  }
+  .topic-card.excellent { border-left-color: #38a169; }
+  .topic-card.good      { border-left-color: #3182ce; }
+  .topic-card.average   { border-left-color: #a0aec0; }
+  .topic-card::before {
+    content: '';
+    position: absolute;
+    top: 0; right: 0;
+    width: 180px; height: 180px;
+    border-radius: 50%;
+    opacity: 0.04;
+    transform: translate(50%, -50%);
+  }
+  .topic-card.excellent::before { background: #38a169; }
+  .topic-card.good::before      { background: #3182ce; }
+  .topic-card.average::before   { background: #a0aec0; }
+  /* ─── TOPIC HEADER ─── */
+  .topic-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  .topic-rank {
+    font-size: 11px;
+    font-weight: 700;
+    color: #fff;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    border-radius: 8px;
+    padding: 3px 10px;
+    margin-bottom: 6px;
+    display: inline-block;
+    letter-spacing: 0.5px;
+  }
+  .topic-name {
+    font-size: clamp(16px, 3vw, 20px);
+    font-weight: 700;
+    color: #1a202c;
+    margin-bottom: 6px;
+  }
+  .topic-heat {
+    font-size: 12px;
+    color: #e53e3e;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .score-badge {
+    text-align: center;
+    min-width: 80px;
+  }
+  .score-circle {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    font-size: 24px;
+    font-weight: 800;
+    color: #fff;
+    margin: 0 auto 4px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+  }
+  .score-circle.excellent { background: linear-gradient(135deg, #38a169, #68d391); }
+  .score-circle.good      { background: linear-gradient(135deg, #3182ce, #63b3ed); }
+  .score-circle.average   { background: linear-gradient(135deg, #718096, #a0aec0); }
+  .score-label { font-size: 11px; color: #718096; }
+  /* ─── SCORE BREAKDOWN ─── */
+  .score-breakdown {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 12px;
+    margin-bottom: 20px;
+    background: #f7fafc;
+    border-radius: 12px;
+    padding: 16px;
+  }
+  .score-item label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    color: #4a5568;
+    margin-bottom: 6px;
+  }
+  .score-item label span { font-weight: 600; }
+  .progress-bar {
+    height: 8px;
+    background: #e2e8f0;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 1s ease;
+  }
+  .fill-green  { background: linear-gradient(90deg, #48bb78, #38a169); }
+  .fill-blue   { background: linear-gradient(90deg, #63b3ed, #3182ce); }
+  .fill-purple { background: linear-gradient(90deg, #b794f4, #805ad5); }
+  .fill-orange { background: linear-gradient(90deg, #fbb6ce, #e53e3e); }
+  /* ─── TOPIC ANALYSIS ─── */
+  .analysis-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+  .analysis-box {
+    background: #f7fafc;
+    border-radius: 12px;
+    padding: 14px 16px;
+  }
+  .analysis-box h4 {
+    font-size: 12px;
+    font-weight: 700;
+    color: #718096;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin-bottom: 8px;
+  }
+  .analysis-box p {
+    font-size: 13px;
+    color: #2d3748;
+    line-height: 1.6;
+  }
+  /* ─── PRODUCT IDEAS ─── */
+  .ideas-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: #4a5568;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .ideas-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 16px;
+  }
+  .idea-card {
+    border-radius: 16px;
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+    transition: transform .2s, box-shadow .2s;
+  }
+  .idea-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 40px rgba(0,0,0,0.15);
+  }
+  .idea-card.excellent-bg {
+    background: linear-gradient(135deg, #f0fff4, #c6f6d5);
+    border: 1px solid #9ae6b4;
+  }
+  .idea-card.good-bg {
+    background: linear-gradient(135deg, #ebf8ff, #bee3f8);
+    border: 1px solid #90cdf4;
+  }
+  .idea-card.average-bg {
+    background: linear-gradient(135deg, #f7fafc, #edf2f7);
+    border: 1px solid #e2e8f0;
+  }
+  .idea-name {
+    font-size: 17px;
+    font-weight: 800;
+    margin-bottom: 4px;
+    color: #1a202c;
+  }
+  .idea-score-badge {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 20px;
+    margin-bottom: 12px;
+  }
+  .badge-green  { background: #c6f6d5; color: #276749; }
+  .badge-blue   { background: #bee3f8; color: #1a365d; }
+  .badge-gray   { background: #edf2f7; color: #4a5568; }
+  .idea-features {
+    list-style: none;
+    margin-bottom: 12px;
+  }
+  .idea-features li {
+    font-size: 13px;
+    color: #2d3748;
+    padding: 3px 0;
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+  }
+  .idea-features li::before {
+    content: '▸';
+    color: #68d391;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .good-bg .idea-features li::before   { color: #63b3ed; }
+  .average-bg .idea-features li::before { color: #a0aec0; }
+  .idea-user {
+    font-size: 12px;
+    color: #718096;
+    background: rgba(255,255,255,0.7);
+    border-radius: 8px;
+    padding: 6px 10px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .idea-user strong { color: #4a5568; }
+  /* ─── FOOTER ─── */
+  .footer {
+    text-align: center;
+    padding: 48px 24px 36px;
+    color: #a0aec0;
+    font-size: 12px;
+    margin-top: 48px;
+  }
+  .footer strong { color: #718096; }
+  /* ─── DIVIDER ─── */
+  .topic-divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, #e2e8f0, transparent);
+    margin: 20px 0;
+  }
+  /* ─── RESPONSIVE ─── */
+  @media (max-width: 600px) {
+    .hero { padding: 40px 16px 40px; }
+    .stats-bar { gap: 10px; }
+    .stat-card { padding: 16px 12px; }
+    .stat-num { font-size: 26px; }
+    .topic-card { padding: 20px 16px; }
+    .ideas-grid { grid-template-columns: 1fr; }
+  }
+  /* ─── ANIMATION ─── */
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .topic-card { animation: fadeInUp .5s ease both; }
+  .topic-card:nth-child(1)  { animation-delay: .05s; }
+  .topic-card:nth-child(2)  { animation-delay: .10s; }
+  .topic-card:nth-child(3)  { animation-delay: .15s; }
+  .topic-card:nth-child(4)  { animation-delay: .20s; }
+  .topic-card:nth-child(5)  { animation-delay: .25s; }
+  .topic-card:nth-child(6)  { animation-delay: .30s; }
+  .topic-card:nth-child(7)  { animation-delay: .35s; }
+  .topic-card:nth-child(8)  { animation-delay: .40s; }
+  .topic-card:nth-child(9)  { animation-delay: .45s; }
+  .topic-card:nth-child(10) { animation-delay: .50s; }
+  /* ─── TAG ─── */
+  .tag {
+    display: inline-block;
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-weight: 600;
+    margin-left: 6px;
+    vertical-align: middle;
+  }
+  .tag-new { background: #fed7d7; color: #c53030; }
+  /* ─── OVERVIEW CHART ─── */
+  .overview-chart {
+    display: flex;
+    align-items: flex-end;
+    gap: 6px;
+    height: 60px;
+    margin-top: 8px;
+  }
+  .chart-bar {
+    flex: 1;
+    border-radius: 4px 4px 0 0;
+    position: relative;
+    cursor: default;
+    transition: opacity .2s;
+  }
+  .chart-bar:hover { opacity: 0.8; }
+  .chart-bar-label {
+    position: absolute;
+    bottom: -18px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 10px;
+    color: #718096;
+    white-space: nowrap;
+  }
+  .chart-wrap {
+    background: #f7fafc;
+    border-radius: 12px;
+    padding: 20px 20px 32px;
+    margin-bottom: 24px;
+  }
+  .chart-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: #4a5568;
+    margin-bottom: 12px;
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════ HERO ═══════════════════════════════ -->
+<div class="hero">
+  <div class="hero-badge">🔥 微博热搜 · AI产品创意分析</div>
+  <h1>热搜<span>产品创意</span>分析报告</h1>
+  <p style="font-size:16px;opacity:0.85;margin-top:8px;">基于实时热搜话题，挖掘高潜力产品创意方向</p>
+  <p class="hero-sub">📅 生成时间：2026-04-04 10:34:49 &nbsp;|&nbsp; 数据来源：微博热搜榜</p>
+</div>
+
+<!-- ═══════════════════════════════ STATS ═══════════════════════════════ -->
+<div class="stats-bar">
+  <div class="stat-card">
+    <div class="stat-num c-purple">10</div>
+    <div class="stat-label">📊 分析话题数</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-num c-orange">77.9</div>
+    <div class="stat-label">⭐ 平均综合评分</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-num c-green">5</div>
+    <div class="stat-label">🏆 优秀话题 (≥80分)</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-num c-blue">5</div>
+    <div class="stat-label">✅ 良好话题 (60-79分)</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-num c-gray">0</div>
+    <div class="stat-label">💤 一般话题 (&lt;60分)</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-num c-purple">31</div>
+    <div class="stat-label">💡 产品创意总数</div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════ SCORE CHART ═══════════════════════════════ -->
+<div class="section" style="margin-top:60px;">
+  <div class="chart-wrap">
+    <div class="chart-title">📈 各话题综合评分对比</div>
+    <div class="overview-chart">
+      <div class="chart-bar" style="height:96.7%;background:linear-gradient(180deg,#68d391,#38a169);" title="与辉同行宣布全额退款: 87分"><div class="chart-bar-label">87</div></div>
+      <div class="chart-bar" style="height:86.7%;background:linear-gradient(180deg,#63b3ed,#3182ce);" title="优思益称无力售后: 78分"><div class="chart-bar-label">78</div></div>
+      <div class="chart-bar" style="height:91.1%;background:linear-gradient(180deg,#68d391,#38a169);" title="赏花踏青特色主题专列: 82分"><div class="chart-bar-label">82</div></div>
+      <div class="chart-bar" style="height:95.6%;background:linear-gradient(180deg,#68d391,#38a169);" title="海南搁浅皇带鱼: 86分"><div class="chart-bar-label">86</div></div>
+      <div class="chart-bar" style="height:71.1%;background:linear-gradient(180deg,#63b3ed,#3182ce);" title="何宣林是北影班主任: 64分"><div class="chart-bar-label">64</div></div>
+      <div class="chart-bar" style="height:100%;background:linear-gradient(180deg,#f6ad55,#dd6b20);" title="装修去家务化: 90分"><div class="chart-bar-label">90</div></div>
+      <div class="chart-bar" style="height:83.3%;background:linear-gradient(180deg,#63b3ed,#3182ce);" title="带师生徒步祭英烈: 75分"><div class="chart-bar-label">75</div></div>
+      <div class="chart-bar" style="height:66.7%;background:linear-gradient(180deg,#63b3ed,#3182ce);" title="阚清子感谢倪萍: 60分"><div class="chart-bar-label">60</div></div>
+      <div class="chart-bar" style="height:92.2%;background:linear-gradient(180deg,#68d391,#38a169);" title="工信部提醒苹果用户: 83分"><div class="chart-bar-label">83</div></div>
+      <div class="chart-bar" style="height:82.2%;background:linear-gradient(180deg,#63b3ed,#3182ce);" title="王楚钦0比2落后: 74分"><div class="chart-bar-label">74</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════ TOPICS ═══════════════════════════════ -->
+<div class="section">
+  <div class="section-title">🔍 话题深度分析 &amp; 产品创意</div>
+
+  <!-- ══ TOPIC 1 ══ -->
+  <div class="topic-card excellent">
+    <div class="topic-header">
+      <div>
+        <div class="topic-rank">🔥 热搜 #1</div>
+        <div class="topic-name">与辉同行宣布全额退款</div>
+        <div class="topic-heat">🌡 热度指数：1,034,117</div>
+      </div>
+      <div class="score-badge">
+        <div class="score-circle excellent">87</div>
+        <div class="score-label">🏆 优秀</div>
+      </div>
+    </div>
+
+    <div class="score-breakdown">
+      <div class="score-item">
+        <label>话题吸引力 <span>18/20</span></label>
+        <div class="progress-bar"><div class="progress-fill fill-green" style="width:90%"></div></div>
+      </div>
+      <div class="score-item">
+        <label>病毒传播性 <span>18/20</span></label>
+        <div class="progress-bar"><div class="progress-fill fill-green" style="width:90%"></div></div>
+      </div>
+      <div class="score-item">
+        <label>情感共鸣 <span>18/20</span></label>
+        <div class="progress-bar"><div class="progress-fill fill-green" style="width:90%"></div></div>
+      </div>
+      <div class="score-item">
+        <label>创意空间 <span>16/20</span></label>
+        <div class="progress-bar"><div class="progress-fill fill-green" style="width:80%"></div></div>
+      </div>
+      <div class="score-item">
+        <label>有用度综合 <span>17/20</span></label>
+        <div class="progress-bar"><div class="progress-fill fill-purple" style="width:85%"></div></div>
+      </div>
+    </div>
+
+    <div class="analysis-grid">
+      <div class="analysis-box">
+        <h4>📋 话题背景</h4>
+        <p>知名直播间"与辉同行"（董宇辉主导）为消费者宣布全额退款，起因是合作品牌优思益无法提供正常售后服务，形成消费者权益保护的典型事件。</p>
+      </div>
+      <div class="analysis-box">
+        <h4>🌐 社会意义</h4>
+        <p>反映直播带货行业的信任危机与品牌责任缺位问题，大V主动维权展现了平台主播的社会担当，推动行业建立更完善的售后保障体系。</p>
+      </div>
+      <div class="analysis-box">
+        <h4>🎯 产品机会</h4>
+        <p>直播电商消费者保护、品牌信用评估、售后追踪系统存在巨大市场空白，监管趋严背景下合规工具需求旺盛。</p>
+      </div>
+    </div>
+
+    <div class="topic-divider"></div>
+    <div class="ideas-title">💡 产品创意方案（4个）</div>
+    <div class="ideas-grid">
+      <div class="idea-card excellent-bg">
+        <div class="idea-name">📱 直播护盾</div>
+        <div class="idea-score-badge badge-green">创意评分 92</div>
+        <ul class="idea-features">
+          <li>AI实时监控直播间商品品质与品牌信用</li>
+          <li>购买前自动拉取品牌售后投诉记录</li>
+          <li>一键发起集体维权与退款申请</li>
+          <li>主播信用分与历史退款率可视化</li>
+          <li>消费者保险一站式投保入口</li>
+        </ul>
+        <div class="idea-user">👥 目标用户：<strong>直播电商高频消费者（25-45岁女性为主）</strong></div>
+      </div>
+      <div class="idea-card excellent-bg">
+        <div class="idea-name">🔗 带货溯源链</div>
+        <div class="idea-score-badge badge-green">创意评分 88</div>
+        <ul class="idea-features">
+          <li>区块链技术记录商品从源头到销售全链路</li>
+          <li>扫码查看厂家资质与售后承诺合约</li>
+          <li>智能合约自动执行退款条款</li>
+          <li>品牌售后能力评级公开展示</li>
+        </ul>
+        <div class="idea-user">👥 目标用户：<strong>品质敏感型消费者、直播电商平台</strong></div>
+      </div>
+      <div class="idea-card excellent-bg">
+        <div class="idea-name">🛡️ 售后保障险</div>
+        <div class="idea-score-badge badge-green">创意评分 85</div>
+        <ul class="idea-features">
+          <li>直播购物专属"售后保障险"产品</li>
+          <li>品牌倒闭/无力售后时自动理赔</li>
+          <li>与主流直播平台深度嵌入</li>
+          <li>按商品类目动态定价，最低0.5元/单</li>
+        </ul>
+        <div class="idea-user">👥 目标用户：<strong>直播间高客单价消费者、保险科技公司</strong></div>
+      </div>
+      <div class="idea-card excellent-bg">
+        <div class="idea-name">⚖️ 消费者联盟</div>
+        <div class="idea-score-badge badge-green">创意评分 80</div>
+        <ul class="idea-features">
+          <li>同类受害者社区聚合与群体仲裁</li>
+          <li>AI辅助撰写投诉信与法律文书</li>
+          <li>对接市场监管局在线举报入口</li>
+          <li>维权成功案例库与攻略分享</li>
+        </ul>
+        <div class="idea-user">👥 目标用户：<strong>直播消费纠纷受害者群体</strong></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ TOPIC 2 ══ -->
+  <div class="topic-card good">
+    <div class="topic-header">
+      <div>
+        <div class="topic-rank">🔥 热搜 #2</div>
+        <div class="topic-name">优思益称无力售后</div>
+        <div class="topic-heat">🌡 热度指数：724,698</div>
+      </div>
+      <div class="score-badge">
+        <div class="score-circle good">78</div>
+        <div class="score-label">✅ 良好</div>
+      </div>
+    </div>
+
+    <div class="score-breakdown">
+      <div class="score-item">
+        <label>话题吸引力 <span>16/20</span></label>
+        <div class="progress-bar"><div class="progress-fill fill-blue" style="width:80%"></div></div>
+      </div>
+      <div class="score-item">
+        <label>病毒传播性 <span>15/20</span></label>
+        <div class="progress-bar"><div class="progress-fill fill-blue" style="width:75%"></div></div>
+      </div>
+      <div class="score-item">
+        <label>情感共鸣 <span>17/20</span></label>
+        <div class="progress-bar"><div class="progress-fill fill-blue" style="width:85%"></div></div>
+      </div>
+      <div class="score-item">
+        <label>创意空间 <span>14/20</span></label>
+        <div class="progress-bar"><div class="progress-fill fill-blue" style="width:70%"></div></div>
+      </div>
+      <div class="score-item">
+        <label>有用度综合 <span>16/20</span></label>
+        <div class="progress-bar"><div class="progress-fill fill-purple" style="width:80%"></div></div>
+      </div>
+    </div>
+
+    <div class="analysis-grid">
+      <div class="analysis-box">
+        <h4>📋 话题背景</h4>
+        <p>优思益品牌在直播间大量销售后宣称"无力提供售后服务"，消费者面临投诉无门困境，引发对中小品牌直播带货资质监管的广泛讨论。</p>
+      </div>
+      <div class="analysis-box">
+        <h4>🌐 社会意义</h4>
+        <p>暴露中小品牌在直播带货浪潮中"只管销售、不管服务"的乱象，推动社会关注直播平台的品牌准入门槛与售后担保机制建设。</p>
+      </div>
+    </div>
+
+    <div class="topic-divider"></div>
+    <div class="ideas-title">💡 产品创意方案（3个）</div>
+    <div class="ideas-grid">
+      <div class="idea-card good-bg">
+        <div class="idea-name">📊 品牌黑榜</div>
+        <div class="idea-score-badge badge-blue">创意评分 82</div>
+        <ul class="idea-features">
+          <li>聚合工商、消费者协会等多方数据</li>
+          <li>实时更新品牌信用与投诉热度榜</li>
+          <li>购物前一键查询品牌"危险等级"</li>
+          <li>推送订阅已购品牌风险预警</li>
+        </ul>
+        <div class="idea-user">👥 目标用户：<strong>理性消费者、电商平台风控部门</strong></div>
+      </div>
+      <div class="idea-card good-bg">
+        <div class="idea-name">🤝 售后互助圈</div>
+        <div class="idea-score-badge badge-blue">创意评分 75</div>
+        <ul class="idea-features">
+          <li>同品牌消费者自动聚合成互助群</li>
+          <li>共享维权资源、方案与联系方式</li>
+          <li>专业律师志愿者在线解答</li>
+        </ul>
+        <div class="idea-user">👥 目标用户：<strong>遭遇售后难题的消费者群体</strong></div>
+      </div>
+      <div class="idea-card good-bg">
+        <div class="idea-name">🚨 消费预警雷达</div>
+        <div class="idea-score-badge badge-blue">创意评分 79</div>
+        <ul class="idea-features">
+          <li>AI实时扫描直播间品牌资质风险</li>
+          <li>下单前弹窗提示该品牌售后风险分</li>
+          <li>浏览器插件一键集成购物平台</li>
+        </ul>
+        <div class="idea-user">👥 目标用户：<strong>直播电商活跃用户（日均购物≥1次）</strong></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ TOPIC 3 ══ -->
+  <div class="topic-card excellent">
+    <div class="topic-header">
+      <div>
+        <div class="topic-rank">🔥 热搜 #3</div>
+        <div class="topic-name">赏花踏青特色主题专列来了</div>
+        <div class="topic-heat">🌡 热度指数：599,598</div>
+      </div>
+      <div class="score-badge">
+        <div class="score-circle excellent">82</div>
+        <div class="score-label">🏆 优秀</div>
+      </div>
+    </div>
+
+    <div class="score-breakdown">
+      <div class="score-item">
+        <label>话题吸引力 <span>16/20</span></label>
+        <div class="progress-bar"><div class="progress-fill fill-green" style="width:80%"></div></div>
+      </div>
+      <div class="score-item">
+        <label>病毒传播性 <span>15/20</span></label>
+        <div class="progress-bar"><div class="progress-fill fill-green" style="width:75%"></div></div>
+      </div>
+      <div class="score-item">
+        <label>情感共鸣 <span>17/20</span></label>
+        <div class="progress-bar"><div class="progress-fill fill-green" style="width:85%"></div></div>
+      </div>
+      <div class="score-item">
+        <label>创意空间 <span>18/20</span></label>
+        <div class="progress-bar"><div class="progress-fill fill-green" style="width:90%"></div></div>
+      </div>
+      <div class="score-item">
+        <label>有用度综合 <span>16/20</span></label>
+        <div class="progress-bar"><div class="progress-fill fill-purple" style="width:80%"></div></div>
+      </div>
+    </div>
+
+    <div class="analysis-grid">
+      <div class="analysis-box">
+        <h4>📋 话题背景</h4>
+        <p>清明假期前后，铁路部门推出赏花踏青主题特色列车，沿途经过樱花、桃花、油菜花等著名花卉景区，引发大量城市居民的春游热情。</p>
+      </div>
+      <div class="analysis-box">
+        <h4>🌐 社会意义</h4>
+        <p>折射中国中产阶层对"慢生活"和自然体验的渴望，绿皮车复古情怀与赏花经济结合，带动小众旅游目的地振兴，推动文旅融合创新。</p>
+      </div>
+      <div class="analysis-box">
+        <h4>🎯 产品机会</h4>
+        <p>赏花旅游垂直市场尚未有专属产品，花期预测、结伴出行、打卡分享的完整链路存在整合机会，AI气象+旅游融合是差异化切入点。</p>
+      </div>
+    </div>
+
+    <div class="topic-divider"></div>
+    <div class="ideas-title">💡 产品创意方案（3个）</div>
+    <div class="ideas-grid">
+      <div class="idea-card excellent-bg">
+        <div class="idea-name">🌸 花期预报仪</div>
+        <div class="idea-score-badge badge-green">创意评分 89</div>
+        <ul class="idea-features">
+          <li>基于气象大数据AI预测全国花期精确到天</li>
+          <li>AR实景预览目标景点花海盛况</li>
+          <li>推送"最佳观赏时间窗口"及交通方案</li>
+          <li>用户实地拍照更新众包花期数据</li>
+        </ul>
+        <div class="idea-user">👥 目标用户：<strong>热爱春游踏青的都市白领（25-40岁）</strong></div>
+      </div>
+      <div class="idea-card excellent-bg">
+        <div class="idea-name">🚂 踏青组队宝</div>
+        <div class="idea-score-badge badge-green">创意评分 84</div>
+        <ul class="idea-features">
+          <li>同城赏花同行者智能匹配组队</li>
+          <li>专列/包车团购拼车一键发起</li>
+          <li>旅途中共享实时位置与打卡内容</li>
+          <li>行程结束自动生成精美旅行合集</li>
+        </ul>
+        <div class="idea-user">👥 目标用户：<strong>单身青年、摄影爱好者、户外社群</strong></div>
+      </div>
+      <div class="idea-card excellent-bg">
+        <div class="idea-name">📸 专列旅记</div>
+        <div class="idea-score-badge badge-green">创意评分 78</div>
+        <ul class="idea-features">
+          <li>主题列车专属数字纪念册制作工具</li>
+          <li>车厢座位号生成专属"花旅身份证"</li>
+          <li>沿途景点自动触发打卡解锁成就</li>
+        </ul>
+        <div class="idea-user">👥 目标用户：<strong>主题专列乘客、旅行打卡文化爱好者</strong></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ TOPIC 4 ══ -->
+  <div class="topic-card excellent">
+    <div class="topic-header">
+      <div>
+        <div class="topic-rank">🔥 热搜 #4</div>
+        <div class="topic-name">海南一沙滩现巨型搁浅皇带鱼</div>
+        <div class="topic-heat">🌡 热度指数：415,782</div>
+      </div>
+      <div class="score-badge">
+        <div class="score-circle excellent">86</div>
+        <div class="score-label">🏆 优秀</div>
+      </div>
+    </div>
+
+    <div class="score-breakdown">
+      <div class="score-item">
+        <label>话题吸引力 <span>19/20</span></label>
+        <div class="progress-bar"><div class="progress-fill fill-green" style="width:95%"></div></div>
+      </div>
+      <div class="score-item">
+        <label>病毒传播性 <span>20/20</span></label>
+        <div class="progress-bar"><div class="progress-fill fill-green" style="width:100%"></div></div>
+      </div>
+      <div class="score-item">
+        <label>情感共鸣 <span>16/20</span></label>
+        <div class="progress-bar"><div class="progress-fill fill-green" style="width:80%"></div></div>
+      </div>
+      <div class="score-item">
+        <label>创意空间 <span>18/20</span></label>
+        <div class="progress-bar"><div class="progress-fill fill-green" style="width:90%"></div></div>
+      </div>
+      <div class="score-item">
+        <label>有用度综合 <span>13/20</span></label>
+        <div class="progress-bar"><div class="progress-fill fill-purple" style="width:65%"></div></div>
+      </div>
+    </div>
+
+    <div class="analysis-grid">
+      <div class="analysis-box">
+        <h4>📋 话题背景</h4>
+        <p>皇带鱼（又称地震鱼）是世界上最长的硬骨鱼，体长可达17米，深居海底极少现身。此次在海南海滩搁浅引发全网围观，民间地震预兆说法再次流传。</p>
+      </div>
+      <div class="analysis-box">
+        <h4>🌐 社会意义</h4>
+        <p>激发公众对深海生物与海洋生态的关注，"地震鱼"的民间传说折射科学素养的普及需求，也反映沿海生态环境保护问题亟需更多科普教育。</p>
+      </div>
+      <div class="analysis-box">
+        <h4>🎯 产品机会</h4>
+        <p>深海科普内容严重匮乏，猎奇+科学的内容产品有巨大需求，同时海洋生物监测预警系统与公众应急科普平台也存在市场空白。</p>
+      </div>
+    </div>
+
+    <div class="topic-divider"></div>
+    <div class="ideas-title">💡 产品创意方案（4个）</div>
+    <div class="ideas-grid">
+      <div class="idea-card excellent-bg">
+        <div class="idea-name">🐟 深海奇异录</div>
+        <div class="idea-score-badge badge-green">创意评分 91</div>
+        <ul class="idea-features">
+          <li>全球深海异常生物出没记录图谱</li>
+          <li>AR扫描识别搁浅海洋生物并科普讲解</li>
+          <li>用户上报功能+专家实时鉴定</li>
+          <li>深海生物3D动态百科图鉴</li>
+          <li>联动地震局数据的"奇异事件"关联分析</li>
+        </ul>
+        <div class="idea-user">👥 目标用户：<strong>科普爱好者、海洋专业学生、沿海渔民</strong></div>
+      </div>
+      <div class="idea-card excellent-bg">
+        <div class="idea-name">🌊 海洋守护者</div>
+        <div class="idea-score-badge badge-green">创意评分 86</div>
+        <ul class="idea-features">
+          <li>海洋异常生物搁浅实时众报系统</li>
+          <li>对接海洋局和渔政进行官方响应</li>
+          <li>志愿者救援协调与物资调度</li>
+          <li>搁浅事件热力图与趋势分析</li>
+        </ul>
+        <div class="idea-user">👥 目标用户：<strong>沿海居民、环保志愿者、海洋研究机构</strong></div>
+      </div>
+      <div class="idea-card excellent-bg">
+        <div class="idea-name">🔭 鱼讯预警站</div>
+        <div class="idea-score-badge badge-green">创意评分 82</div>
+        <ul class="idea-features">
+          <li>整合海洋异常、地震前兆多维度数据</li>
+          <li>AI分析历史规律，辟谣与科学解读并重</li>
+          <li>一键触发地震应急知识卡片</li>
+        </ul>
+        <div class="idea-user">👥 目标用户：<strong>地震高风险区居民、防灾减灾部门</strong></div>
+      </div>
+      <div class="idea-card excellent-bg">
+        <div class="idea-name">🎮 深海探险家</div>
+        <div class="idea-score-badge badge-green">创意评分 84</div>
+        <ul class="idea-features">
+          <li>休闲养成游戏，以科学数据为基础设计生物</li>
+          <li>解锁真实深海生物图鉴与纪录片片段</li>
+          <li>探索任务触发海洋保护公益捐款</li>
+        </ul>
+        <div class="idea-user">👥 目标用户：<strong>Z世代科普游戏爱好者（15-28岁）</strong></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ TOPIC 5 ══ -->
+  <div class="topic-card good">
+    <div class="topic-header">
+      <div>
+        <div class="topic-rank">🔥 热搜 #5</div>
+        <div class="topic-name">何宣林是北影表演系班主任</div>
+        <div class="topic-heat">🌡 热度指数：396,271</div>
+      </div>
+      <div class="score-badge">
+        <div class="score-circle good">64</div>
+        <div class="score-label">✅ 良好</div>
+      </div>
+    </div>
+
+    <div class="score-breakdown">
+      <div class="score-item">
+        <label>话题吸引力 <span>14/20</span></label>
+        <div class="progress-bar"><div class="progress-fill fill-blue" style="width:70%"></div></div>
+      </div>
+      <div class="score-item">
+        <label>病毒传播性 <span>13/20</span></label>
+        <div class="progress-bar"><div class="progress-fill fill-blue" style="width:65%"></div></div>
+      </div>
+      <div class="score-item">
+        <label>情感共鸣 <span>13/20</span></label>
+        <div class="progress-bar"><div class="progress-fill fill-blue" style="width:65%"></div></div>
+      </div>
+      <div class="score-item">
+        <label>创意空间 <span>12/20</span></label>
+        <div class="progress-bar"><div class="progress-fill fill-blue" style="width:60%"></div></div>
+      </div>
+      <div class="score-item">
+        <label>有用度综合 <span>12/20</span></label>
+        <div class="progress-bar"><div class="progress-fill fill-purple" style="width:60%"></div></div>
+      </div>
+    </div>
+
+    <div class="analysis-grid">
+      <div class="analysis-box">
+        <h4>📋 话题背景</h4>
+        <p>何宣林担任北京电影学院表演系班主任的消息引发网友关注，折射出娱乐圈人才培养与学术资格的讨论，以及粉丝对偶像学历背景的好奇。</p>
+      </div>
+      <div class="analysis-box">
+        <h4>🌐 社会意义</h4>
+        <p>反映公众对娱乐行业与高校教育边界的关注，明星跨界从教引发关于"星教授"现象的社会讨论，涉及教育资源公平性议题。</p>
+      </div>
+    </div>
+
+    <div class="topic-divider"></div>
+    <div class="ideas-title">💡 产品创意方案（2个）</div>
+    <div class="ideas-grid">
+      <div class="idea-card good-bg">
+        <div class="idea-name">🎬 影视圈图谱</div>
+        <div class="idea-score-badge badge-blue">创意评分 77</div>
+        <ul class="idea-features">
+          <li>娱乐圈人脉关系可视化知识图谱</li>
+          <li>追踪明星与院校、制片公司关联关系</li>
+          <li>科班vs非科班明星成就对比数据</li>
+          <li>高校表演专业历届知名校友树</li>
+        </ul>
+        <div class="idea-user">👥 目标用户：<strong>娱乐资讯爱好者、影视行业从业者</strong></div>
+      </div>
+      <div class="idea-card good-bg">
+        <div class="idea-name">🎭 明星求学记</div>
+        <div class="idea-score-badge badge-blue">创意评分 70</div>
+        <ul class="idea-features">
+          <li>明星学历与学习经历深度档案</li>
+          <li>各大艺术院校报考攻略与真实难度</li>
+          <li>梦想考艺校的粉丝学习打卡社区</li>
+        </ul>
+        <div class="idea-user">👥 目标用户：<strong>追星族、有艺考意向的高中生</strong></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ TOPIC 6 ══ -->
+  <div class="topic-card excellent">
+    <div class="topic-header">
+      <div>
+        <div class="topic-rank">🔥 热搜 #6</div>
+        <div class="topic-name">好多人装修没有去家务化的意识</div>
+        <div class="topic-heat">🌡 热度指数：385,556</div>
+      </div>
+      <div class="score-badge">
+        <div class="score-circle excellent" style="background:linear-gradient(135deg,#dd6b20,#f6ad55);">90</div>
+        <div class="score-label">🥇 最高分</div>
+      </div>
+    </div>
+
+    <div class="score-breakdown">
+      <div class="score-item">
+        <label>话题吸引力 <span>17/20</span></label>
+        <div class="progress-bar"><div class="progress-fill fill-green" style="width:85%"></div></div>
+      </div>
+      <div class="score-item">
+        <label>病毒传播性 <span>16/20</span></label>
+        <div class="progress-bar"><div class="progress-fill fill-green" style="width:80%"></div></div>
+      </div>
+      <div class="score-item">
+        <label>情感共鸣 <span>18/20</span></label>
+        <div class="progress-bar"><div class="progress-fill fill-green" style="width:90%"></div></div>
+      </div>
+      <div class="score-item">
+        <label>创意空间 <span>19/20</span></label>
+        <div class="progress-bar"><div class="progress-fill fill-green" style="width:95%"></div></div>
+      </div>
+      <div class="score-item">
+        <label>有用度综合 <span>20/20</span></label>
+        <div class="progress-bar"><div class="progress-fill fill-orange" style="width:100%"></div></div>
+      </div>
+    </div>
+
+    <div class="analysis-grid">
+      <div class="analysis-box">
+        <h4>📋 话题背景</h4>
+        <p>"去家务化"装修理念走红网络，内容涵盖无缝地板、隐藏式收纳、全屋智能、减少卫生死角等设计策略，引发新一代装修人群广泛共鸣与讨论。</p>
+      </div>
+      <div class="analysis-box">
+        <h4>🌐 社会意义</h4>
+        <p>折射现代人对生活品质与时间成本的重新权衡，"懒人经济"在家居领域的延伸，也反映双职工家庭对家务分配痛点的强烈诉求。</p>
+      </div>
+      <div class="analysis-box">
+        <h4>🎯 产品机会</h4>
+        <p>家装行业数字化升级、智能家居普及、家务优化工具均处于高速增长期，"去家务化"理念可贯穿从装修规划到智能家电选购的全生命周期。</p>
+      </div>
+    </div>
+
+    <div class="topic-divider"></div>
+    <div class="ideas-title">💡 产品创意方案（5个）</div>
+    <div class="ideas-grid">
+      <div class="idea-card excellent-bg">
+        <div class="idea-name">🏠 懒人设计师</div>
+        <div class="idea-score-badge badge-green">创意评分 94</div>
+        <ul class="idea-features">
+          <li>AI输入户型图自动输出"去家务化"改造方案</li>
+          <li>量化每项设计选择每年省出的清洁时长</li>
+          <li>一键对接家装公司与施工队报价</li>
+          <li>用户晒图社区：去家务化前后效果对比</li>
+          <li>与家居品牌合作的精选好物推荐</li>
+        </ul>
+        <div class="idea-user">👥 目标用户：<strong>准装修业主（25-45岁，双职工城市家庭）</strong></div>
+      </div>
+      <div class="idea-card excellent-bg">
+        <div class="idea-name">⏱️ 家务减法日记</div>
+        <div class="idea-score-badge badge-green">创意评分 88</div>
+        <ul class="idea-features">
+          <li>记录家务时间，AI分析可优化的环节</li>
+          <li>个性化推荐减少家务的产品与装修改造</li>
+          <li>PK模式：晒出你的"家务节省排行"</li>
+          <li>家庭成员协作分工智能调度</li>
+        </ul>
+        <div class="idea-user">👥 目标用户：<strong>家庭主妇/主夫、追求生活效率的都市人</strong></div>
+      </div>
+      <div class="idea-card excellent-bg">
+        <div class="idea-name">🔍 智居评分师</div>
+        <div class="idea-score-badge badge-green">创意评分 86</div>
+        <ul class="idea-features">
+          <li>上传家居照片，AI扫描"家务陷阱"区域</li>
+          <li>输出可打分的"去家务化指数"报告</li>
+          <li>改造ROI计算：花X元省去Y小时家务</li>
+        </ul>
+        <div class="idea-user">👥 目标用户：<strong>现有住宅改造用户、家居内容创作者</strong></div>
+      </div>
+      <div class="idea-card excellent-bg">
+        <div class="idea-name">🛒 极简好物榜</div>
+        <div class="idea-score-badge badge-green">创意评分 83</div>
+        <ul class="idea-features">
+          <li>"去家务化"神器垂直评测导购平台</li>
+          <li>真实用户使用时长数据驱动排名</li>
+          <li>按家庭场景分类推荐：厨房/浴室/客厅</li>
+        </ul>
+        <div class="idea-user">👥 目标用户：<strong>品质生活追求者、家居内容消费者</strong></div>
+      </div>
+      <div class="idea-card excellent-bg">
+        <div class="idea-name">🤖 全屋管家AI</div>
+        <div class="idea-score-badge badge-green">创意评分 90</div>
+        <ul class="idea-features">
+          <li>接入全屋智能设备，自动规划家务时间</li>
+          <li>扫地机/洗碗机等联动调度编排</li>
+          <li>家务完成情况周报与节省时间可视化</li>
+          <li>开放API对接主流智能家居生态</li>
+        </ul>
+        <div class="idea-user">👥 目标用户：<strong>全屋智能家居用户、科技型家庭</strong></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ TOPIC 7 ══ -->
+  <div class="topic-card good">
+    <div class="topic-header">
+      <div>
+        <div class="topic-rank">🔥 热搜 #7</div>
+        <div class="topic-name">带师生徒步祭英烈校领导步数76000</div>
+        <div class="topic-heat">🌡 热度指数：350,240</div>
+      </div>
+      <div class="score-badge">
+        <div class="score-circle good">75</div>
+        <div class="score-label">✅ 良好</div>
+      </div>
+    </div>
+
+    <div class="score-breakdown">
+      <div class="score-item">
+        <label>话题吸引力 <span>16/20</span></label>
+        <div class="progress-bar"><div class="progress-fill fill-blue" style="width:80%"></div></div>
+      </div>
+      <div class="score-item">
+        <label>病毒传播性 <span>15/20</span></label>
+        <div class="progress-bar"><div class="progress-fill fill-blue" style="width:75%"></div></div>
+      </div>
+      <div class="score-item">
+        <label>情感共鸣 <span>17/20</span></label>
+        <div class="progress-bar"><div class="progress-fill fill-blue" style="width:85%"></div></div>
+      </div>
+      <div class="score-item">
+        <label>创意空间 <span>14/20</span></label>
+        <div class="progress-bar"><div class="progress-fill fill-blue" style="width:70%"></div></div>
+      </div>
+      <div class="score-item">
+        <label>有用度综合 <span>13/20</span></label>
+        <div class="progress-bar"><div class="progress-fill fill-purple" style="width:65%"></div></div>
+      </div>
+    </div>
+
+    <div class="analysis-grid">
+      <div class="analysis-box">
+        <h4>📋 话题背景</h4>
+        <p>清明节前后，某校校领导带领师生徒步数十公里祭奠英烈，全程步数达76000步，其敬业与坚持精神感动网友，引发对爱国主义教育方式的广泛探讨。</p>
+      </div>
+      <div class="analysis-box">
+        <h4>🌐 社会意义</h4>
+        <p>展现新时代体验式爱国主义教育的创新实践，"用脚步丈量历史"的方式引起社会共鸣，也推动学校探索更多有仪式感的德育活动形式。</p>
+      </div>
+    </div>
+
+    <div class="topic-divider"></div>
+    <div class="ideas-title">💡 产品创意方案（3个）</div>
+    <div class="ideas-grid">
+      <div class="idea-card good-bg">
+        <div class="idea-name">🚶 红色步道图</div>
+        <div class="idea-score-badge badge-blue">创意评分 80</div>
+        <ul class="idea-features">
+          <li>全国烈士陵园、爱国主义教育基地徒步路线库</li>
+          <li>步行打卡自动生成电子纪念证书</li>
+          <li>与学校德育系统对接，步数自动记录</li>
+          <li>家长可实时查看孩子徒步位置与进度</li>
+        </ul>
+        <div class="idea-user">👥 目标用户：<strong>学校德育管理者、参与爱国主义活动的师生</strong></div>
+      </div>
+      <div class="idea-card good-bg">
+        <div class="idea-name">🏫 校园健步榜</div>
+        <div class="idea-score-badge badge-blue">创意评分 72</div>
+        <ul class="idea-features">
+          <li>学校内部步数挑战赛与排行榜系统</li>
+          <li>清明/烈士纪念日专题活动模板</li>
+          <li>步数兑换公益捐款（每步=1分钱）</li>
+        </ul>
+        <div class="idea-user">👥 目标用户：<strong>中小学、高校德育部门</strong></div>
+      </div>
+      <div class="idea-card good-bg">
+        <div class="idea-name">🗺️ 英烈地图</div>
+        <div class="idea-score-badge badge-blue">创意评分 76</div>
+        <ul class="idea-features">
+          <li>全国烈士故事地理可视化图谱</li>
+          <li>AR扫描烈士陵园墓碑讲述英雄事迹</li>
+          <li>用户贡献本地烈士故事，AI整理成册</li>
+        </ul>
+        <div class="idea-user">👥 目标用户：<strong>中小学生、历史爱好者、清明祭扫人群</strong></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ TOPIC 8 ══ -->
+  <div class="topic-card good">
+    <div class="topic-header">
+      <div>
+        <div class="topic-rank">🔥 热搜 #8</div>
+        <div class="topic-name">阚清子说很感谢倪萍 <span class="tag tag-new">新</span></div>
+        <div class="topic-heat">🌡 热度指数：339,077 &nbsp;|&nbsp; 综艺话题</div>
+      </div>
+      <div class="score-badge">
+        <div class="score-circle good">60</div>
+        <div class="score-label">✅ 良好</div>
+      </div>
+    </div>
+
+    <div class="score-breakdown">
+      <div class="score-item">
+        <label>话题吸引力 <span>13/20</span></label>
+        <div class="progress-bar"><div class="progress-fill fill-blue" style="width:65%"></div></div>
+      </div>
+      <div class="score-item">
+        <label>病毒传播性 <span>12/20</span></label>
+        <div class="progress-bar"><div class="progress-fill fill-blue" style="width:60%"></div></div>
+      </div>
+      <div class="score-item">
+        <label>情感共鸣 <span>14/20</span></label>
+        <div class="progress-bar"><div class="progress-fill fill-blue" style="width:70%"></div></div>
+      </div>
+      <div class="score-item">
+        <label>创意空间 <span>11/20</span></label>
+        <div class="progress-bar"><div class="progress-fill fill-blue" style="width:55%"></div></div>
+      </div>
+      <div class="score-item">
+        <label>有用度综合 <span>10/20</span></label>
+        <div class="progress-bar"><div class="progress-fill fill-purple" style="width:50%"></div></div>
+      </div>
+    </div>
+
+    <div class="analysis-grid">
+      <div class="analysis-box">
+        <h4>📋 话题背景</h4>
+        <p>演员阚清子在综艺节目中表达对国民主持人倪萍的感激之情，两代女艺人之间的温情互动引发网友感动，折射娱乐圈前辈对后辈的提携精神。</p>
+      </div>
+      <div class="analysis-box">
+        <h4>🌐 社会意义</h4>
+        <p>在娱乐圈负面新闻频发的背景下，感恩与传承的温情故事弥足珍贵，也引发公众对娱乐圈人情温度的重新审视与正向期待。</p>
+      </div>
+    </div>
+
+    <div class="topic-divider"></div>
+    <div class="ideas-title">💡 产品创意方案（2个）</div>
+    <div class="ideas-grid">
+      <div class="idea-card good-bg">
+        <div class="idea-name">💌 感恩星球</div>
+        <div class="idea-score-badge badge-blue">创意评分 68</div>
+        <ul class="idea-features">
+          <li>匿名或实名向人生中的贵人发送感谢卡</li>
+          <li>AI辅助撰写感谢信，情感分析优化语言</li>
+          <li>感谢树：记录你生命中所有帮助过你的人</li>
+          <li>公开感谢墙：正能量内容社区</li>
+        </ul>
+        <div class="idea-user">👥 目标用户：<strong>情感表达需求者、节日送礼场景用户</strong></div>
+      </div>
+      <div class="idea-card good-bg">
+        <div class="idea-name">🌟 明星缘分树</div>
+        <div class="idea-score-badge badge-blue">创意评分 63</div>
+        <ul class="idea-features">
+          <li>娱乐圈师徒/提携关系可视化图谱</li>
+          <li>明星成长故事中的贵人脉络梳理</li>
+          <li>粉丝共建：补充明星鲜为人知的感恩故事</li>
+        </ul>
+        <div class="idea-user">👥 目标用户：<strong>娱乐内容消费者、明星粉丝群体</strong></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ TOPIC 9 ══ -->
+  <div class="topic-card excellent">
+    <div class="topic-header">
+      <div>
+        <div class="topic-rank">🔥 热搜 #9</div>
+        <div class="topic-name">工信部紧急提醒苹果用户</div>
+        <div class="topic-heat">🌡 热度指数：312,764</div>
+      </div>
+      <div class="score-badge">
+        <div class="score-circle excellent">83</div>
+        <div class="score-label">🏆 优秀</div>
+      </div>
+    </div>
+
+    <div class="score-breakdown">
+      <div class="score-item">
+        <label>话题吸引力 <span>17/20</span></label>
+        <div class="progress-bar"><div class="progress-fill fill-green" style="width:85%"></div></div>
+      </div>
+      <div class="score-item">
+        <label>病毒传播性 <span>16/20</span></label>
+        <div class="progress-bar"><div class="progress-fill fill-green" style="width:80%"></div></div>
+      </div>
+      <div class="score-item">
+        <label>情感共鸣 <span>15/20</span></label>
+        <div class="progress-bar"><div class="progress-fill fill-green" style="width:75%"></div></div>
+      </div>
+      <div class="score-item">
+        <label>创意空间 <span>17/20</span></label>
+        <div class="progress-bar"><div class="progress-fill fill-green" style="width:85%"></div></div>
+      </div>
+      <div class="score-item">
+        <label>有用度综合 <span>18/20</span></label>
+        <div class="progress-bar"><div class="progress-fill fill-purple" style="width:90%"></div></div>
+      </div>
+    </div>
+
+    <div class="analysis-grid">
+      <div class="analysis-box">
+        <h4>📋 话题背景</h4>
+        <p>工信部发出紧急提醒，针对苹果设备上存在的某类安全漏洞或隐私风险，提示用户及时更新系统或关闭特定功能，引发数亿苹果用户高度关注。</p>
+      </div>
+      <div class="analysis-box">
+        <h4>🌐 社会意义</h4>
+        <p>体现国家监管机构对数字安全的主动作为，推动公众数字安全意识提升。中美科技博弈背景下，苹果设备安全性持续受到监管机构关注。</p>
+      </div>
+      <div class="analysis-box">
+        <h4>🎯 产品机会</h4>
+        <p>普通用户面对安全警告往往不知所措，"安全提醒翻译器"（将专业提醒转化为可执行步骤）有极强的刚性需求，隐私保护工具市场持续扩大。</p>
+      </div>
+    </div>
+
+    <div class="topic-divider"></div>
+    <div class="ideas-title">💡 产品创意方案（3个）</div>
+    <div class="ideas-grid">
+      <div class="idea-card excellent-bg">
+        <div class="idea-name">🔐 安全翻译官</div>
+        <div class="idea-score-badge badge-green">创意评分 92</div>
+        <ul class="idea-features">
+          <li>将工信部/苹果等官方安全提醒转化为傻瓜式操作步骤</li>
+          <li>一键检测手机当前安全设置是否达标</li>
+          <li>推送个性化安全加固建议（按使用习惯）</li>
+          <li>安全评分体系，直观展示设备防护等级</li>
+          <li>定期推送监管机构最新安全公告摘要</li>
+        </ul>
+        <div class="idea-user">👥 目标用户：<strong>数亿中国苹果/安卓设备用户（尤其中老年群体）</strong></div>
+      </div>
+      <div class="idea-card excellent-bg">
+        <div class="idea-name">👁️ 隐私泄露雷达</div>
+        <div class="idea-score-badge badge-green">创意评分 88</div>
+        <ul class="idea-features">
+          <li>实时监控APP数据权限请求并拦截异常</li>
+          <li>个人信息泄露暗网扫描服务</li>
+          <li>隐私健康报告：哪些APP偷看了你的数据</li>
+          <li>一键提交数据删除申请给违规企业</li>
+        </ul>
+        <div class="idea-user">👥 目标用户：<strong>隐私意识强的城市用户、企业员工</strong></div>
+      </div>
+      <div class="idea-card excellent-bg">
+        <div class="idea-name">📅 数字安全日历</div>
+        <div class="idea-score-badge badge-green">创意评分 79</div>
+        <ul class="idea-features">
+          <li>每日推送一个数字安全小技巧</li>
+          <li>重要安全漏洞修复提醒（关联设备型号）</li>
+          <li>月度"安全回顾"报告自动生成分享</li>
+        </ul>
+        <div class="idea-user">👥 目标用户：<strong>希望提升数字安全意识的大众用户</strong></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ TOPIC 10 ══ -->
+  <div class="topic-card good">
+    <div class="topic-header">
+      <div>
+        <div class="topic-rank">🔥 热搜 #10</div>
+        <div class="topic-name">王楚钦直言0比2落后真没机会</div>
+        <div class="topic-heat">🌡 热度指数：282,233</div>
+      </div>
+      <div class="score-badge">
+        <div class="score-circle good">74</div>
+        <div class="score-label">✅ 良好</div>
+      </div>
+    </div>
+
+    <div class="score-breakdown">
+      <div class="score-item">
+        <label>话题吸引力 <span>15/20</span></label>
+        <div class="progress-bar"><div class="progress-fill fill-blue" style="width:75%"></div></div>
+      </div>
+      <div class="score-item">
+        <label>病毒传播性 <span>14/20</span></label>
+        <div class="progress-bar"><div class="progress-fill fill-blue" style="width:70%"></div></div>
+      </div>
+      <div class="score-item">
+        <label>情感共鸣 <span>16/20</span></label>
+        <div class="progress-bar"><div class="progress-fill fill-blue" style="width:80%"></div></div>
+      </div>
+      <div class="score-item">
+        <label>创意空间 <span>15/20</span></label>
+        <div class="progress-bar"><div class="progress-fill fill-blue" style="width:75%"></div></div>
+      </div>
+      <div class="score-item">
+        <label>有用度综合 <span>14/20</span></label>
+        <div class="progress-bar"><div class="progress-fill fill-purple" style="width:70%"></div></div>
+      </div>
+    </div>
+
+    <div class="analysis-grid">
+      <div class="analysis-box">
+        <h4>📋 话题背景</h4>
+        <p>国乒主力王楚钦在比赛中0:2落后后，直言"真的没有机会了"，引发球迷关于国乒心理素质、竞技压力与运动员坦诚态度的广泛讨论。</p>
+      </div>
+      <div class="analysis-box">
+        <h4>🌐 社会意义</h4>
+        <p>运动员的真实情绪表达打破"永不言败"的刻板形象，引发对竞技体育心理健康的关注，也触发粉丝关于团队支持系统与运动员精神压力的深层讨论。</p>
+      </div>
+    </div>
+
+    <div class="topic-divider"></div>
+    <div class="ideas-title">💡 产品创意方案（2个）</div>
+    <div class="ideas-grid">
+      <div class="idea-card good-bg">
+        <div class="idea-name">🏓 逆转时刻志</div>
+        <div class="idea-score-badge badge-blue">创意评分 78</div>
+        <ul class="idea-features">
+          <li>体育赛事历史逆转时刻数据库与集锦</li>
+          <li>"0:2逆转成功率"等冷知识实时推送</li>
+          <li>球迷实时预测比赛走向并竞猜积分</li>
+          <li>运动员赛前赛后情绪表达内容聚合</li>
+        </ul>
+        <div class="idea-user">👥 目标用户：<strong>乒乓球及竞技体育爱好者、体育数据迷</strong></div>
+      </div>
+      <div class="idea-card good-bg">
+        <div class="idea-name">💪 球迷加油站</div>
+        <div class="idea-score-badge badge-blue">创意评分 73</div>
+        <ul class="idea-features">
+          <li>赛事直播同步应援弹幕专属社区</li>
+          <li>AI生成专属加油文案一键分享</li>
+          <li>运动员心理压力公益科普内容专区</li>
+        </ul>
+        <div class="idea-user">👥 目标用户：<strong>体育直播观众、国乒粉丝群体</strong></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ═══════════════════════════════ SUMMARY ═══════════════════════════════ -->
+<div class="section" style="margin-top:48px;margin-bottom:0;">
+  <div class="section-title">📋 分析总结</div>
+  <div style="background:#fff;border-radius:20px;padding:28px;box-shadow:0 4px 24px rgba(0,0,0,0.07);">
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;">
+      <div style="background:linear-gradient(135deg,#f0fff4,#c6f6d5);border-radius:14px;padding:20px;">
+        <div style="font-size:14px;font-weight:700;color:#276749;margin-bottom:12px;">🥇 最高创意潜力话题</div>
+        <div style="font-size:16px;font-weight:800;color:#1a202c;margin-bottom:4px;">好多人装修没有去家务化的意识</div>
+        <div style="font-size:13px;color:#4a5568;">综合评分 <strong>90分</strong> | 5个产品创意 | 真实需求满分</div>
+      </div>
+      <div style="background:linear-gradient(135deg,#ebf8ff,#bee3f8);border-radius:14px;padding:20px;">
+        <div style="font-size:14px;font-weight:700;color:#1a365d;margin-bottom:12px;">🔥 最高社会影响话题</div>
+        <div style="font-size:16px;font-weight:800;color:#1a202c;margin-bottom:4px;">与辉同行宣布全额退款</div>
+        <div style="font-size:13px;color:#4a5568;">热度指数 <strong>1,034,117</strong> | 直播电商维权风口</div>
+      </div>
+      <div style="background:linear-gradient(135deg,#fff5f5,#fed7d7);border-radius:14px;padding:20px;">
+        <div style="font-size:14px;font-weight:700;color:#c53030;margin-bottom:12px;">🦠 最强传播力话题</div>
+        <div style="font-size:16px;font-weight:800;color:#1a202c;margin-bottom:4px;">海南一沙滩现巨型搁浅皇带鱼</div>
+        <div style="font-size:13px;color:#4a5568;">病毒传播性 <strong>20/20满分</strong> | 猎奇内容天花板</div>
+      </div>
+      <div style="background:linear-gradient(135deg,#faf5ff,#e9d8fd);border-radius:14px;padding:20px;">
+        <div style="font-size:14px;font-weight:700;color:#553c9a;margin-bottom:12px;">💡 最具长期价值话题</div>
+        <div style="font-size:16px;font-weight:800;color:#1a202c;margin-bottom:4px;">工信部紧急提醒苹果用户</div>
+        <div style="font-size:13px;color:#4a5568;">有用度 <strong>18/20</strong> | 数字安全市场长期刚需</div>
+      </div>
+    </div>
+    <div style="margin-top:20px;padding:16px;background:#f7fafc;border-radius:12px;font-size:13px;color:#4a5568;line-height:1.8;">
+      <strong style="color:#2d3748;">💼 投资建议：</strong>
+      本次分析共发现 <strong>31个</strong> 产品创意方向，其中重点推荐三大赛道：
+      ① <strong>直播电商消费者保护</strong>（受监管趋严与消费者权益意识提升双重驱动）；
+      ② <strong>智能家居去家务化</strong>（懒人经济+双职工家庭+装修市场数字化升级协同驱动）；
+      ③ <strong>个人数字安全工具</strong>（国家政策引导+隐私意识觉醒+苹果合规压力多重催化）。
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════ FOOTER ═══════════════════════════════ -->
+<div class="footer">
+  <div style="font-size:20px;margin-bottom:8px;">🤖</div>
+  <div>报告由 <strong>Claude AI 微博热搜产品创意分析系统</strong> 自动生成</div>
+  <div style="margin-top:4px;">生成时间：2026-04-04 10:34:49 &nbsp;·&nbsp; 数据来源：微博热搜实时榜单</div>
+  <div style="margin-top:4px;">评分模型：有趣度(80%) × [吸引力+传播性+情感共鸣+创意空间] + 有用度(20%) × [真实需求+市场规模+可行性+持续性]</div>
+  <div style="margin-top:12px;padding:10px 20px;background:#fff;border-radius:8px;display:inline-block;box-shadow:0 2px 8px rgba(0,0,0,0.06);">
+    ⚡ Powered by Anthropic Claude &nbsp;|&nbsp; 📊 分析话题 10 个 &nbsp;|&nbsp; 💡 产品创意 31 个
+  </div>
+</div>
+
+</body>
+</html>
