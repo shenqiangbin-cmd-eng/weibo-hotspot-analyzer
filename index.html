@@ -1,0 +1,1243 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>微博热搜产品创意分析报告 | 2026-04-24</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+    background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+    min-height: 100vh;
+    color: #e8e8f0;
+    padding: 20px;
+  }
+  /* Header */
+  .header {
+    text-align: center;
+    padding: 40px 20px 30px;
+    animation: fadeInDown 0.8s ease;
+  }
+  .header h1 {
+    font-size: clamp(1.6rem, 4vw, 2.8rem);
+    font-weight: 800;
+    background: linear-gradient(90deg, #f093fb, #f5576c, #fda085);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 10px;
+  }
+  .header .subtitle {
+    font-size: 0.95rem;
+    color: #9999bb;
+    letter-spacing: 2px;
+  }
+  .weibo-badge {
+    display: inline-block;
+    background: linear-gradient(90deg, #e6162d, #ff6b35);
+    color: white;
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 3px 12px;
+    border-radius: 20px;
+    margin-left: 8px;
+    vertical-align: middle;
+    letter-spacing: 1px;
+  }
+
+  /* Overview Stats */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 16px;
+    max-width: 900px;
+    margin: 0 auto 40px;
+    animation: fadeInUp 0.8s ease 0.2s both;
+  }
+  .stat-card {
+    background: rgba(255,255,255,0.07);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 16px;
+    padding: 20px 16px;
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  .stat-card:hover { transform: translateY(-4px); box-shadow: 0 12px 30px rgba(0,0,0,0.3); }
+  .stat-card .stat-value {
+    font-size: 2rem;
+    font-weight: 800;
+    line-height: 1.1;
+    margin-bottom: 6px;
+  }
+  .stat-card .stat-label { font-size: 0.8rem; color: #9999bb; letter-spacing: 1px; }
+  .stat-value.purple { background: linear-gradient(90deg, #a78bfa, #7c3aed); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+  .stat-value.gold { background: linear-gradient(90deg, #fbbf24, #f59e0b); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+  .stat-value.green { background: linear-gradient(90deg, #34d399, #10b981); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+  .stat-value.blue { background: linear-gradient(90deg, #60a5fa, #3b82f6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+  .stat-value.gray { background: linear-gradient(90deg, #9ca3af, #6b7280); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+
+  /* Section title */
+  .section-title {
+    text-align: center;
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin: 40px 0 24px;
+    color: #c4c4e0;
+    letter-spacing: 1px;
+    animation: fadeInUp 0.6s ease;
+  }
+  .section-title span {
+    background: linear-gradient(90deg, #f093fb, #f5576c);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* Topic Cards */
+  .topics-container { max-width: 1100px; margin: 0 auto; }
+  .topic-card {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 20px;
+    padding: 28px;
+    margin-bottom: 28px;
+    animation: fadeInUp 0.6s ease both;
+    transition: box-shadow 0.3s ease;
+    position: relative;
+    overflow: hidden;
+  }
+  .topic-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    border-radius: 20px 20px 0 0;
+  }
+  .topic-card.score-excellent::before { background: linear-gradient(90deg, #34d399, #10b981); }
+  .topic-card.score-good::before { background: linear-gradient(90deg, #60a5fa, #3b82f6); }
+  .topic-card.score-normal::before { background: linear-gradient(90deg, #9ca3af, #6b7280); }
+  .topic-card:hover { box-shadow: 0 16px 40px rgba(0,0,0,0.4); }
+
+  .topic-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 18px;
+    flex-wrap: wrap;
+  }
+  .topic-rank {
+    width: 36px; height: 36px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 1rem;
+    flex-shrink: 0;
+  }
+  .rank-1 { background: linear-gradient(135deg, #ffd700, #ffa500); color: #1a1a1a; }
+  .rank-2 { background: linear-gradient(135deg, #c0c0c0, #999); color: #1a1a1a; }
+  .rank-3 { background: linear-gradient(135deg, #cd7f32, #a0522d); color: white; }
+  .rank-other { background: rgba(255,255,255,0.1); color: #9999bb; }
+
+  .topic-title-wrap { flex: 1; }
+  .topic-title {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #e8e8f8;
+    margin-bottom: 4px;
+    line-height: 1.4;
+  }
+  .topic-meta { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+  .topic-heat {
+    font-size: 0.78rem;
+    color: #ff6b6b;
+    background: rgba(255,107,107,0.12);
+    padding: 2px 10px;
+    border-radius: 20px;
+    border: 1px solid rgba(255,107,107,0.2);
+  }
+  .topic-tag {
+    font-size: 0.72rem;
+    padding: 2px 8px;
+    border-radius: 20px;
+    font-weight: 600;
+  }
+  .tag-hot { background: rgba(239,68,68,0.2); color: #f87171; border: 1px solid rgba(239,68,68,0.3); }
+  .tag-new { background: rgba(34,197,94,0.2); color: #4ade80; border: 1px solid rgba(34,197,94,0.3); }
+  .tag-top { background: rgba(251,191,36,0.2); color: #fbbf24; border: 1px solid rgba(251,191,36,0.3); }
+
+  /* Score Display */
+  .score-display {
+    text-align: right;
+    flex-shrink: 0;
+  }
+  .score-circle {
+    width: 64px; height: 64px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.3rem; font-weight: 800;
+    margin-left: auto;
+    position: relative;
+  }
+  .score-circle.excellent {
+    background: conic-gradient(#10b981 0%, #10b981 var(--pct), rgba(255,255,255,0.08) var(--pct));
+    box-shadow: 0 0 20px rgba(16,185,129,0.4);
+    color: #34d399;
+  }
+  .score-circle.good {
+    background: conic-gradient(#3b82f6 0%, #3b82f6 var(--pct), rgba(255,255,255,0.08) var(--pct));
+    box-shadow: 0 0 20px rgba(59,130,246,0.4);
+    color: #60a5fa;
+  }
+  .score-circle.normal {
+    background: conic-gradient(#6b7280 0%, #6b7280 var(--pct), rgba(255,255,255,0.08) var(--pct));
+    color: #9ca3af;
+  }
+  .score-circle::after {
+    content: '';
+    position: absolute;
+    width: 50px; height: 50px;
+    border-radius: 50%;
+    background: #1a1a2e;
+  }
+  .score-num { position: relative; z-index: 1; }
+  .score-label { font-size: 0.7rem; color: #6b7280; margin-top: 4px; text-align: center; }
+
+  /* Score Breakdown */
+  .score-breakdown {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 18px;
+  }
+  .breakdown-item { display: flex; flex-direction: column; gap: 4px; }
+  .breakdown-label { font-size: 0.75rem; color: #9999bb; }
+  .breakdown-bar {
+    height: 6px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .breakdown-fill {
+    height: 100%;
+    border-radius: 3px;
+    transition: width 1.5s ease;
+  }
+  .fill-interest { background: linear-gradient(90deg, #f093fb, #f5576c); }
+  .fill-useful { background: linear-gradient(90deg, #4facfe, #00f2fe); }
+  .breakdown-score { font-size: 0.72rem; color: #c4c4e0; text-align: right; }
+
+  /* Topic Analysis */
+  .topic-analysis {
+    background: rgba(255,255,255,0.04);
+    border-radius: 12px;
+    padding: 14px 16px;
+    margin-bottom: 18px;
+    font-size: 0.88rem;
+    color: #b0b0cc;
+    line-height: 1.7;
+    border-left: 3px solid rgba(240,147,251,0.4);
+  }
+  .topic-analysis strong { color: #d4d4f0; }
+
+  /* Ideas Grid */
+  .ideas-section-label {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #9999bb;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 14px;
+  }
+  .ideas-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 14px;
+  }
+  .idea-card {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 14px;
+    padding: 16px;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+  }
+  .idea-card:hover { transform: translateY(-3px); box-shadow: 0 10px 25px rgba(0,0,0,0.3); }
+  .idea-name {
+    font-size: 1.05rem;
+    font-weight: 800;
+    margin-bottom: 8px;
+    background: linear-gradient(90deg, #f093fb, #f5576c, #fda085);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .idea-score-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+  .idea-score-track {
+    flex: 1;
+    height: 5px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .idea-score-fill {
+    height: 100%;
+    border-radius: 3px;
+    background: linear-gradient(90deg, #f093fb, #f5576c);
+  }
+  .idea-score-num { font-size: 0.75rem; color: #f093fb; font-weight: 700; white-space: nowrap; }
+  .idea-users {
+    font-size: 0.75rem;
+    color: #60a5fa;
+    background: rgba(59,130,246,0.12);
+    border: 1px solid rgba(59,130,246,0.2);
+    padding: 3px 10px;
+    border-radius: 20px;
+    display: inline-block;
+    margin-bottom: 10px;
+  }
+  .idea-features { list-style: none; }
+  .idea-features li {
+    font-size: 0.82rem;
+    color: #c0c0d8;
+    padding: 3px 0;
+    padding-left: 14px;
+    position: relative;
+    line-height: 1.5;
+  }
+  .idea-features li::before {
+    content: '▸';
+    position: absolute;
+    left: 0;
+    color: #f093fb;
+    font-size: 0.7rem;
+    top: 4px;
+  }
+
+  /* Footer */
+  .footer {
+    text-align: center;
+    padding: 40px 20px 20px;
+    color: #555577;
+    font-size: 0.8rem;
+    line-height: 1.8;
+  }
+
+  /* Animations */
+  @keyframes fadeInDown {
+    from { opacity: 0; transform: translateY(-30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Responsive */
+  @media (max-width: 600px) {
+    .topic-header { flex-direction: column; }
+    .score-display { display: flex; align-items: center; gap: 12px; }
+    .score-circle { width: 50px; height: 50px; font-size: 1rem; }
+    .score-circle::after { width: 38px; height: 38px; }
+    .score-breakdown { grid-template-columns: 1fr; }
+    .ideas-grid { grid-template-columns: 1fr; }
+    .stats-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<div class="header">
+  <h1>微博热搜产品创意分析报告 <span class="weibo-badge">WEIBO</span></h1>
+  <p class="subtitle">2026年04月24日 · 11:20:05 · 基于实时热搜榜TOP10</p>
+</div>
+
+<!-- Stats Overview -->
+<div class="stats-grid">
+  <div class="stat-card">
+    <div class="stat-value purple">10</div>
+    <div class="stat-label">分析话题数</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-value gold">76.8</div>
+    <div class="stat-label">平均综合评分</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-value green">4</div>
+    <div class="stat-label">优秀话题 ≥80分</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-value blue">6</div>
+    <div class="stat-label">良好话题 60-79分</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-value gray">0</div>
+    <div class="stat-label">一般话题 &lt;60分</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-value purple">31</div>
+    <div class="stat-label">产品创意总数</div>
+  </div>
+</div>
+
+<!-- Topics -->
+<div class="section-title">📊 <span>话题深度分析 × 产品创意方案</span></div>
+<div class="topics-container">
+
+
+<!-- ===== TOPIC 1: 小米YU7GT ===== -->
+<div class="topic-card score-excellent" style="animation-delay:0.1s">
+  <div class="topic-header">
+    <div class="topic-rank rank-1">1</div>
+    <div class="topic-title-wrap">
+      <div class="topic-title">小米YU7GT</div>
+      <div class="topic-meta">
+        <span class="topic-heat">🔥 热度 1,170,054</span>
+      </div>
+    </div>
+    <div class="score-display">
+      <div class="score-circle excellent" style="--pct:86%">
+        <span class="score-num">86</span>
+      </div>
+      <div class="score-label">综合评分</div>
+    </div>
+  </div>
+
+  <div class="score-breakdown">
+    <div class="breakdown-item">
+      <div class="breakdown-label">有趣度（80分）</div>
+      <div class="breakdown-bar"><div class="breakdown-fill fill-interest" style="width:85%"></div></div>
+      <div class="breakdown-score">话题吸引力18 + 传播性17 + 情感共鸣16 + 创意空间17 = <strong>68</strong></div>
+    </div>
+    <div class="breakdown-item">
+      <div class="breakdown-label">有用度（20分）</div>
+      <div class="breakdown-bar"><div class="breakdown-fill fill-useful" style="width:90%"></div></div>
+      <div class="breakdown-score">真实需求5 + 市场规模5 + 可行性4 + 持续性4 = <strong>18</strong></div>
+    </div>
+  </div>
+
+  <div class="topic-analysis">
+    <strong>📌 话题背景：</strong>小米汽车旗舰车型YU7 GT版正式亮相，雷军亲自官宣5月底发布，热度冠绝全榜。YU7 GT定位高性能版本，续航与驾驶性能均有大幅提升，叠加小米生态联动概念，引发科技圈与汽车圈共同围观。<br>
+    <strong>💡 社会意义：</strong>国产新能源车在高端性能市场快速崛起，"科技平权"叙事深入人心，围绕该话题的产品创意空间涵盖购车决策、用车体验、粉丝社区等多个维度。
+  </div>
+
+  <div class="ideas-section-label">💡 产品创意方案（共4个）</div>
+  <div class="ideas-grid">
+    <div class="idea-card">
+      <div class="idea-name">车比比</div>
+      <div class="idea-score-bar">
+        <div class="idea-score-track"><div class="idea-score-fill" style="width:91%"></div></div>
+        <div class="idea-score-num">91分</div>
+      </div>
+      <div class="idea-users">🎯 新能源购车决策用户</div>
+      <ul class="idea-features">
+        <li>小米YU7 GT vs 竞品实时横向对比（特斯拉/问界/智界）</li>
+        <li>AI根据用户通勤场景推荐最优车型配置</li>
+        <li>真实车主评分榜与避坑清单社区</li>
+        <li>分期/置换方案一键测算，含隐性成本提示</li>
+        <li>上市倒计时提醒 + 到店预约快速入口</li>
+      </ul>
+    </div>
+    <div class="idea-card">
+      <div class="idea-name">雷声追踪</div>
+      <div class="idea-score-bar">
+        <div class="idea-score-track"><div class="idea-score-fill" style="width:85%"></div></div>
+        <div class="idea-score-num">85分</div>
+      </div>
+      <div class="idea-users">🎯 科技产品发烧友/雷军粉丝</div>
+      <ul class="idea-features">
+        <li>雷军个人动态实时聚合（微博/微信/发布会）</li>
+        <li>小米全线产品发布日历与抢购预警</li>
+        <li>粉丝参与产品命名/功能投票的创意互动</li>
+        <li>专属"米粉"身份勋章与成就系统</li>
+      </ul>
+    </div>
+    <div class="idea-card">
+      <div class="idea-name">GT试驾圈</div>
+      <div class="idea-score-bar">
+        <div class="idea-score-track"><div class="idea-score-fill" style="width:82%"></div></div>
+        <div class="idea-score-num">82分</div>
+      </div>
+      <div class="idea-users">🎯 汽车爱好者/潜在买家</div>
+      <ul class="idea-features">
+        <li>AR虚拟试驾：手机扫描即可体验YU7GT驾驶视角</li>
+        <li>线下试驾资源共享，用户约车拼试驾</li>
+        <li>试驾视频/测评UGC内容社区</li>
+        <li>预约试驾成功后解锁专属周边兑换码</li>
+      </ul>
+    </div>
+    <div class="idea-card">
+      <div class="idea-name">充电图谱</div>
+      <div class="idea-score-bar">
+        <div class="idea-score-track"><div class="idea-score-fill" style="width:80%"></div></div>
+        <div class="idea-score-num">80分</div>
+      </div>
+      <div class="idea-users">🎯 新能源车主/长途出行者</div>
+      <ul class="idea-features">
+        <li>全国小米超充桩实时占用率地图</li>
+        <li>基于续航与路程自动规划最优充电停靠方案</li>
+        <li>充电等待期间附近商圈智能推荐</li>
+        <li>多品牌充电桩通用扫码支付，一App搞定</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+
+<!-- ===== TOPIC 2: 快手 低龄化伪成人 ===== -->
+<div class="topic-card score-excellent" style="animation-delay:0.15s">
+  <div class="topic-header">
+    <div class="topic-rank rank-2">2</div>
+    <div class="topic-title-wrap">
+      <div class="topic-title">快手 低龄化伪成人</div>
+      <div class="topic-meta">
+        <span class="topic-heat">🔥 热度 839,859</span>
+        <span class="topic-tag tag-hot">热</span>
+      </div>
+    </div>
+    <div class="score-display">
+      <div class="score-circle excellent" style="--pct:82%">
+        <span class="score-num">82</span>
+      </div>
+      <div class="score-label">综合评分</div>
+    </div>
+  </div>
+
+  <div class="score-breakdown">
+    <div class="breakdown-item">
+      <div class="breakdown-label">有趣度（80分）</div>
+      <div class="breakdown-bar"><div class="breakdown-fill fill-interest" style="width:81%"></div></div>
+      <div class="breakdown-score">话题吸引力16 + 传播性18 + 情感共鸣17 + 创意空间14 = <strong>65</strong></div>
+    </div>
+    <div class="breakdown-item">
+      <div class="breakdown-label">有用度（20分）</div>
+      <div class="breakdown-bar"><div class="breakdown-fill fill-useful" style="width:85%"></div></div>
+      <div class="breakdown-score">真实需求5 + 市场规模4 + 可行性4 + 持续性4 = <strong>17</strong></div>
+    </div>
+  </div>
+
+  <div class="topic-analysis">
+    <strong>📌 话题背景：</strong>快手平台上出现大量未成年用户通过化妆、滤镜伪装成成年人，绕过青少年保护机制刷短视频、进行打赏消费的现象，引发家长群体和监管部门高度关注。<br>
+    <strong>💡 社会意义：</strong>未成年人网络保护是当下最具社会共识的痛点之一，围绕"家长监督+平台责任+未成年人数字健康"三角，存在大量合规且高需求的产品机会。
+  </div>
+
+  <div class="ideas-section-label">💡 产品创意方案（共4个）</div>
+  <div class="ideas-grid">
+    <div class="idea-card">
+      <div class="idea-name">守护盾</div>
+      <div class="idea-score-bar">
+        <div class="idea-score-track"><div class="idea-score-fill" style="width:93%"></div></div>
+        <div class="idea-score-num">93分</div>
+      </div>
+      <div class="idea-users">🎯 有未成年子女的家长</div>
+      <ul class="idea-features">
+        <li>AI人脸年龄识别，实时检测是否化妆伪装成年</li>
+        <li>家长远程查看孩子短视频观看记录与时长</li>
+        <li>异常消费行为（打赏/充值）即时推送家长</li>
+        <li>一键开启"青少年专属内容池"并锁定</li>
+        <li>每周生成孩子数字行为健康报告</li>
+      </ul>
+    </div>
+    <div class="idea-card">
+      <div class="idea-name">青春防线</div>
+      <div class="idea-score-bar">
+        <div class="idea-score-track"><div class="idea-score-fill" style="width:87%"></div></div>
+        <div class="idea-score-num">87分</div>
+      </div>
+      <div class="idea-users">🎯 学校/家委会/教育机构</div>
+      <ul class="idea-features">
+        <li>班级群统一管理学生设备网络访问权限</li>
+        <li>基于作息时间自动开启/关闭娱乐类应用</li>
+        <li>未成年人正向内容推荐引擎（知识/体育/艺术）</li>
+        <li>家校共育数字素养课程与互动打卡</li>
+      </ul>
+    </div>
+    <div class="idea-card">
+      <div class="idea-name">净网举报</div>
+      <div class="idea-score-bar">
+        <div class="idea-score-track"><div class="idea-score-fill" style="width:81%"></div></div>
+        <div class="idea-score-num">81分</div>
+      </div>
+      <div class="idea-users">🎯 关注网络净化的普通用户</div>
+      <ul class="idea-features">
+        <li>一键举报短视频平台违规内容，自动归类</li>
+        <li>众包模式审核可疑账号年龄真实性</li>
+        <li>举报成功积分兑换公益证书与平台权益</li>
+        <li>各平台未成年保护政策合规评分榜</li>
+      </ul>
+    </div>
+    <div class="idea-card">
+      <div class="idea-name">数字童年</div>
+      <div class="idea-score-bar">
+        <div class="idea-score-track"><div class="idea-score-fill" style="width:78%"></div></div>
+        <div class="idea-score-num">78分</div>
+      </div>
+      <div class="idea-users">🎯 6-14岁儿童及家长</div>
+      <ul class="idea-features">
+        <li>专为未成年打造的正向短视频内容平台</li>
+        <li>家长共同参与设定每日"屏幕营养餐"</li>
+        <li>创作工具：鼓励孩子生产原创内容而非消费</li>
+        <li>实名可信的身份体系，杜绝年龄造假</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+
+<!-- ===== TOPIC 3: 第11个中国航天日 ===== -->
+<div class="topic-card score-good" style="animation-delay:0.2s">
+  <div class="topic-header">
+    <div class="topic-rank rank-3">3</div>
+    <div class="topic-title-wrap">
+      <div class="topic-title">第11个中国航天日</div>
+      <div class="topic-meta">
+        <span class="topic-heat">🔥 热度 831,278</span>
+      </div>
+    </div>
+    <div class="score-display">
+      <div class="score-circle good" style="--pct:74%">
+        <span class="score-num">74</span>
+      </div>
+      <div class="score-label">综合评分</div>
+    </div>
+  </div>
+
+  <div class="score-breakdown">
+    <div class="breakdown-item">
+      <div class="breakdown-label">有趣度（80分）</div>
+      <div class="breakdown-bar"><div class="breakdown-fill fill-interest" style="width:76%"></div></div>
+      <div class="breakdown-score">话题吸引力15 + 传播性14 + 情感共鸣16 + 创意空间16 = <strong>61</strong></div>
+    </div>
+    <div class="breakdown-item">
+      <div class="breakdown-label">有用度（20分）</div>
+      <div class="breakdown-bar"><div class="breakdown-fill fill-useful" style="width:65%"></div></div>
+      <div class="breakdown-score">真实需求3 + 市场规模3 + 可行性4 + 持续性3 = <strong>13</strong></div>
+    </div>
+  </div>
+
+  <div class="topic-analysis">
+    <strong>📌 话题背景：</strong>4月24日是中国航天日，今年是第11届。神舟系列、天宫空间站、嫦娥工程等一系列重大成就在这一天集中展示，激发了全民对太空探索的热情与自豪感。<br>
+    <strong>💡 社会意义：</strong>航天精神与科普教育结合，是难得的高质量流量节点。围绕航天IP的创意产品可连接爱国情感、科技科普和年轻代际认同三重价值。
+  </div>
+
+  <div class="ideas-section-label">💡 产品创意方案（共3个）</div>
+  <div class="ideas-grid">
+    <div class="idea-card">
+      <div class="idea-name">飞天日历</div>
+      <div class="idea-score-bar">
+        <div class="idea-score-track"><div class="idea-score-fill" style="width:83%"></div></div>
+        <div class="idea-score-num">83分</div>
+      </div>
+      <div class="idea-users">🎯 航天爱好者/科普受众</div>
+      <ul class="idea-features">
+        <li>每日推送一条中国航天历史成就"今日回顾"</li>
+        <li>火箭发射实时倒计时与直播入口</li>
+        <li>AR功能：手机扫天空看"虚拟空间站轨道"</li>
+        <li>航天节点互动纪念勋章收集系统</li>
+      </ul>
+    </div>
+    <div class="idea-card">
+      <div class="idea-name">宇宙课堂</div>
+      <div class="idea-score-bar">
+        <div class="idea-score-track"><div class="idea-score-fill" style="width:79%"></div></div>
+        <div class="idea-score-num">79分</div>
+      </div>
+      <div class="idea-users">🎯 中小学生/航天科普爱好者</div>
+      <ul class="idea-features">
+        <li>航天员讲故事短视频系列课程</li>
+        <li>3D交互式太空探索地图（可点击各任务节点）</li>
+        <li>学生航天主题创作大赛平台</li>
+        <li>完成科普任务解锁真实航天纪念品抽奖</li>
+      </ul>
+    </div>
+    <div class="idea-card">
+      <div class="idea-name">星辰社</div>
+      <div class="idea-score-bar">
+        <div class="idea-score-track"><div class="idea-score-fill" style="width:74%"></div></div>
+        <div class="idea-score-num">74分</div>
+      </div>
+      <div class="idea-users">🎯 航天迷/IP周边收藏者</div>
+      <ul class="idea-features">
+        <li>官方授权航天IP数字藏品与实体周边商城</li>
+        <li>航天知识问答竞赛，积分兑换限定周边</li>
+        <li>发射观测活动组织，联结全国观测爱好者群体</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+
+<!-- ===== TOPIC 4: BMW进入新世代 ===== -->
+<div class="topic-card score-good" style="animation-delay:0.25s">
+  <div class="topic-header">
+    <div class="topic-rank rank-other">4</div>
+    <div class="topic-title-wrap">
+      <div class="topic-title">BMW进入新世代</div>
+      <div class="topic-meta">
+        <span class="topic-tag tag-new">新</span>
+      </div>
+    </div>
+    <div class="score-display">
+      <div class="score-circle good" style="--pct:67%">
+        <span class="score-num">67</span>
+      </div>
+      <div class="score-label">综合评分</div>
+    </div>
+  </div>
+
+  <div class="score-breakdown">
+    <div class="breakdown-item">
+      <div class="breakdown-label">有趣度（80分）</div>
+      <div class="breakdown-bar"><div class="breakdown-fill fill-interest" style="width:64%"></div></div>
+      <div class="breakdown-score">话题吸引力14 + 传播性12 + 情感共鸣12 + 创意空间13 = <strong>51</strong></div>
+    </div>
+    <div class="breakdown-item">
+      <div class="breakdown-label">有用度（20分）</div>
+      <div class="breakdown-bar"><div class="breakdown-fill fill-useful" style="width:80%"></div></div>
+      <div class="breakdown-score">真实需求4 + 市场规模4 + 可行性4 + 持续性4 = <strong>16</strong></div>
+    </div>
+  </div>
+
+  <div class="topic-analysis">
+    <strong>📌 话题背景：</strong>宝马正式宣布进入"新世代（Neue Klasse）"战略转型阶段，发布全新纯电平台与交互系统，标志着传统豪华车品牌在电动化与智能化赛道上的全力投入。<br>
+    <strong>💡 社会意义：</strong>传统豪车品牌与中国新势力展开正面竞争，消费者在豪华与智能之间的选择困境催生决策辅助工具需求。
+  </div>
+
+  <div class="ideas-section-label">💡 产品创意方案（共2个）</div>
+  <div class="ideas-grid">
+    <div class="idea-card">
+      <div class="idea-name">豪车雷达</div>
+      <div class="idea-score-bar">
+        <div class="idea-score-track"><div class="idea-score-fill" style="width:80%"></div></div>
+        <div class="idea-score-num">80分</div>
+      </div>
+      <div class="idea-users">🎯 30-50岁高净值豪华车潜在买家</div>
+      <ul class="idea-features">
+        <li>宝马/奔驰/特斯拉/蔚来等豪华品牌新车全对比</li>
+        <li>AI根据驾驶习惯与预算匹配最优选项</li>
+        <li>真实车主长期使用报告（油钱/保养/残值）</li>
+        <li>限时优惠与置换政策实时推送</li>
+      </ul>
+    </div>
+    <div class="idea-card">
+      <div class="idea-name">座舱沉浸</div>
+      <div class="idea-score-bar">
+        <div class="idea-score-track"><div class="idea-score-fill" style="width:74%"></div></div>
+        <div class="idea-score-num">74分</div>
+      </div>
+      <div class="idea-users">🎯 汽车设计爱好者/潜在买家</div>
+      <ul class="idea-features">
+        <li>VR全景体验宝马新世代座舱交互系统</li>
+        <li>用户自定义配色/内饰方案并一键分享</li>
+        <li>新能源车智能驾驶功能横向体验测评视频库</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+
+<!-- ===== TOPIC 5: 建议装修一定要去家务化 ===== -->
+<div class="topic-card score-excellent" style="animation-delay:0.3s">
+  <div class="topic-header">
+    <div class="topic-rank rank-other">5</div>
+    <div class="topic-title-wrap">
+      <div class="topic-title">建议装修一定要去家务化</div>
+      <div class="topic-meta">
+        <span class="topic-heat">🔥 热度 820,504</span>
+      </div>
+    </div>
+    <div class="score-display">
+      <div class="score-circle excellent" style="--pct:93%">
+        <span class="score-num">93</span>
+      </div>
+      <div class="score-label">综合评分</div>
+    </div>
+  </div>
+
+  <div class="score-breakdown">
+    <div class="breakdown-item">
+      <div class="breakdown-label">有趣度（80分）</div>
+      <div class="breakdown-bar"><div class="breakdown-fill fill-interest" style="width:91%"></div></div>
+      <div class="breakdown-score">话题吸引力18 + 传播性18 + 情感共鸣19 + 创意空间18 = <strong>73</strong></div>
+    </div>
+    <div class="breakdown-item">
+      <div class="breakdown-label">有用度（20分）</div>
+      <div class="breakdown-bar"><div class="breakdown-fill fill-useful" style="width:100%"></div></div>
+      <div class="breakdown-score">真实需求5 + 市场规模5 + 可行性5 + 持续性5 = <strong>20</strong></div>
+    </div>
+  </div>
+
+  <div class="topic-analysis">
+    <strong>📌 话题背景：</strong>"去家务化"装修理念在社交媒体引发强烈共鸣——通过材料选择、布局规划和智能家居减少日常清洁打扫的工作量。该话题精准击中了现代人"既想住好看的房子，又不想当保洁员"的共同心声。<br>
+    <strong>💡 社会意义：</strong>家庭空间效率与生活质量的平衡是万年刚需，从装修决策到智能家居落地，存在极大的产品价值空间，且生命周期持续、复购频率高。
+  </div>
+
+  <div class="ideas-section-label">💡 产品创意方案（共5个）</div>
+  <div class="ideas-grid">
+    <div class="idea-card">
+      <div class="idea-name">懒居师</div>
+      <div class="idea-score-bar">
+        <div class="idea-score-track"><div class="idea-score-fill" style="width:95%"></div></div>
+        <div class="idea-score-num">95分</div>
+      </div>
+      <div class="idea-users">🎯 装修中/准装修的业主</div>
+      <ul class="idea-features">
+        <li>AI分析户型图，自动生成"去家务化"改造方案</li>
+        <li>每个设计决策配套"卫生难度评分"预判</li>
+        <li>材料对比：哪种地板/台面最不容易藏污纳垢</li>
+        <li>真实业主使用5年后的真实反馈数据库</li>
+        <li>一键联系本地认证"懒家设计师"上门服务</li>
+      </ul>
+    </div>
+    <div class="idea-card">
+      <div class="idea-name">扫地经</div>
+      <div class="idea-score-bar">
+        <div class="idea-score-track"><div class="idea-score-fill" style="width:88%"></div></div>
+        <div class="idea-score-num">88分</div>
+      </div>
+      <div class="idea-users">🎯 已入住的房主/租房族</div>
+      <ul class="idea-features">
+        <li>智能扫地机器人全屋路线规划优化</li>
+        <li>家务任务AI分配，结合扫拖机/洗碗机联动</li>
+        <li>家具布局"扫地友好度"实景评分工具</li>
+        <li>定期推送家居去污小技巧精华内容</li>
+      </ul>
+    </div>
+    <div class="idea-card">
+      <div class="idea-name">材料侦探</div>
+      <div class="idea-score-bar">
+        <div class="idea-score-track"><div class="idea-score-fill" style="width:85%"></div></div>
+        <div class="idea-score-num">85分</div>
+      </div>
+      <div class="idea-users">🎯 正在选材的装修业主</div>
+      <ul class="idea-features">
+        <li>扫描任意建材样品识别材质与耐脏评级</li>
+        <li>地板/墙砖/台面"使用3年后状态"AI模拟预览</li>
+        <li>按预算筛选"高颜值+低维护"材料清单</li>
+        <li>避坑指南：易藏污材料黑名单社区共建</li>
+      </ul>
+    </div>
+    <div class="idea-card">
+      <div class="idea-name">空间极减</div>
+      <div class="idea-score-bar">
+        <div class="idea-score-track"><div class="idea-score-fill" style="width:81%"></div></div>
+        <div class="idea-score-num">81分</div>
+      </div>
+      <div class="idea-users">🎯 极简主义生活方式爱好者</div>
+      <ul class="idea-features">
+        <li>基于"最少物品"理念的断舍离辅助工具</li>
+        <li>衣橱/书架/厨房储物"熵值"定期评估</li>
+        <li>闲置物品一键发布至二手平台</li>
+        <li>每周极简挑战社群与成就解锁</li>
+      </ul>
+    </div>
+    <div class="idea-card">
+      <div class="idea-name">懒家联盟</div>
+      <div class="idea-score-bar">
+        <div class="idea-score-track"><div class="idea-score-fill" style="width:77%"></div></div>
+        <div class="idea-score-num">77分</div>
+      </div>
+      <div class="idea-users">🎯 家居内容创作者/装修社区用户</div>
+      <ul class="idea-features">
+        <li>去家务化改造案例视频社区（Before/After）</li>
+        <li>用户投票评选"最懒神器"年度榜单</li>
+        <li>品牌联名：智能家电测评内容变现闭环</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+
+<!-- ===== TOPIC 6: 秦昊说外面有人了还要送啊 ===== -->
+<div class="topic-card score-good" style="animation-delay:0.35s">
+  <div class="topic-header">
+    <div class="topic-rank rank-other">6</div>
+    <div class="topic-title-wrap">
+      <div class="topic-title">秦昊说外面有人了还要送啊</div>
+      <div class="topic-meta">
+        <span class="topic-heat">综艺 · 热度 813,038</span>
+        <span class="topic-tag tag-top">重磅</span>
+      </div>
+    </div>
+    <div class="score-display">
+      <div class="score-circle good" style="--pct:75%">
+        <span class="score-num">75</span>
+      </div>
+      <div class="score-label">综合评分</div>
+    </div>
+  </div>
+
+  <div class="score-breakdown">
+    <div class="breakdown-item">
+      <div class="breakdown-label">有趣度（80分）</div>
+      <div class="breakdown-bar"><div class="breakdown-fill fill-interest" style="width:81%"></div></div>
+      <div class="breakdown-score">话题吸引力17 + 传播性18 + 情感共鸣16 + 创意空间14 = <strong>65</strong></div>
+    </div>
+    <div class="breakdown-item">
+      <div class="breakdown-label">有用度（20分）</div>
+      <div class="breakdown-bar"><div class="breakdown-fill fill-useful" style="width:50%"></div></div>
+      <div class="breakdown-score">真实需求2 + 市场规模3 + 可行性3 + 持续性2 = <strong>10</strong></div>
+    </div>
+  </div>
+
+  <div class="topic-analysis">
+    <strong>📌 话题背景：</strong>演员秦昊在综艺节目中的一句调侃金句"外面有人了还要送啊"引发全网二创狂潮，成为表情包和段子素材。妻子伊能静的反应更添戏剧张力，夫妻互动成为话题核心。<br>
+    <strong>💡 社会意义：</strong>娱乐金句的短暂爆发力强，但可持续性有限。产品创意需快速捕捉情绪价值，围绕"情感表达""亲密关系"切入更具长尾价值。
+  </div>
+
+  <div class="ideas-section-label">💡 产品创意方案（共3个）</div>
+  <div class="ideas-grid">
+    <div class="idea-card">
+      <div class="idea-name">伴侣金句</div>
+      <div class="idea-score-bar">
+        <div class="idea-score-track"><div class="idea-score-fill" style="width:82%"></div></div>
+        <div class="idea-score-num">82分</div>
+      </div>
+      <div class="idea-users">🎯 情侣/夫妻/恋爱中的年轻人</div>
+      <ul class="idea-features">
+        <li>AI生成专属"伴侣金句"卡片，支持自定义场景</li>
+        <li>综艺/影视经典亲密台词表情包一键制作</li>
+        <li>每日发送一句"感情保鲜金句"推送</li>
+        <li>情侣互动游戏：猜对方会说哪句话赢礼物</li>
+      </ul>
+    </div>
+    <div class="idea-card">
+      <div class="idea-name">综艺剪辑</div>
+      <div class="idea-score-bar">
+        <div class="idea-score-track"><div class="idea-score-fill" style="width:76%"></div></div>
+        <div class="idea-score-num">76分</div>
+      </div>
+      <div class="idea-users">🎯 综艺爱好者/内容创作者</div>
+      <ul class="idea-features">
+        <li>综艺金句自动检测与高光片段剪辑工具</li>
+        <li>一键生成带字幕的表情包短视频</li>
+        <li>追综艺的好友群实时讨论弹幕共享</li>
+      </ul>
+    </div>
+    <div class="idea-card">
+      <div class="idea-name">情感雷达</div>
+      <div class="idea-score-bar">
+        <div class="idea-score-track"><div class="idea-score-fill" style="width:71%"></div></div>
+        <div class="idea-score-num">71分</div>
+      </div>
+      <div class="idea-users">🎯 关注亲密关系的年轻用户</div>
+      <ul class="idea-features">
+        <li>基于微博/评论分析"CP热度"实时榜单</li>
+        <li>明星夫妻/情侣甜蜜指数追踪</li>
+        <li>用户自测"伴侣相处模式"测评工具</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+
+<!-- ===== TOPIC 7: 女歌手因恐飞取消北京巡演 ===== -->
+<div class="topic-card score-good" style="animation-delay:0.4s">
+  <div class="topic-header">
+    <div class="topic-rank rank-other">7</div>
+    <div class="topic-title-wrap">
+      <div class="topic-title">女歌手因恐飞取消北京巡演</div>
+      <div class="topic-meta">
+        <span class="topic-heat">演出 · 热度 793,260</span>
+      </div>
+    </div>
+    <div class="score-display">
+      <div class="score-circle good" style="--pct:72%">
+        <span class="score-num">72</span>
+      </div>
+      <div class="score-label">综合评分</div>
+    </div>
+  </div>
+
+  <div class="score-breakdown">
+    <div class="breakdown-item">
+      <div class="breakdown-label">有趣度（80分）</div>
+      <div class="breakdown-bar"><div class="breakdown-fill fill-interest" style="width:74%"></div></div>
+      <div class="breakdown-score">话题吸引力15 + 传播性15 + 情感共鸣15 + 创意空间14 = <strong>59</strong></div>
+    </div>
+    <div class="breakdown-item">
+      <div class="breakdown-label">有用度（20分）</div>
+      <div class="breakdown-bar"><div class="breakdown-fill fill-useful" style="width:65%"></div></div>
+      <div class="breakdown-score">真实需求3 + 市场规模3 + 可行性4 + 持续性3 = <strong>13</strong></div>
+    </div>
+  </div>
+
+  <div class="topic-analysis">
+    <strong>📌 话题背景：</strong>某位知名女歌手因患有严重的飞行恐惧症（飞行恐惧/飞行焦虑），被迫取消北京演唱会巡演场次，引发歌迷失望之余也引起公众对心理健康话题的广泛讨论。<br>
+    <strong>💡 社会意义：</strong>飞行恐惧是全球约25%人口存在的真实焦虑，同时戳中心理健康话题的大众敏感神经，围绕"焦虑疏导""出行心理"有着实际的产品机会。
+  </div>
+
+  <div class="ideas-section-label">💡 产品创意方案（共2个）</div>
+  <div class="ideas-grid">
+    <div class="idea-card">
+      <div class="idea-name">平安飞</div>
+      <div class="idea-score-bar">
+        <div class="idea-score-track"><div class="idea-score-fill" style="width:85%"></div></div>
+        <div class="idea-score-num">85分</div>
+      </div>
+      <div class="idea-users">🎯 有飞行恐惧/出行焦虑的人群</div>
+      <ul class="idea-features">
+        <li>科学脱敏训练：渐进式飞行焦虑克服课程</li>
+        <li>实时飞行数据安慰：当前航班安全指数可视化</li>
+        <li>机上冥想音频包与呼吸引导练习</li>
+        <li>恐飞社群互助，同病相怜的打卡共克挑战</li>
+        <li>AI模拟机长广播，提前适应飞行声音环境</li>
+      </ul>
+    </div>
+    <div class="idea-card">
+      <div class="idea-name">心安驿站</div>
+      <div class="idea-score-bar">
+        <div class="idea-score-track"><div class="idea-score-fill" style="width:76%"></div></div>
+        <div class="idea-score-num">76分</div>
+      </div>
+      <div class="idea-users">🎯 有特定恐惧/焦虑症的都市人群</div>
+      <ul class="idea-features">
+        <li>恐惧类型测评（恐飞/社恐/密闭/高空等）</li>
+        <li>专业心理咨询师匹配，按需预约暴露疗法</li>
+        <li>每日5分钟正念减压训练打卡</li>
+        <li>匿名恐惧故事分享社区，去污名化氛围营造</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+
+<!-- ===== TOPIC 8: WBG大象正式连接 ===== -->
+<div class="topic-card score-good" style="animation-delay:0.45s">
+  <div class="topic-header">
+    <div class="topic-rank rank-other">8</div>
+    <div class="topic-title-wrap">
+      <div class="topic-title">WBG大象正式连接</div>
+      <div class="topic-meta">
+        <span class="topic-heat">电竞话题</span>
+      </div>
+    </div>
+    <div class="score-display">
+      <div class="score-circle good" style="--pct:67%">
+        <span class="score-num">67</span>
+      </div>
+      <div class="score-label">综合评分</div>
+    </div>
+  </div>
+
+  <div class="score-breakdown">
+    <div class="breakdown-item">
+      <div class="breakdown-label">有趣度（80分）</div>
+      <div class="breakdown-bar"><div class="breakdown-fill fill-interest" style="width:68%"></div></div>
+      <div class="breakdown-score">话题吸引力14 + 传播性14 + 情感共鸣13 + 创意空间13 = <strong>54</strong></div>
+    </div>
+    <div class="breakdown-item">
+      <div class="breakdown-label">有用度（20分）</div>
+      <div class="breakdown-bar"><div class="breakdown-fill fill-useful" style="width:65%"></div></div>
+      <div class="breakdown-score">真实需求3 + 市场规模3 + 可行性4 + 持续性3 = <strong>13</strong></div>
+    </div>
+  </div>
+
+  <div class="topic-analysis">
+    <strong>📌 话题背景：</strong>WBG（Weibo Gaming）电竞战队官宣新选手"大象"正式加入，粉丝圈层高度关注。英雄联盟赛事战队的阵容变动是LPL赛季前最具热度的话题之一。<br>
+    <strong>💡 社会意义：</strong>电竞产业粉丝黏性极高，围绕战队/选手数据的产品需求真实存在，但圈层相对垂直，市场规模有上限。
+  </div>
+
+  <div class="ideas-section-label">💡 产品创意方案（共2个）</div>
+  <div class="ideas-grid">
+    <div class="idea-card">
+      <div class="idea-name">战队雷达</div>
+      <div class="idea-score-bar">
+        <div class="idea-score-track"><div class="idea-score-fill" style="width:80%"></div></div>
+        <div class="idea-score-num">80分</div>
+      </div>
+      <div class="idea-users">🎯 LPL赛事粉丝/电竞爱好者</div>
+      <ul class="idea-features">
+        <li>LPL所有战队最新阵容动态实时追踪</li>
+        <li>选手转会分析：对战队胜率影响AI预测</li>
+        <li>赛事日历订阅 + 比赛直播一键入口</li>
+        <li>粉丝预测积分榜与战队支持度排行</li>
+      </ul>
+    </div>
+    <div class="idea-card">
+      <div class="idea-name">电竞档案</div>
+      <div class="idea-score-bar">
+        <div class="idea-score-track"><div class="idea-score-fill" style="width:73%"></div></div>
+        <div class="idea-score-num">73分</div>
+      </div>
+      <div class="idea-users">🎯 电竞选手/电竞数据分析爱好者</div>
+      <ul class="idea-features">
+        <li>选手职业生涯全数据可视化（KDA/MVP率/冠军）</li>
+        <li>历届赛季战队实力演变时间轴</li>
+        <li>新选手与队伍历史风格契合度分析报告</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+
+<!-- ===== TOPIC 9: 雷军官宣小米YU7GT5月底发布 ===== -->
+<div class="topic-card score-excellent" style="animation-delay:0.5s">
+  <div class="topic-header">
+    <div class="topic-rank rank-other">9</div>
+    <div class="topic-title-wrap">
+      <div class="topic-title">雷军官宣小米YU7GT5月底发布</div>
+      <div class="topic-meta">
+        <span class="topic-heat">🔥 热度 793,204</span>
+      </div>
+    </div>
+    <div class="score-display">
+      <div class="score-circle excellent" style="--pct:82%">
+        <span class="score-num">82</span>
+      </div>
+      <div class="score-label">综合评分</div>
+    </div>
+  </div>
+
+  <div class="score-breakdown">
+    <div class="breakdown-item">
+      <div class="breakdown-label">有趣度（80分）</div>
+      <div class="breakdown-bar"><div class="breakdown-fill fill-interest" style="width:80%"></div></div>
+      <div class="breakdown-score">话题吸引力17 + 传播性16 + 情感共鸣15 + 创意空间16 = <strong>64</strong></div>
+    </div>
+    <div class="breakdown-item">
+      <div class="breakdown-label">有用度（20分）</div>
+      <div class="breakdown-bar"><div class="breakdown-fill fill-useful" style="width:90%"></div></div>
+      <div class="breakdown-score">真实需求5 + 市场规模5 + 可行性4 + 持续性4 = <strong>18</strong></div>
+    </div>
+  </div>
+
+  <div class="topic-analysis">
+    <strong>📌 话题背景：</strong>雷军在微博亲自官宣小米YU7 GT将于5月底正式发布，这是继SU7系列后小米汽车的又一重磅产品，高性能+高颜值+小米生态定位精准，预约量极速攀升。<br>
+    <strong>💡 社会意义：</strong>雷军本人的社交媒体影响力已成产品营销核心资产，围绕"创始人IP驱动购买决策"的创意产品是当下最值得深挖的方向之一。
+  </div>
+
+  <div class="ideas-section-label">💡 产品创意方案（共3个）</div>
+  <div class="ideas-grid">
+    <div class="idea-card">
+      <div class="idea-name">发布追踪</div>
+      <div class="idea-score-bar">
+        <div class="idea-score-track"><div class="idea-score-fill" style="width:88%"></div></div>
+        <div class="idea-score-num">88分</div>
+      </div>
+      <div class="idea-users">🎯 科技产品早鸟用户/米粉</div>
+      <ul class="idea-features">
+        <li>全平台科技产品发布日历精准推送</li>
+        <li>预约提醒+一键占位，发布即刻抢购通道</li>
+        <li>历届发布会价格预测AI模型（准确率排行）</li>
+        <li>KOL发布会解读第一时间聚合推送</li>
+      </ul>
+    </div>
+    <div class="idea-card">
+      <div class="idea-name">车主先遣</div>
+      <div class="idea-score-bar">
+        <div class="idea-score-track"><div class="idea-score-fill" style="width:83%"></div></div>
+        <div class="idea-score-num">83分</div>
+      </div>
+      <div class="idea-users">🎯 SU7/YU7意向买家</div>
+      <ul class="idea-features">
+        <li>小米YU7 GT锁单进度与交付周期实时更新</li>
+        <li>等车期间的车主专属福利打卡社区</li>
+        <li>提车攻略：验车清单/保险选购/首月用车指南</li>
+        <li>小米汽车OTA更新日志第一时间解读</li>
+      </ul>
+    </div>
+    <div class="idea-card">
+      <div class="idea-name">雷系生态</div>
+      <div class="idea-score-bar">
+        <div class="idea-score-track"><div class="idea-score-fill" style="width:77%"></div></div>
+        <div class="idea-score-num">77分</div>
+      </div>
+      <div class="idea-users">🎯 小米全生态用户</div>
+      <ul class="idea-features">
+        <li>小米手机/家居/汽车全生态联动体验规划工具</li>
+        <li>YU7 GT + 小米家居智联方案一键配置</li>
+        <li>米家设备与车机无缝切换体验演示</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+
+<!-- ===== TOPIC 10: 金智秀戛纳获奖感言 ===== -->
+<div class="topic-card score-good" style="animation-delay:0.55s">
+  <div class="topic-header">
+    <div class="topic-rank rank-other">10</div>
+    <div class="topic-title-wrap">
+      <div class="topic-title">金智秀戛纳获奖感言</div>
+      <div class="topic-meta">
+        <span class="topic-heat">盛典 · 热度 753,187</span>
+        <span class="topic-tag tag-hot">热</span>
+      </div>
+    </div>
+    <div class="score-display">
+      <div class="score-circle good" style="--pct:72%">
+        <span class="score-num">72</span>
+      </div>
+      <div class="score-label">综合评分</div>
+    </div>
+  </div>
+
+  <div class="score-breakdown">
+    <div class="breakdown-item">
+      <div class="breakdown-label">有趣度（80分）</div>
+      <div class="breakdown-bar"><div class="breakdown-fill fill-interest" style="width:78%"></div></div>
+      <div class="breakdown-score">话题吸引力17 + 传播性17 + 情感共鸣15 + 创意空间13 = <strong>62</strong></div>
+    </div>
+    <div class="breakdown-item">
+      <div class="breakdown-label">有用度（20分）</div>
+      <div class="breakdown-bar"><div class="breakdown-fill fill-useful" style="width:50%"></div></div>
+      <div class="breakdown-score">真实需求2 + 市场规模3 + 可行性3 + 持续性2 = <strong>10</strong></div>
+    </div>
+  </div>
+
+  <div class="topic-analysis">
+    <strong>📌 话题背景：</strong>BLACKPINK成员金智秀（Jisoo）在戛纳电影节相关活动中凭借出色表现获得认可，其获奖感言引发全球粉丝热议，成为跨越K-pop与时尚圈的顶流话题。<br>
+    <strong>💡 社会意义：</strong>K-pop明星在国际时尚/电影盛典舞台的影响力持续扩大，围绕"明星动态追踪""粉丝情感经济"的产品拥有稳定且高付费意愿的核心受众。
+  </div>
+
+  <div class="ideas-section-label">💡 产品创意方案（共2个）</div>
+  <div class="ideas-grid">
+    <div class="idea-card">
+      <div class="idea-name">星映戛纳</div>
+      <div class="idea-score-bar">
+        <div class="idea-score-track"><div class="idea-score-fill" style="width:80%"></div></div>
+        <div class="idea-score-num">80分</div>
+      </div>
+      <div class="idea-users">🎯 K-pop粉丝/时尚爱好者</div>
+      <ul class="idea-features">
+        <li>戛纳/威尼斯等顶级盛典明星实时动态聚合</li>
+        <li>明星同款穿搭来源解析与购买链接直达</li>
+        <li>粉丝应援物众筹与签名周边预售</li>
+        <li>获奖感言多语言翻译+情感解读AI助手</li>
+      </ul>
+    </div>
+    <div class="idea-card">
+      <div class="idea-name">应援星球</div>
+      <div class="idea-score-bar">
+        <div class="idea-score-track"><div class="idea-score-fill" style="width:74%"></div></div>
+        <div class="idea-score-num">74分</div>
+      </div>
+      <div class="idea-users">🎯 偶像粉丝群体/饭圈用户</div>
+      <ul class="idea-features">
+        <li>粉丝后援会活动组织与资金透明化管理</li>
+        <li>国际应援活动联动（中日韩三国粉丝协同）</li>
+        <li>明星成就里程碑纪念数字藏品发行</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+</div><!-- end topics-container -->
+
+<!-- Footer -->
+<div class="footer">
+  <p>📊 本报告由 Claude AI 微博热搜产品创意分析系统生成</p>
+  <p>生成时间：2026-04-24 11:20:05 &nbsp;|&nbsp; 数据来源：微博热搜实时榜单 TOP10</p>
+  <p>评分维度：有趣度(80%) = 话题吸引力 + 病毒传播性 + 情感共鸣 + 创意空间 &nbsp;|&nbsp; 有用度(20%) = 真实需求 + 市场规模 + 可行性 + 持续性</p>
+  <p style="margin-top:12px; color:#444466;">本报告仅供产品创意参考，不构成投资建议</p>
+</div>
+
+</body>
+</html>
